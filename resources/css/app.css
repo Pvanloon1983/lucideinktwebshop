@@ -271,11 +271,6 @@ thead {
   padding: 10px 15px;
 }
 
-.header
-.navbar ul li a:hover {
-
-}
-
 .logo-container {
   display: flex;
   justify-content: center;
@@ -283,7 +278,13 @@ thead {
 }
 
 .logo-container img {
-  width: 60px;
+  width: 70px;
+}
+
+.logo-container a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .nav-item
@@ -293,7 +294,7 @@ thead {
 
 @media only screen and (max-width: 992px) {
   .logo-container img {
-    width: 50px;
+    width: 60px;
   }
 }
 
