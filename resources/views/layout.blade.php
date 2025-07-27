@@ -6,8 +6,17 @@
     <title>Laravel</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+  {{-- <style>
+    body {
+    background-image: url('/images/arka.jpg');
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    }
+  </style> --}}
 </head>
-<body>
+<body >
 
 <header class="header">
     <div class="container">

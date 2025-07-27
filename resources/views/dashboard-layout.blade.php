@@ -39,7 +39,16 @@
     <i class="fa-solid fa-xmark"></i>
   </div>
   <nav class="navbar">
-    Test    
+    <ul>
+      <a href="{{ route('editProfile') }}">
+        <li class="nav-item {{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}"> Profiel</span></li>  
+      </a>
+      <a href="{{ route('productIndex') }}">
+        <li class="nav-item {{ request()->routeIs('productIndex') ? 'active-admin-link' : '' }}">
+        <span class="{{ request()->routeIs('productIndex') ? 'active-admin-link' : '' }}"> Producten</span>
+        </li>  
+      </a>
+    </ul>   
   </nav>
 </div>
 

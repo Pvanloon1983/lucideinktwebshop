@@ -17,14 +17,13 @@
 
     @guest
     <li class="nav-item">
-        <a class="{{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route("login") }}">
-            <i class="fa-regular fa-user"></i></a>
+        <a class="{{ request()->routeIs('login') ? 'active' : '' }}" href="{{ route("login") }}">Account</a>
     </li>
     @endguest
 
     @auth
     <li class="nav-item" style="margin-right: 20px;">
-        <a class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route("dashboard") }}">Admin</a>
+        <a class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route("dashboard") }}"></i> Dashboard</a>
     </li>
     @endauth
     @auth

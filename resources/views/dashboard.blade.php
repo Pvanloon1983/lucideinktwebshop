@@ -1,6 +1,7 @@
 <x-dashboard-layout>
 <main class="container page dashboard">
-    <h1>Dashboard</h1>
+    <h2>Dashboard</h2>
+    <h3>Welkom, {{ $user->first_name }}</h3>
     @if(session('success'))
         <div class="alert alert-success" style="position: relative;">
             {{ session('success') }}
