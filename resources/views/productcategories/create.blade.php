@@ -10,7 +10,7 @@
 
 			<form action="{{ route('productCategoryStore') }}" method="POST" class="form profile">
         @csrf
-				@method('PUT')
+				@method('POST')
 
 					<div class="form-input">
 						<label for="name">Naam</label>
@@ -21,14 +21,14 @@
 					</div>
 
 					<div class="form-input">
-						<label for="is_published">Publiceren</label>
-						<select name="is_published" id="is_published">
-							<option value="0">Nee</option>
-							<option value="1">Ja</option>
-						</select>
-						@error('is_published')
-						<div class="error">{{ $message }}</div>
-						@enderror
+							<label for="is_published">Publiceren</label>
+							<select name="is_published" id="is_published">
+									<option value="0" {{ old('is_published')=='0' ? 'selected' : '' }}>Nee</option>
+									<option value="1" {{ old('is_published')=='1' ? 'selected' : '' }}>Ja</option>
+							</select>
+							@error('is_published')
+							<div class="error">{{ $message }}</div>
+							@enderror
 					</div>
 
 
