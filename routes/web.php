@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductCategoryController;
 
 // Pages
 Route::get('/', function () { return view('home'); })->name('home');
@@ -30,3 +31,19 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->n
 
 // Products
 Route::get('/dashboard/products', [ProductController::class, 'index'])->name('productIndex')->middleware('auth');
+Route::get('/dashboard/products/create', [ProductController::class, 'create'])->name('productCreatePage')->middleware('auth');
+Route::post('/dashboard/products/create', [ProductController::class, 'store'])->name('productStore')->middleware('auth');
+
+// Productcategories
+Route::get('/dashboard/productcategories', [ProductCategoryController::class, 'index'])->name('productCategoryIndex')->middleware('auth');
+Route::get('/dashboard/productcategories/create', [ProductCategoryController::class, 'create'])->name('productCategoryCreatePage')->middleware('auth');
+Route::post('/dashboard/productcategories/create', [ProductCategoryController::class, 'store'])->name('productCategoryStore')->middleware('auth');
+Route::get('/dashboard/productcategories/edit/{id}', [ProductCategoryController::class, 'edit'])
+	->name('productCategoryEditPage')
+	->middleware('auth');
+Route::put('/dashboard/productcategories/edit/{id}', [ProductCategoryController::class, 'update'])
+	->name('productCategoryUpdate')
+	->middleware('auth');
+Route::delete('/dashboard/productcategories/delete/{id}', [ProductCategoryController::class, 'destroy'])
+	->name('productCategoryDelete')
+	->middleware('auth');

@@ -1,12 +1,13 @@
 <x-dashboard-layout>
 <main class="container page dashboard">
-    <h2>Alle producten</h2>
+    <h2>Producten</h2>
     @if(session('success'))
         <div class="alert alert-success" style="position: relative;">
             {{ session('success') }}
             <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
         </div>
     @endif
+    <a href="{{ route('productCreatePage') }}"><button class="btn">Nieuwe toevoegen</button></a>
     <div class="table-wrapper">
         <table class="table">
         <thead>
@@ -14,43 +15,52 @@
                 <th>ID</th>
                 <th>Afbeelding</th>
                 <th>Titel</th>
+                <th>Slug</th>
                 <th>Prijs</th>
-                <th>Categorie</th>
+                <th>Categorieën</th>
                 <th>Hoofdproduct</th>
                 <th>Gepubliceerd</th>
                 <th>Datum</th>
+                <th>Actie</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($products as $product)
-            <tr>
-                <td>{{ $product->id }}</td>
-                <td><img width="50px" src="{{ $product->image_1 }}" alt=""></td>
-                <td>{{ $product->title }}</td>
-                <td>{{ $product->price }}</td>
-                <td>
-                    @if(isset($product->categories) && count($product->categories))
-                        {{ implode(', ', $product->categories->pluck('name')->toArray()) }}
-                    @else
-                        -
-                    @endif
-                </td>
-                <td>
-                    @if($product->parent)
-                        {{ $product->parent->title }}
-                    @else
-                        -
-                    @endif
-                </td>
-                <td>
-                    @if ($product->is_published == 1)
-                        ja
-                    @else
-                        nee
-                    @endif
-                </td>
-                <td>{{ $product->created_at->format('d-m-Y') }}</td>
-            </tr>
+                <tr>
+                    <td style="min-width:40px;">{{ $product->id }}</td>
+                    <td class="td-img">
+                        <img src="{{ Str::startsWith($product->image_1, 'https://') ? $product->image_1 : asset('storage/' . $product->image_1) }}" alt="">
+                    </td>
+                    <td style="min-width:180px;">{{ $product->title }}</td>
+                    <td style="min-width:160px;">{{ $product->slug }}</td>
+                    <td style="min-width:70px;">{{ $product->price }}</td>
+                    <td style="min-width:180px;">
+                        {{ $product->category?->name ?? '-' }}
+                    </td>
+                    <td style="min-width:120px;">
+                        @if($product->parent)
+                            {{ $product->parent->title }}
+                        @else
+                            -
+                        @endif
+                    </td>
+                    <td style="min-width:90px;">
+                        @if ($product->is_published == 1)
+                            ja
+                        @else
+                            nee
+                        @endif
+                    </td>
+                    <td style="min-width:110px;">{{ $product->created_at->format('d-m-Y') }}</td>
+                    <td class="table-action" style="min-width:80px;">
+                        <a href="#"><i class="fa-regular fa-pen-to-square edit action-btn"></i></a>
+                        <form action="#" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button onclick="return confirm('Weet je zeker dat je dit wilt verwijderen?');" style="background-color: transparent; border: none;padding: 0;" type="submit"><i class="fa-regular fa-trash-can delete action-btn"></i></button>
+                        </form>
+                    </td>
+                </tr>
             @empty
                 
             @endforelse

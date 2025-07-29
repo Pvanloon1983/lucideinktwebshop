@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Laravel</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+   @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body>
 
@@ -41,13 +41,28 @@
   <nav class="navbar">
     <ul>
       <a href="{{ route('editProfile') }}">
-        <li class="nav-item {{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}"> Profiel</span></li>  
+        <li class="nav-item {{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}">Profiel</span></li>  
       </a>
       <a href="{{ route('productIndex') }}">
         <li class="nav-item {{ request()->routeIs('productIndex') ? 'active-admin-link' : '' }}">
-        <span class="{{ request()->routeIs('productIndex') ? 'active-admin-link' : '' }}"> Producten</span>
+        <span class="{{ request()->routeIs('productIndex') ? 'active-admin-link' : '' }}">Producten</span>
         </li>  
       </a>
+      <a href="{{ route('productCategoryIndex') }}">
+        <li class="nav-item {{ request()->routeIs('productCategoryIndex') ? 'active-admin-link' : '' }}">
+        <span class="{{ request()->routeIs('productCategoryIndex') ? 'active-admin-link' : '' }}">Productcategorieën</span>
+        </li>  
+      </a>
+          @auth
+      <li class="nav-item">
+          <form class="logout-button" action="{{ route('logout') }}" method="POST">
+              @csrf
+              <button type="submit" class="btn btn-primary">
+                  Uitloggen
+              </button>
+          </form>
+      </li>
+      @endauth
     </ul>   
   </nav>
 </div>

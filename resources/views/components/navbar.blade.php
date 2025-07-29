@@ -26,15 +26,5 @@
         <a class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route("dashboard") }}"></i> Dashboard</a>
     </li>
     @endauth
-    @auth
-    <li class="nav-item">
-        <form class="logout-button" action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="btn btn-primary">
-                Uitloggen
-            </button>
-        </form>
-    </li>
-    @endauth
 </ul>
 

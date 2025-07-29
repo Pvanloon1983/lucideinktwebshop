@@ -15,6 +15,9 @@ class ProductCategory extends Model
 
     protected $fillable = [
         'name',
+        'slug',
+        'created_by',
+        'updated_by'
     ];
 
     public function creator()
@@ -28,6 +31,6 @@ class ProductCategory extends Model
 
     public function products()
     {
-        return $this->belongsToMany(Product::class, 'product_product_category', 'product_category_id', 'product_id');
+        return $this->hasMany(Product::class, 'category_id');
     }
 }

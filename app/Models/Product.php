@@ -12,9 +12,13 @@ class Product extends Model
 
     protected $fillable = [
         'title',
+        'slug',
+        'price',
+        'is_published',
         'short_description',
         'long_description',
         'parent_id',
+        'category_id',
         'weight',
         'height',
         'width',
@@ -23,6 +27,8 @@ class Product extends Model
         'image_2',
         'image_3',
         'image_4',
+        'created_by',
+        'updated_by'
     ];
 
     public function creator()
@@ -44,9 +50,9 @@ class Product extends Model
         return $this->hasMany(Product::class, 'parent_id');
     }
 
-    public function categories()
+    public function category()
     {
-        return $this->belongsToMany(ProductCategory::class, 'product_product_category', 'product_id', 'product_category_id');
+        return $this->belongsTo(ProductCategory::class, 'category_id');
     }
 
 }
