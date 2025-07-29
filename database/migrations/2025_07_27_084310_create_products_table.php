@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->unique();
+            $table->string('title');
+            $table->string('slug');
+            $table->unique(['title', 'deleted_at']);
+            $table->unique(['slug', 'deleted_at']);
             $table->foreignId('category_id')->nullable()->constrained('product_categories')->nullOnDelete();
-            $table->string('slug')->unique();
             $table->text('short_description')->nullable();
             $table->text('long_description')->nullable();
             $table->decimal('price', 8, 2)->nullable();
@@ -31,6 +33,7 @@ return new class extends Migration
             $table->boolean('is_published')->default('0');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('cascade');
             $table->timestamps();
             $table->softDeletes();
         });

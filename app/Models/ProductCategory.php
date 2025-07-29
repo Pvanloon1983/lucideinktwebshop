@@ -18,7 +18,8 @@ class ProductCategory extends Model
         'slug',
         'is_published',
         'created_by',
-        'updated_by'
+        'updated_by',
+        'deleted_by'
     ];
 
     public function creator()

@@ -33,6 +33,9 @@ Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->n
 Route::get('/dashboard/products', [ProductController::class, 'index'])->name('productIndex')->middleware('auth');
 Route::get('/dashboard/products/create', [ProductController::class, 'create'])->name('productCreatePage')->middleware('auth');
 Route::post('/dashboard/products/create', [ProductController::class, 'store'])->name('productStore')->middleware('auth');
+Route::get('/dashboard/products/edit/{id}', [ProductController::class, 'edit'])->name('productEditPage')->middleware('auth');
+Route::put('/dashboard/products/edit/{id}', [ProductController::class, 'update'])->name('productUpdate')->middleware('auth');
+Route::delete('/dashboard/products/delete/{id}', [ProductController::class, 'destroy'])->name('productDelete')->middleware('auth');
 
 // Productcategories
 Route::get('/dashboard/productcategories', [ProductCategoryController::class, 'index'])->name('productCategoryIndex')->middleware('auth');

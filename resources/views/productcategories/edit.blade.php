@@ -8,7 +8,7 @@
         </div>
     @endif
 
-			<form action="{{ route('productCategoryUpdate', $category->id) }}" method="POST" class="form profile">
+			<form action="{{ route('productUpdate', $category->id) }}" method="POST" class="form profile">
 				@method('PUT')
         @csrf
         <div class="form-input">

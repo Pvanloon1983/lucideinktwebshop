@@ -35,24 +35,27 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Maak categorieën aan
-        ProductCategory::factory(10)->create();
+        
+        // ProductCategory::factory(10)->create();
 
-        $categories = ProductCategory::all();
+        // $categories = ProductCategory::all();
 
         // Maak producten aan, elk met één random category_id
-        Product::factory(20)->make()->each(function ($product) use ($categories) {
-            $product->category_id = $categories->random()->id;
-            $product->save();
-        });
+
+        // Product::factory(20)->make()->each(function ($product) use ($categories) {
+        //     $product->category_id = $categories->random()->id;
+        //     $product->save();
+        // });
 
         // Parent-logica: wijs willekeurig een parent toe (niet zichzelf)
-        $products = Product::all();
-        foreach ($products as $product) {
-            $possibleParents = $products->where('id', '!=', $product->id);
-            if ($possibleParents->count() && rand(0, 1)) {
-                $product->parent_id = $possibleParents->random()->id;
-                $product->save();
-            }
-        }
+
+        // $products = Product::all();
+        // foreach ($products as $product) {
+        //     $possibleParents = $products->where('id', '!=', $product->id);
+        //     if ($possibleParents->count() && rand(0, 1)) {
+        //         $product->parent_id = $possibleParents->random()->id;
+        //         $product->save();
+        //     }
+        // }
     }
 }

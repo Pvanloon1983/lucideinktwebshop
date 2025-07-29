@@ -1,6 +1,6 @@
 <x-dashboard-layout>
     <main class="container page dashboard product-form">
-        <h2>Product aanmaken</h2>
+        <h2>Product bewerken</h2>
         @if(session('success'))
         <div class="alert alert-success" style="position: relative;">
             {{ session('success') }}
@@ -9,16 +9,18 @@
         </div>
         @endif
 
-        <form action="{{ route('productStore') }}" method="POST" class="form" enctype="multipart/form-data">
-            @csrf
+        <form action="#" method="POST" class="form" enctype="multipart/form-data">
+        {{-- <form action="{{ route('productUpdate', $product->id) }}" method="POST" class="form" enctype="multipart/form-data"> --}}
+            @method('PUT')  
+            @csrf						
             <div class="grid-box">
                 {{-- Beschrijving --}}
                 <div class="section">
                     <div class="form-input">
                         <label for="is_published">Publiceren</label>
                         <select name="is_published" id="is_published">
-                            <option value="0" {{ old('is_published')=='0' ? 'selected' : '' }}>Nee</option>
-                            <option value="1" {{ old('is_published')=='1' ? 'selected' : '' }}>Ja</option>
+                            <option value="0" {{ old('is_published', $product->is_published) == '0' ? 'selected' : '' }}>Nee</option>
+                            <option value="1" {{ old('is_published', $product->is_published) == '1' ? 'selected' : '' }}>Ja</option>
                         </select>
                         @error('is_published')
                         <div class="error">{{ $message }}</div>
@@ -26,7 +28,7 @@
                     </div>
                     <div class="form-input">
                         <label for="title">Titel</label>
-                        <input type="text" name="title" value="{{ old('title') }}">
+                        <input type="text" name="title" value="{{ old('title', $product->title) }}">
                         @error('title')
                         <div class="error">{{ $message }}</div>
                         @enderror
@@ -34,14 +36,14 @@
                     <div class="form-input">
                         <label for="short_description">Korte omschrijving</label>
                         <textarea class="short_description"
-                            name="short_description">{{ old('short_description') }}</textarea>
+                            name="short_description">{{ old('short_description', $product->short_description) }}</textarea>
                         @error('short_description')
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-input">
                         <label for="long_description">Lange omschrijving</label>
-                        <textarea class="long_description" name="long_description">{{ old('long_description') }}</textarea>
+                        <textarea class="long_description" name="long_description">{{ old('long_description', $product->long_description) }}</textarea>
                         @error('long_description')
                         <div class="error">{{ $message }}</div>
                         @enderror
@@ -51,7 +53,7 @@
                 <div class="section">
                     <div class="form-input">
                         <label for="price">Prijs</label>
-                        <input type="number" name="price" value="{{ old('price') }}" step="0.01">
+                        <input type="number" name="price" value="{{ old('price', $product->price) }}" step="0.01">
                         @error('price')
                         <div class="error">{{ $message }}</div>
                         @enderror
@@ -61,8 +63,7 @@
                         <select name="category_id" id="category_id">
                             <option value="">-- Kies categorie --</option>
                             @foreach ($categories as $category)
-                            <option value="{{ $category->id }}" {{ old('category_id')==$category->id ? 'selected' : ''
-                                }}>
+                            <option value="{{ $category->id }}" {{ old('category_id', $product->category_id) == $category->id ? 'selected' : '' }}>
                                 {{ $category->name }}
                             </option>
                             @endforeach
@@ -76,9 +77,10 @@
                         <select name="parent_id" id="parent_id">
                             <option value="">-- Kies hoofdproduct --</option>
                             @if (count($products) > 0)
-                            @foreach ($products as $product)
-                            <option value="{{ $product->id }}" {{ old('parent_id')==$product->id ? 'selected' : '' }}>{{
-                                $product->title }}</option>
+                            @foreach ($products as $parent)
+                            <option value="{{ $parent->id }}" {{ old('parent_id', $product->parent_id) == $parent->id ? 'selected' : '' }}>
+                                {{ $parent->title }}
+                            </option>
                             @endforeach
                             @endif
                         </select>
@@ -92,28 +94,28 @@
                 <div class="section">
                     <div class="form-input">
                         <label for="weight">Gewicht (gr.)</label>
-                        <input type="number" name="weight" value="{{ old('weight') }}" step="0.01">
+                        <input type="number" name="weight" value="{{ old('weight', $product->weight) }}" step="0.01">
                         @error('weight')
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-input">
                         <label for="height">Hoogte (cm)</label>
-                        <input type="number" name="height" value="{{ old('height') }}" step="0.01">
+                        <input type="number" name="height" value="{{ old('height', $product->height) }}" step="0.01">
                         @error('height')
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-input">
                         <label for="width">Breedte (cm)</label>
-                        <input type="number" name="width" value="{{ old('width') }}" step="0.01">
+                        <input type="number" name="width" value="{{ old('width', $product->width) }}" step="0.01">
                         @error('width')
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-input">
                         <label for="depth">Diepte (cm)</label>
-                        <input type="number" name="depth" value="{{ old('depth') }}" step="0.01">
+                        <input type="number" name="depth" value="{{ old('depth', $product->depth) }}" step="0.01">
                         @error('depth')
                         <div class="error">{{ $message }}</div>
                         @enderror
@@ -121,7 +123,8 @@
                 </div>
 
                 {{-- Images --}}
-                <div class="section">
+                <div class="section images">
+
                     @for ($i = 1; $i <= 4; $i++)
                     <div class="form-input">
                         <label for="image_{{ $i }}">
@@ -132,20 +135,31 @@
                             @endif
                         </label>
                         <input type="file" name="image_{{ $i }}" id="image_{{ $i }}" accept="image/*">
-                        @if(old('image_' . $i))
-                            <div class="info">Bestand geselecteerd: {{ old('image_' . $i) }}</div>
+                        @if($product->{'image_'.$i})
+                            <div class="info">
+															<div style="display: flex;flex-direction: column;">
+																<span style="display: block;">Huidige afbeelding: </span>
+																<img 
+																src="{{ Str::startsWith($product->{'image_'.$i}, 'https://') 
+																		? $product->{'image_'.$i} 
+																		: asset('storage/' . $product->{'image_'.$i}) }}" 
+																alt="" 
+																style="max-width:60px;">
+															</div>
+														</div>
                         @endif
                         @error('image_' . $i)
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
                     @endfor
+
                 </div>
 
             </div>
 
             <div class="form-input">
-                <button type="submit" class="btn">Verzenden</button>
+                <button type="submit" class="btn">Opslaan</button>
             </div>
         </form>
     </main>

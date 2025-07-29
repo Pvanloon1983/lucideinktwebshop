@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\ProductCategory;
+use Illuminate\Validation\Rule;
 
 class ProductCategoryController extends Controller
 {
@@ -33,8 +34,13 @@ class ProductCategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:product_categories,name',
-            'is_published' => 'required|boolean',
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('product_categories', 'name')->whereNull('deleted_at'),
+            ],
+            'is_published' => 'required|boolean',            
         ], [
             'name.required' => 'Naam is verplicht.',
             'name.unique' => 'Deze naam is al in gebruik.',
@@ -120,6 +126,10 @@ class ProductCategoryController extends Controller
     public function destroy(string $id)
     {
         $category = ProductCategory::findOrFail($id);
+        $category->update([
+            'updated_by' => auth()->id(),
+            'deleted_by' => auth()->id(),
+        ]);
         $category->delete();
 
         return redirect()->route('productCategoryIndex')->with('success', 'Productcategorie is succesvol verwijderd.');

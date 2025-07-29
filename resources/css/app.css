@@ -43,7 +43,6 @@ body {
   color: var(--main-font-color);
   background: var(--secondary-color);
   line-height: 1.8;
-  word-spacing: 1.8px;
   font-size: var(--text-font-size-page);
 }
 
@@ -269,11 +268,13 @@ thead {
 }
 
 .table 
-.table-action {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 15px; /* space between buttons */
+.table-action a {
+  display: inline;
+}
+
+.table 
+.table-action form {
+  display: inline;
 }
 
 .table 
@@ -283,6 +284,7 @@ thead {
   cursor: pointer;
   padding-right: 0;
   white-space: nowrap;
+  margin-right: 10px;
 }
 
 .table 
@@ -591,12 +593,17 @@ i {
   margin-bottom: 0px;
 }
 
-.auth-page
 .form
 .form-input {
   display: flex;
   flex-direction: column;
   margin-bottom: 20px;
+}
+
+.form
+.form-input
+.btn {
+  width: fit-content;
 }
 
 .auth-page
@@ -916,7 +923,7 @@ i {
   font-family: var(--font-regular);
 }
 
-.form.profile
+.form
 .form-input input:focus {
   outline: 1px solid #cccccc;
 }
@@ -992,6 +999,27 @@ i {
   margin-top: 20px;
   margin-bottom: 50px;
 }
+
+.form-input .short_description,
+.form-input .long_description {
+  height: 125px;
+  resize: none;
+}
+
+.section.images {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 15px;
+}
+
+.section.images span {
+  font-size: 15px;
+}
+
+.section.images .form-input {
+  margin-bottom: 0px;
+}
+
 
 @media only screen and (max-width: 992px) {
   .product-form .grid-box {
