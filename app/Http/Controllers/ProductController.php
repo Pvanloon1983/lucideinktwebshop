@@ -50,6 +50,7 @@ class ProductController extends Controller
             'short_description' => 'nullable|string',
             'long_description' => 'nullable|string',
             'price' => 'nullable|numeric|min:0',
+            'stock' => 'nullable|numeric|min:0',
             'category_id' => 'nullable|exists:product_categories,id',
             'parent_id' => 'nullable|exists:products,id',
             'weight' => 'nullable|numeric|min:0',
@@ -67,6 +68,8 @@ class ProductController extends Controller
             'is_published.boolean' => 'Het veld gepubliceerd moet waar of onwaar zijn.',
             'price.numeric' => 'De prijs moet een getal zijn.',
             'price.min' => 'De prijs moet minimaal 0 zijn.',
+            'stock.numeric' => 'De voorraad moet een getal zijn.',
+            'stock.min' => 'De voorraad moet minimaal 0 zijn.',
             'category_id.exists' => 'De geselecteerde categorie bestaat niet.',
             'parent_id.exists' => 'Het geselecteerde hoofdproduct bestaat niet.',
             'weight.numeric' => 'Het gewicht moet een getal zijn.',
@@ -114,6 +117,7 @@ class ProductController extends Controller
             'short_description' => $validated['short_description'] ?? null,
             'long_description' => $validated['long_description'] ?? null,
             'price' => $validated['price'] ?? null,
+            'stock' => $validated['stock'] ?? 0,
             'parent_id' => $validated['parent_id'] ?? null,
             'weight' => $validated['weight'] ?? null,
             'height' => $validated['height'] ?? null,
@@ -129,14 +133,6 @@ class ProductController extends Controller
 
         return redirect()->route('productIndex')->with('success', 'Product met ID: '.$product->id.' succesvol aangemaakt.');
 
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
     }
 
     /**
@@ -169,6 +165,7 @@ class ProductController extends Controller
             'short_description' => 'nullable|string',
             'long_description' => 'nullable|string',
             'price' => 'nullable|numeric|min:0',
+            'stock' => 'nullable|numeric|min:0',
             'category_id' => 'nullable|exists:product_categories,id',
             'parent_id' => 'nullable|exists:products,id',
             'weight' => 'nullable|numeric|min:0',
@@ -187,6 +184,8 @@ class ProductController extends Controller
             'is_published.boolean' => 'Het veld gepubliceerd moet waar of onwaar zijn.',
             'price.numeric' => 'De prijs moet een getal zijn.',
             'price.min' => 'De prijs moet minimaal 0 zijn.',
+            'stock.numeric' => 'De voorraad moet een getal zijn.',
+            'stock.min' => 'De voorraad moet minimaal 0 zijn.',
             'category_id.exists' => 'De geselecteerde categorie bestaat niet.',
             'parent_id.exists' => 'Het geselecteerde hoofdproduct bestaat niet.',
             'weight.numeric' => 'Het gewicht moet een getal zijn.',
@@ -252,6 +251,7 @@ class ProductController extends Controller
             'short_description' => $validated['short_description'] ?? null,
             'long_description' => $validated['long_description'] ?? null,
             'price' => $validated['price'] ?? null,
+            'stock' => $validated['stock'] ?? null,
             'parent_id' => $validated['parent_id'] ?? null,
             'weight' => $validated['weight'] ?? null,
             'height' => $validated['height'] ?? null,

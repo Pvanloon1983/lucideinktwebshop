@@ -14,6 +14,7 @@ class Product extends Model
         'title',
         'slug',
         'price',
+        'stock',
         'is_published',
         'short_description',
         'long_description',

@@ -21,6 +21,19 @@
     </li>
     @endguest
 
+    <li class="nav-item cart">
+        <a class="{{ request()->routeIs('contact') ? 'active' : '' }}" href="#"><i
+            class="fa-solid fa-cart-shopping"></i>
+        @if(session('cart') && count(session('cart')))
+        <span class="cart-quantity">
+            {{
+            collect(session('cart'))->sum('quantity')
+            }}
+        </span>
+        @endif
+        </a>
+    </li>
+
     @auth
     <li class="nav-item" style="margin-right: 20px;">
         <a class="{{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route("dashboard") }}"></i> Dashboard</a>

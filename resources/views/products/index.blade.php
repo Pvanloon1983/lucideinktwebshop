@@ -17,6 +17,7 @@
                 <th>Titel</th>
                 <th>Slug</th>
                 <th>Prijs</th>
+                <th>Voorraad</th>
                 <th>Categorieën</th>
                 <th>Hoofdproduct</th>
                 <th>Gepubliceerd</th>
@@ -34,6 +35,7 @@
                     <td style="min-width:180px;">{{ $product->title }}</td>
                     <td style="min-width:160px;">{{ $product->slug }}</td>
                     <td style="min-width:70px;">{{ $product->price }}</td>
+                    <td style="min-width:70px;">{{ $product->stock }}</td>
                     <td style="min-width:180px;">
                         {{ $product->category?->name ?? '-' }}
                     </td>

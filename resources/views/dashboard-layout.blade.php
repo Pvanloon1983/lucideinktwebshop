@@ -19,9 +19,26 @@
           <x-navbar></x-navbar>
         </nav>
       </div>
-      <div class="sidebar-toggle">
-        <i class="fa-solid fa-bars"></i>
+
+      <div class="navbar-cart-sidebar-toggle">
+        <li class="nav-item">
+          <a class="{{ request()->routeIs('contact') ? 'active' : '' }}" href="#"><i
+              class="fa-solid fa-cart-shopping"></i>
+            @if(session('cart') && count(session('cart')))
+            <span class="cart-quantity">
+              {{
+              collect(session('cart'))->sum('quantity')
+              }}
+            </span>
+            @endif
+          </a>
+        </li>
+
+        <div class="sidebar-toggle">
+          <i class="fa-solid fa-bars"></i>
+        </div>
       </div>
+
     </div>
 </header>
 
@@ -54,6 +71,16 @@
       <a href="{{ route('productCategoryIndex') }}">
         <li class="nav-item {{ request()->routeIs('productCategoryIndex') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('productCategoryIndex') ? 'active-admin-link' : '' }}">Productcategorieën</span>
+        </li>  
+      </a>
+      <a href="#">
+        <li class="nav-item {{ request()->routeIs('#') ? 'active-admin-link' : '' }}">
+        <span class="{{ request()->routeIs('#') ? 'active-admin-link' : '' }}">Bestellingen</span>
+        </li>  
+      </a>
+      <a href="#">
+        <li class="nav-item {{ request()->routeIs('#') ? 'active-admin-link' : '' }}">
+        <span class="{{ request()->routeIs('#') ? 'active-admin-link' : '' }}">Klanten</span>
         </li>  
       </a>
           @auth

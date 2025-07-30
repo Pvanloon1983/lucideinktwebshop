@@ -36,11 +36,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
  
     for(let i=1; i<=4; i++) {
+        
         const input = document.getElementById('image_' + i);
         const label = document.getElementById('image_' + i + '_label_text');
         const removeBtn = document.querySelector('[data-input="image_' + i + '"]');
         const preview = document.getElementById('image_' + i + '_preview');
         const deleteCheckbox = document.getElementById('delete_image_' + i);
+
+        if (input) {
 
         // Preview bij nieuwe selectie
         input.addEventListener('change', function(e) {
@@ -70,7 +73,8 @@ document.addEventListener('DOMContentLoaded', function () {
             preview.innerHTML = '';
             removeBtn.style.display = 'none';
             if(deleteCheckbox) deleteCheckbox.checked = true;
-        });
+        });   
+        }
     }
 
 });

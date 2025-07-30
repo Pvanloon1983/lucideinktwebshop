@@ -28,6 +28,7 @@ class ProductFactory extends Factory
             'width' => $this->faker->randomFloat(2, 1, 100),
             'depth' => $this->faker->randomFloat(2, 1, 100),
             'price' => $this->faker->randomFloat(2, 1, 100),
+            'stock' => $this->faker->numberBetween(0, 100),
             'is_published' => $this->faker->numberBetween(0, 1),
             'image_1' => 'https://picsum.photos/1920/1080?random=' . fake()->unique()->numberBetween(1, 10000),
             'image_2' => 'https://picsum.photos/1920/1080?random=' . fake()->unique()->numberBetween(1, 10000),

@@ -57,6 +57,13 @@
                         @enderror
                     </div>
                     <div class="form-input">
+                        <label for="stock">Voorraad</label>
+                        <input type="number" name="stock" value="{{ old('stock') }}">
+                        @error('stock')
+                        <div class="error">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="form-input">
                         <label for="category">Categorie</label>
                         <select name="category_id" id="category_id">
                             <option value="">-- Kies categorie --</option>

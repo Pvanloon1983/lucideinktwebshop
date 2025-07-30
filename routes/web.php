@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ShopController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
@@ -11,7 +12,6 @@ use App\Http\Controllers\ProductCategoryController;
 Route::get('/', function () { return view('home'); })->name('home');
 Route::get('/risale-i-nur', function () { return view('risale'); })->name('risale');
 Route::get('/said-nursi', function () { return view('saidnursi'); })->name('saidnursi');
-Route::get('/winkel', function () { return view('shop'); })->name('shop');
 Route::get('/contact', function () { return view('contact'); })->name('contact');
 
 // Dashboard
@@ -50,3 +50,10 @@ Route::put('/dashboard/productcategories/edit/{id}', [ProductCategoryController:
 Route::delete('/dashboard/productcategories/delete/{id}', [ProductCategoryController::class, 'destroy'])
 	->name('productCategoryDelete')
 	->middleware('auth');
+
+// Shop
+Route::get('/winkel', [ShopController::class, 'index'])->name('shop');
+Route::get('/winkel/product/{slug}', [ShopController::class, 'show'])->name('productShow');
+
+// Cart
+Route::post('/winkel/product/cart', [ShopController::class, 'addToCart'])->name('addToCart');
