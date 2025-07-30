@@ -83,8 +83,16 @@ class AuthController extends Controller
 
     public function logout(Request $request) {
       auth()->logout();
+      // Preserve the cart session data before invalidating the session
+      $cart = $request->session()->get('cart');
+
       $request->session()->invalidate();
       $request->session()->regenerateToken();
+
+      // Restore the cart session data after session regeneration
+      if ($cart !== null) {
+          $request->session()->put('cart', $cart);
+      }
       return redirect()->route('login')->with('success', 'Je bent nu uitgelogd.');
     }
 

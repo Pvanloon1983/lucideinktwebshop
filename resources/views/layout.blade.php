@@ -22,21 +22,7 @@
         <nav class="navbar">
           <x-navbar></x-navbar>
         </nav>
-      </div>
-      
-      <div class="navbar-cart-sidebar-toggle">
-        <li class="nav-item">
-          <a class="{{ request()->routeIs('contact') ? 'active' : '' }}" href="#"><i
-              class="fa-solid fa-cart-shopping"></i>
-            @if(session('cart') && count(session('cart')))
-            <span class="cart-quantity">
-              {{
-              collect(session('cart'))->sum('quantity')
-              }}
-            </span>
-            @endif
-          </a>
-        </li>
+      </div>  
 
         <div class="sidebar-toggle">
           <i class="fa-solid fa-bars"></i>
