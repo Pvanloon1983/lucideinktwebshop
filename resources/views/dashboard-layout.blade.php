@@ -40,6 +40,9 @@
   </div>
   <nav class="navbar">
     <ul>
+      <a href="{{ route('dashboard') }}">
+        <li class="nav-item {{ request()->routeIs('dashboard') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('dashboard') ? 'active-admin-link' : '' }}">Dashboard</span></li>  
+      </a>      
       <a href="{{ route('editProfile') }}">
         <li class="nav-item {{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}">Profiel</span></li>  
       </a>
