@@ -9,8 +9,7 @@
         </div>
         @endif
 
-        <form action="#" method="POST" class="form" enctype="multipart/form-data">
-        {{-- <form action="{{ route('productUpdate', $product->id) }}" method="POST" class="form" enctype="multipart/form-data"> --}}
+        <form action="{{ route('productUpdate', $product->id) }}" method="POST" class="form" enctype="multipart/form-data">
             @method('PUT')  
             @csrf						
             <div class="grid-box">
@@ -94,28 +93,28 @@
                 <div class="section">
                     <div class="form-input">
                         <label for="weight">Gewicht (gr.)</label>
-                        <input type="number" name="weight" value="{{ old('weight', $product->weight) }}" step="0.01">
+                        <input type="number" name="weight" value="{{ old('weight', $product->weight) }}">
                         @error('weight')
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-input">
                         <label for="height">Hoogte (cm)</label>
-                        <input type="number" name="height" value="{{ old('height', $product->height) }}" step="0.01">
+                        <input type="number" name="height" value="{{ old('height', $product->height) }}">
                         @error('height')
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-input">
                         <label for="width">Breedte (cm)</label>
-                        <input type="number" name="width" value="{{ old('width', $product->width) }}" step="0.01">
+                        <input type="number" name="width" value="{{ old('width', $product->width) }}">
                         @error('width')
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-input">
                         <label for="depth">Diepte (cm)</label>
-                        <input type="number" name="depth" value="{{ old('depth', $product->depth) }}" step="0.01">
+                        <input type="number" name="depth" value="{{ old('depth', $product->depth) }}">
                         @error('depth')
                         <div class="error">{{ $message }}</div>
                         @enderror
@@ -125,34 +124,47 @@
                 {{-- Images --}}
                 <div class="section images">
 
-                    @for ($i = 1; $i <= 4; $i++)
-                    <div class="form-input">
-                        <label for="image_{{ $i }}">
-                            @if($i == 1)
-                                Hoofdafbeelding
-                            @else
-                                Afbeelding {{ $i }}
-                            @endif
-                        </label>
-                        <input type="file" name="image_{{ $i }}" id="image_{{ $i }}" accept="image/*">
-                        @if($product->{'image_'.$i})
-                            <div class="info">
-															<div style="display: flex;flex-direction: column;">
-																<span style="display: block;">Huidige afbeelding: </span>
-																<img 
-																src="{{ Str::startsWith($product->{'image_'.$i}, 'https://') 
-																		? $product->{'image_'.$i} 
-																		: asset('storage/' . $product->{'image_'.$i}) }}" 
-																alt="" 
-																style="max-width:60px;">
-															</div>
-														</div>
+                @for ($i = 1; $i <= 4; $i++)
+                <div class="form-input">
+                    <label for="image_{{ $i }}">
+                        @if($i == 1)
+                            Hoofdafbeelding
+                        @else
+                            Afbeelding {{ $i }}
                         @endif
-                        @error('image_' . $i)
-                        <div class="error">{{ $message }}</div>
-                        @enderror
+                    </label>
+                    <div class="custom-file-input-wrapper">
+                        <input type="file" name="image_{{ $i }}" id="image_{{ $i }}" accept="image/*" class="custom-file-input">
+                        <label for="image_{{ $i }}" class="custom-file-label">
+                            <span id="image_{{ $i }}_label_text">Kies afbeelding...</span>
+                        </label>
+
+                        {{-- Preview afbeelding --}}
+                        <div id="image_{{ $i }}_preview" style="display: flex; align-items:center;margin-top:5px;">
+                            @if($product->{'image_'.$i})
+                                <img 
+                                    src="{{ Str::startsWith($product->{'image_'.$i}, 'https://') 
+                                        ? $product->{'image_'.$i} 
+                                        : asset('storage/' . $product->{'image_'.$i}) }}" 
+                                    alt="" 
+                                    style="max-width:60px;max-height:60px;">
+                            @endif
+                        </div>
+
+                        <button type="button" class="remove-image-btn"
+                            data-input="image_{{ $i }}"
+                            data-label="image_{{ $i }}_label_text"
+                            data-preview="image_{{ $i }}_preview"
+                            style="{{ $product->{'image_'.$i} ? '' : 'display:none;' }}">
+                            Verwijder
+                        </button>
+                        <input type="checkbox" name="delete_image_{{ $i }}" id="delete_image_{{ $i }}" value="1" style="display:none;">
                     </div>
-                    @endfor
+                    @error('image_' . $i)
+                    <div class="error">{{ $message }}</div>
+                    @enderror
+                </div>
+                @endfor
 
                 </div>
 

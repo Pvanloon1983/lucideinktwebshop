@@ -179,6 +179,7 @@ class ProductController extends Controller
             'image_2' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'image_3' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'image_4' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'hidden_image' => 'nullable|string',
         ], [
             'title.required' => 'De producttitel is verplicht.',
             'title.unique' => 'Deze producttitel bestaat al.',
@@ -223,15 +224,22 @@ class ProductController extends Controller
         // Handle image uploads
         for ($i = 1; $i <= 4; $i++) {
             $imageField = 'image_' . $i;
-            if ($request->hasFile($imageField)) {
-                // Verwijder oude afbeelding als die bestaat
+            $deleteField = 'delete_image_' . $i;
+
+            // Verwijder afbeelding als checkbox is aangevinkt
+            if ($request->has($deleteField) && $product->$imageField) {
+                if (\Storage::disk('public')->exists($product->$imageField)) {
+                    \Storage::disk('public')->delete($product->$imageField);
+                }
+                $validated[$imageField] = null;
+            }
+            // Anders: upload nieuwe afbeelding of behoud oude
+            elseif ($request->hasFile($imageField)) {
                 if (!empty($product->$imageField) && \Storage::disk('public')->exists($product->$imageField)) {
                     \Storage::disk('public')->delete($product->$imageField);
                 }
-                // Sla nieuwe afbeelding op
                 $validated[$imageField] = $request->file($imageField)->store('product_images', 'public');
             } else {
-                // Behoud de oude afbeelding
                 $validated[$imageField] = $product->$imageField;
             }
         }
@@ -256,7 +264,7 @@ class ProductController extends Controller
             'created_by' => auth()->id(),
         ]);
 
-        return redirect()->route('productIndex')->with('success', 'Het product met ID: '.$product->id.' is succesvol bijgewerkt.');
+        return redirect()->back()->with('success', 'Het product is succesvol bijgewerkt.');
     }
 
     /**

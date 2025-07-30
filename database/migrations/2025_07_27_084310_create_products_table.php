@@ -22,10 +22,10 @@ return new class extends Migration
             $table->text('long_description')->nullable();
             $table->decimal('price', 8, 2)->nullable();
             $table->foreignId('parent_id')->nullable()->constrained('products')->onDelete('cascade');
-            $table->decimal('weight', 8, 2)->nullable();
-            $table->decimal('height', 8, 2)->nullable();
-            $table->decimal('width', 8, 2)->nullable();
-            $table->decimal('depth', 8, 2)->nullable();
+            $table->decimal('weight', 8, 0)->nullable();
+            $table->decimal('height', 8, 0)->nullable();
+            $table->decimal('width', 8, 0)->nullable();
+            $table->decimal('depth', 8, 0)->nullable();
             $table->string('image_1')->nullable();
             $table->string('image_2')->nullable();
             $table->string('image_3')->nullable();

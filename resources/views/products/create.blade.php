@@ -92,28 +92,28 @@
                 <div class="section">
                     <div class="form-input">
                         <label for="weight">Gewicht (gr.)</label>
-                        <input type="number" name="weight" value="{{ old('weight') }}" step="0.01">
+                        <input type="number" name="weight" value="{{ old('weight') }}">
                         @error('weight')
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-input">
                         <label for="height">Hoogte (cm)</label>
-                        <input type="number" name="height" value="{{ old('height') }}" step="0.01">
+                        <input type="number" name="height" value="{{ old('height') }}">
                         @error('height')
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-input">
                         <label for="width">Breedte (cm)</label>
-                        <input type="number" name="width" value="{{ old('width') }}" step="0.01">
+                        <input type="number" name="width" value="{{ old('width') }}">
                         @error('width')
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="form-input">
                         <label for="depth">Diepte (cm)</label>
-                        <input type="number" name="depth" value="{{ old('depth') }}" step="0.01">
+                        <input type="number" name="depth" value="{{ old('depth') }}">
                         @error('depth')
                         <div class="error">{{ $message }}</div>
                         @enderror
@@ -121,7 +121,7 @@
                 </div>
 
                 {{-- Images --}}
-                <div class="section">
+                <div class="section images">
                     @for ($i = 1; $i <= 4; $i++)
                     <div class="form-input">
                         <label for="image_{{ $i }}">
@@ -131,7 +131,23 @@
                                 Afbeelding {{ $i }}
                             @endif
                         </label>
-                        <input type="file" name="image_{{ $i }}" id="image_{{ $i }}" accept="image/*">
+                        <div class="custom-file-input-wrapper">
+                            <input type="file" name="image_{{ $i }}" id="image_{{ $i }}" accept="image/*" class="custom-file-input">
+                            <label for="image_{{ $i }}" class="custom-file-label">
+                                <span id="image_{{ $i }}_label_text">Kies afbeelding...</span>
+                            </label>
+
+                            {{-- Preview afbeelding --}}
+                            <div id="image_{{ $i }}_preview" style="display: flex; align-items:center;margin-top:5px;"></div>
+
+                            <button type="button" class="remove-image-btn"
+                                data-input="image_{{ $i }}"
+                                data-label="image_{{ $i }}_label_text"
+                                data-preview="image_{{ $i }}_preview"
+                                style="display:none;">
+                                Verwijder
+                            </button>
+                        </div>
                         @if(old('image_' . $i))
                             <div class="info">Bestand geselecteerd: {{ old('image_' . $i) }}</div>
                         @endif
@@ -145,7 +161,7 @@
             </div>
 
             <div class="form-input">
-                <button type="submit" class="btn">Verzenden</button>
+                <button type="submit" class="btn">Opslaan</button>
             </div>
         </form>
     </main>

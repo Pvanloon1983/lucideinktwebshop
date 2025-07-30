@@ -33,7 +33,7 @@
 
 
 					<div class="form-input">
-						<button type="submit" class="btn">Verzenden</button>
+						<button type="submit" class="btn">Opslaan</button>
 					</div>
 
       </form>

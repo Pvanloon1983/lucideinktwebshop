@@ -117,7 +117,7 @@ class ProductCategoryController extends Controller
             'is_published' => $validated['is_published'],
         ]);
 
-        return redirect()->route('productCategoryIndex')->with('success', 'Productcategorie met ID: '.$category->id.' is succesvol bijgewerkt.');
+        return back()->with('success', 'Productcategorie is succesvol bijgewerkt.');
     }
 
     /**
@@ -131,7 +131,6 @@ class ProductCategoryController extends Controller
             'deleted_by' => auth()->id(),
         ]);
         $category->delete();
-
-        return redirect()->route('productCategoryIndex')->with('success', 'Productcategorie is succesvol verwijderd.');
+        return back()->with('success', 'Productcategorie is succesvol verwijderd.');
     }
 }
