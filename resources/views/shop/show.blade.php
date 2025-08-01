@@ -1,5 +1,14 @@
 <x-layout>
 <main class="container page product">
+			@if(session('success_add_to_cart'))
+			<div class="alert alert-success" style="position: relative;">
+					<div>
+					{{ session('success_add_to_cart') }} <a style="text-decoration: underline;color: #0a3622;" href="{{ route('cartPage') }}"> Bekijk winkelwagen</a>
+					</div>
+					<button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+			</div>
+			@endif
+
 			@if(session('success'))
 			<div class="alert alert-success" style="position: relative;">
 					{{ session('success') }}
@@ -20,8 +29,8 @@
 					<form action="{{ route('addToCart') }}" method="POST">
 						@csrf
 						<input type="hidden" name="product_id" value="{{ $product->id }}">
-						<input type="hidden" name="quantity">
-						<button class="add-to-cart-button">Aan winkelmand toevoegen</button>	
+						<input type="hidden" name="quantity" value="1">
+						<button type="submit" class="add-to-cart-button btn"><span class="loader"></span>Aan winkelmand toevoegen</button>	
 					</form>	
 				</div>
 			@else

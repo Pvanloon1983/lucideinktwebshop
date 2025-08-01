@@ -24,9 +24,25 @@
         </nav>
       </div>  
 
+      <div class="navbar-cart-sidebar-toggle">
+        <li class="nav-item">
+          <a class="{{ request()->routeIs('cartPage') ? 'active' : '' }}" href="{{ route('cartPage') }}"><i
+              class="fa-solid fa-cart-shopping"></i>
+            @if(session('cart') && count(session('cart')))
+            <span class="cart-quantity">
+              {{
+              collect(session('cart'))->sum('quantity')
+              }}
+            </span>
+            @endif
+          </a>
+        </li>
+
         <div class="sidebar-toggle">
           <i class="fa-solid fa-bars"></i>
         </div>
+      </div>
+
       </div>
 
     </div>

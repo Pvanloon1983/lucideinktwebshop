@@ -43,7 +43,7 @@
           <input type="password" name="password_confirmation">
         </div>
         <div class="form-input">
-          <button type="submit" class="btn">Verzenden</button>
+          <button type="submit" class="btn"><span class="loader"></span>Registreren</button>
         </div>
         <div class="form-input">
           <span>All een account? <a href="{{ route('login') }}">Inloggen</a></span>

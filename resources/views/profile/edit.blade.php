@@ -45,7 +45,7 @@
         </div>
 
         <div class="form-input">
-          <button type="submit" class="btn">Opslaan</button>
+          <button type="submit" class="btn"><span class="loader"></span>Opslaan</button>
         </div>
       </form>
 

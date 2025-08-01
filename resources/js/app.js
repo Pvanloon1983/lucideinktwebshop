@@ -77,4 +77,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Loader button logic
+    document.querySelectorAll('form').forEach(function(form) {
+        const button = form.querySelector('button[type="submit"]');
+        const loader = button ? button.querySelector('.loader') : null;
+
+        if (button && loader) {
+            form.addEventListener('submit', function() {
+                loader.style.display = 'inline-block';
+                button.disabled = true;
+            });
+
+            // On page load, hide loader and enable button
+            loader.style.display = 'none';
+            button.disabled = false;
+        }
+    });
+
 });

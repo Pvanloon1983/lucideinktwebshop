@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
@@ -56,4 +57,8 @@ Route::get('/winkel', [ShopController::class, 'index'])->name('shop');
 Route::get('/winkel/product/{slug}', [ShopController::class, 'show'])->name('productShow');
 
 // Cart
-Route::post('/winkel/product/cart', [ShopController::class, 'addToCart'])->name('addToCart');
+Route::get('/winkel/cart', [CartController::class, 'index'])->name('cartPage');
+Route::post('/winkel/cart', [CartController::class, 'addToCart'])->name('addToCart');
+Route::post('/winkel/cart/update', [CartController::class, 'updateCart'])->name('updateCart');
+Route::post('/winkel/cart/remove', [CartController::class, 'removeCart'])->name('removeCart');
+Route::delete('/winkel/cart/delete', [CartController::class, 'deleteItemFromCart'])->name('deleteItemFromCart');

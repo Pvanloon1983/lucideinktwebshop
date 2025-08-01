@@ -22,7 +22,7 @@
 
       <div class="navbar-cart-sidebar-toggle">
         <li class="nav-item">
-          <a class="{{ request()->routeIs('contact') ? 'active' : '' }}" href="#"><i
+          <a class="{{ request()->routeIs('cartPage') ? 'active' : '' }}" href="{{ route('cartPage') }}"><i
               class="fa-solid fa-cart-shopping"></i>
             @if(session('cart') && count(session('cart')))
             <span class="cart-quantity">
@@ -64,12 +64,12 @@
         <li class="nav-item {{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}">Profiel</span></li>  
       </a>
       <a href="{{ route('productIndex') }}">
-        <li class="nav-item {{ request()->routeIs('productIndex') ? 'active-admin-link' : '' }}">
-        <span class="{{ request()->routeIs('productIndex') ? 'active-admin-link' : '' }}">Producten</span>
+        <li class="nav-item {{ request()->routeIs('productIndex') || request()->routeIs('productCreatePage') || request()->routeIs('productEditPage') ? 'active-admin-link' : '' }}">
+        <span class="{{ request()->routeIs('productIndex') || request()->routeIs('productCreatePage') || request()->routeIs('productEditPage') ? 'active-admin-link' : '' }}">Producten</span>
         </li>  
       </a>
       <a href="{{ route('productCategoryIndex') }}">
-        <li class="nav-item {{ request()->routeIs('productCategoryIndex') ? 'active-admin-link' : '' }}">
+        <li class="nav-item {{ request()->routeIs('productCategoryIndex') || request()->routeIs('productCategoryCreatePage') || request()->routeIs('productCategoryEditPage') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('productCategoryIndex') ? 'active-admin-link' : '' }}">Productcategorieën</span>
         </li>  
       </a>
@@ -88,7 +88,7 @@
           <form class="logout-button" action="{{ route('logout') }}" method="POST">
               @csrf
               <button type="submit" class="btn btn-primary">
-                  Uitloggen
+                  <span class="loader"></span>Uitloggen
               </button>
           </form>
       </li>

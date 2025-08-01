@@ -35,7 +35,7 @@
         <label for="remember">Onthoud mij</label>
       </div>
       <div class="form-input">
-        <button type="submit" class="btn">Inloggen</button>
+        <button type="submit" class="btn"><span class="loader"></span>Inloggen</button>
       </div>
       <div class="form-input">
         <span>Nog geen account? <a href="{{ route('register') }}">Registreren</a></span>
