@@ -937,7 +937,7 @@ i {
   padding-top: 30px;
 }
 
-@media only screen and (max-width: 600px) {
+@media only screen and (max-width: 992px) {
   .form.profile {
     max-width: 100%;
   }
@@ -1037,7 +1037,11 @@ i {
   grid-template-columns: auto auto;
 }
 
-
+@media only screen and (max-width: 992px) {
+  .product-form .grid-box {
+    grid-template-columns: auto;
+  }
+}
 
 .product-form .section {
   background-color: #fff;
