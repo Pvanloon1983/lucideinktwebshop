@@ -16,7 +16,7 @@
   <header class="header">
     <div class="container">
       <div class="logo-container">
-        <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo2.png') }}" alt=""></a>
+        <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>
       </div>
       <div class="desktop-navbar-container">
         <nav class="navbar">

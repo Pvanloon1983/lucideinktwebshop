@@ -88,7 +88,7 @@ button {
   color: #fff;
   transition: all 0.1s ease-in-out;
   font-size: 16px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 5px;
 }
@@ -498,11 +498,10 @@ button {
 .alert-close {
   background: none;
   border: none;
-  font-size: 1.2rem;
   cursor: pointer;
   padding-right: 0px;
   color: #0a3622;
-  font-size: 15px;
+  font-size: 20px;
 }
 
 .page
@@ -716,7 +715,7 @@ i {
 .alert-close {
   background: none;
   border: none;
-  font-size: 1.2rem;
+  font-size: 20px;
   cursor: pointer;
   padding-right: 0px;
   color: #0a3622;
@@ -1010,7 +1009,7 @@ i {
 .alert-close {
   background: none;
   border: none;
-  font-size: 1.2rem;
+  font-size: 20px;
   cursor: pointer;
   padding-right: 0px;
   color: #0a3622;
@@ -1138,21 +1137,15 @@ i {
   margin-top: 20px;    
 }
 
-.page.shop
-.book-box {
-  display: flex;
-  flex-wrap: wrap;
-  column-gap: 20px;
-  margin-bottom: 50px;
+.page.shop .book-box {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
+  justify-items: start;
 }
-
-.page.shop 
-.card {
-  background-color: #fff;
-  width: 250px;
-  padding: 10px;
-  border: 1px solid #d8d8d8;
+.page.shop .card {
+  width: 100%;
+  max-width: 220px;
 }
 
 @media only screen and (max-width: 992px) {
