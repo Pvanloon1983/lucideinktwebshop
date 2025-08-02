@@ -8,7 +8,11 @@ class CheckoutController extends Controller
 {
     public function index()
     {
-       $cart = session()->get('cart', []);
+        $cart = session()->get('cart', []);
+
+        if (empty($cart)) {
+            return redirect('/winkel')->with('error', 'Je winkelwagen is leeg.');
+        }
 
         return view('checkout.index', ['cart' => $cart]);
     }

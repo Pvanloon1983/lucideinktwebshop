@@ -94,4 +94,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
+
+    // Alternate shipping address
+    const altInput = document.querySelector('#alt-shipping');
+    const altShipping = document.querySelector('.customer-details.alternate');
+
+    if (altInput && altShipping) {
+        altInput.addEventListener('change', function() {
+            altShipping.classList.toggle('open');
+        });
+    }
+
 });

@@ -31,7 +31,9 @@
   --text-font-size-page: 17px;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -1451,16 +1453,23 @@ i {
   margin-top: 20px;
 }
 
+.page.checkout h2 {
+  margin-top: 20px;
+}
+
+
 .page.checkout
 .form {
   margin-bottom: 50px;
+  position: relative;
 }
 
 .page.checkout
 .checkout-grid {
   display: grid;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: 50% auto;
   gap: 20px;
+  position: relative;
 }
 
 .page.checkout
@@ -1490,6 +1499,128 @@ i {
   gap: 20px;
 }
 
+.page.checkout
+.customer-details.alternate {
+  margin-top: 20px;
+  display: none;
+}
+
+.page.checkout
+.customer-details.alternate.open {
+  display: block;
+}
+
+.page.checkout
+.alt-shipping {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin-bottom: 0;
+}
+
+.page.checkout
+.alt-shipping input {
+  width: 15px;
+  margin-left: 15px;
+  margin-top: 0px;
+  cursor: pointer;
+}
+
+.page.checkout 
+.order-table {
+  border-collapse: collapse;
+} 
+
+.page.checkout 
+.order-details
+.order-table thead tr 
+{ 
+  text-align: left;
+  background-color: #333;
+  color: #fff;
+  font-size: 15px;
+}
+
+.page.checkout 
+.order-details
+.order-table thead th {
+  /* border: 1px solid #fff; */
+  padding: 4px 8px;
+  font-weight: 400;
+}
+
+.page.checkout 
+.order-details
+.order-table td {
+  padding: 4px 8px;
+}
+
+.page.checkout
+.total-price {
+  border-top: 1px solid #d8d8d8;
+}
+
+  
+.page.checkout .order-details {
+  overflow-x: auto;
+  max-width: 100%;
+  height: fit-content;
+}
+.page.checkout .order-table {
+  min-width: 100%;
+}
+
+.page.checkout
+.place-order {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+@media only screen and (max-width: 1400px) {
+  .street-box {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0px !important;
+  }
+
+  .housnumber-box {
+    display: grid !important;
+    grid-template-columns: 50% auto;
+  }
+}
+
+@media only screen and (max-width: 992px) {
+
+  .page.checkout
+  .checkout-grid {
+    grid-template-columns: auto;
+    width: 100%;
+  }
+
+}
+
+@media only screen and (max-width: 600px) {
+  .page.checkout
+  .name-box {
+    grid-template-columns: auto;
+    gap: 0;
+  }
+
+  .page.checkout
+  .housnumber-box {
+    grid-template-columns: auto;
+    gap: 0;
+  }
+
+  .page.checkout {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+  }
+
+}
 
 
-/* Removed empty ruleset for .page.checkout .name-box input */
+
