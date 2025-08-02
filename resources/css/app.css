@@ -1248,8 +1248,6 @@ i {
   margin-bottom: 10px;
 }
 
-
-
 @media only screen and (max-width: 992px) {
   .single-product
   .image {
@@ -1258,7 +1256,7 @@ i {
     width: 200px;
     margin: 0 auto;
     padding-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
   }
 
   .single-product {
@@ -1297,7 +1295,16 @@ i {
   max-width: 100%;
   border-radius: 0px;
   margin-top: 20px;
-  margin-bottom: -20px;
+  margin-bottom: -10px;
+}
+
+@media only screen and (max-width: 992px) {
+  .page.product 
+  .alert {
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .cart-quantity {
