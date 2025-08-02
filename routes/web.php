@@ -6,6 +6,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductCategoryController;
 
@@ -62,3 +63,6 @@ Route::post('/winkel/cart', [CartController::class, 'addToCart'])->name('addToCa
 Route::post('/winkel/cart/update', [CartController::class, 'updateCart'])->name('updateCart');
 Route::post('/winkel/cart/remove', [CartController::class, 'removeCart'])->name('removeCart');
 Route::delete('/winkel/cart/delete', [CartController::class, 'deleteItemFromCart'])->name('deleteItemFromCart');
+
+// Checkout
+Route::get('/winkel/checkout', [CheckoutController::class, 'index'])->name('checkoutPage');

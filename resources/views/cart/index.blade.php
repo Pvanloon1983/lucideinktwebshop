@@ -79,7 +79,9 @@
 				</div>
 
 				<div class="button-box">
-					<button class="btn checkout">Afrekenen</button>
+					<a href="{{ route('checkoutPage') }}">
+						<button class="btn checkout">Afrekenen</button>	
+					</a>					
 					<form action="{{ route('removeCart') }}" method="POST">
 						@csrf
 						<button type="submit" class="btn delete" onclick="return confirm('Weet je zeker dat je dit wilt verwijderen?');"><span class="loader"></span>Winkelwagen legen</button>

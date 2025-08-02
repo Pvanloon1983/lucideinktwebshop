@@ -1420,3 +1420,45 @@ i {
     max-height: 60px;
   }
 }
+
+/*=== Checkout page ===*/
+.page.checkout h1 {
+  margin-top: 20px;
+}
+
+.page.checkout
+.form {
+  margin-bottom: 50px;
+}
+
+.page.checkout
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 50% 50%;
+  gap: 20px;
+}
+
+.page.checkout
+.item {
+  background-color: #fff;
+  padding: 20px;
+  border: 1px solid #d8d8d8;
+}
+
+.page.checkout
+.name-box {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 20px;
+}
+
+.page.checkout
+.street-box {
+  display: grid;
+  grid-template-columns: 80% auto;
+  gap: 20px;
+}
+
+
+
+/* Removed empty ruleset for .page.checkout .name-box input */
