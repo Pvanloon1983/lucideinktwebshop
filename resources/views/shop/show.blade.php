@@ -24,7 +24,7 @@
 				<div class="meta-data">
 					<h1 class="title">{{ $product->title }}</h1>
 					<p class="category">{{ $product->category->name }}</p>
-					<p class="price">{{ $product->price }}</p>
+					<p class="price">€ {{ $product->price }}</p>
 					<p class="short_description">{{ $product->short_description }}</p>
 					<form action="{{ route('addToCart') }}" method="POST">
 						@csrf

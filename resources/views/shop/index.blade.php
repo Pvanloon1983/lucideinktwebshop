@@ -10,7 +10,7 @@
 				</div>
 				<h6 class="title">{{ $product->title }}</h6>
 				<p class="category">{{ $product->category->name }}</p>
-				<p class="price">{{ $product->price }}</p>
+				<p class="price">€ {{ $product->price }}</p>
 			</div>
 			</a>
 		@endforeach

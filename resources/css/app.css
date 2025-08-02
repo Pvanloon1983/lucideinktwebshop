@@ -1480,7 +1480,13 @@ i {
 .page.checkout
 .street-box {
   display: grid;
-  grid-template-columns: 80% auto;
+  grid-template-columns: 60% auto;
+  gap: 20px;
+}
+
+.page.checkout
+.housnumber-box {
+  display: flex;
   gap: 20px;
 }
 

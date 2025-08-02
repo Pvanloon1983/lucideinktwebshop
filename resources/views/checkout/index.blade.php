@@ -8,7 +8,7 @@
 					<h2>Klantdetails</h2>
 
 						<div class="form-input">
-								<label for="email">Email</label>
+								<label for="email">E-mailadres</label>
 								<input type="email" name="email" value="{{ old('email') }}">
 								@error('email')
 								<div class="error">{{ $message }}</div>
@@ -34,18 +34,27 @@
 
 						<div class="street-box">
 							<div class="form-input">
-									<label for="street">Straat</label>
+									<label for="street">Straatnaam</label>
 									<input type="text" name="street" value="{{ old('street') }}">
 									@error('street')
 									<div class="error">{{ $message }}</div>
 									@enderror
 							</div>
-							<div class="form-input">
-									<label for="housenumber">Huisnummer</label>
-									<input type="number" name="housenumber" value="{{ old('housenumber') }}">
-									@error('housenumber')
-									<div class="error">{{ $message }}</div>
-									@enderror
+							<div class="housnumber-box">
+								<div class="form-input">
+										<label for="housenumber">Huisnummer</label>
+										<input type="number" name="housenumber" value="{{ old('housenumber') }}">
+										@error('housenumber')
+										<div class="error">{{ $message }}</div>
+										@enderror
+								</div>
+								<div class="form-input">
+										<label for="housenumber">Huisnummer</label>
+										<input type="number" name="housenumber" value="{{ old('housenumber') }}">
+										@error('housenumber')
+										<div class="error">{{ $message }}</div>
+										@enderror
+								</div>
 							</div>
 						</div>
 
@@ -61,6 +70,14 @@
 								<label for="city">Stad</label>
 								<input type="text" name="city" value="{{ old('city') }}">
 								@error('city')
+								<div class="error">{{ $message }}</div>
+								@enderror
+						</div>
+
+						<div class="form-input">
+								<label for="company">Bedrijsnaam (optioneel)</label>
+								<input type="text" name="company" value="{{ old('company') }}">
+								@error('company')
 								<div class="error">{{ $message }}</div>
 								@enderror
 						</div>
