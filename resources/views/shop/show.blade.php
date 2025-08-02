@@ -15,10 +15,10 @@
 					<button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
 			</div>
 			@endif
+		<a href="{{ route('shop') }}" class="back-link">&larr; Terug naar winkel</a>	
 		<div class="single-product">
-			@if ($product)
-				<div class="image">
-					<a href="{{ route('shop') }}" class="back-link">&larr; Terug naar winkel</a>
+			@if ($product)			
+				<div class="image">					
 					<img src="{{ asset('/storage/' . $product->image_1) }}" alt="">
 				</div>
 				<div class="meta-data">

@@ -1211,10 +1211,10 @@ i {
   background-color: #fff;
   max-width: 1000px;
   padding: 20px;
-
+  padding-top: 30px;
   border: 1px solid #d8d8d8;
   margin: 0 auto;
-  margin-top: 30px;
+  margin-top: 0;
   margin-bottom: 50px;
 }
 
@@ -1234,15 +1234,18 @@ i {
 }
 
 .single-product
-.image {
-  margin-top: -10px;
-}
-
-.single-product
 .image img {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
   image-rendering: pixelated;
+}
+
+.page.product
+.back-link {
+  display: block;
+  text-align: left;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 
 
@@ -1252,6 +1255,10 @@ i {
   .image {
     display: flex;
     flex-direction: column;
+    width: 200px;
+    margin: 0 auto;
+    padding-top: 10px;
+    margin-bottom: 10px;
   }
 
   .single-product {
@@ -1259,6 +1266,14 @@ i {
     max-width: 400px;
     padding: 20px;
   }
+
+  .back-link {
+    max-width: 400px;
+    margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+
 }
 
 .single-product
