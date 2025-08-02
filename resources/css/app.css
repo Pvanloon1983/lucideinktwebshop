@@ -1139,7 +1139,7 @@ i {
 
 .page.shop .book-box {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: auto auto auto auto;
   gap: 20px;
   justify-items: start;
 }
@@ -1148,12 +1148,9 @@ i {
   max-width: 220px;
 }
 
-@media only screen and (max-width: 992px) {
-  .page.shop 
-  .card {
-    background-color: #fff;
-    padding: 10px;
-    border: 1px solid #d8d8d8;
+@media only screen and (max-width: 600px) {
+  .page.shop .book-box {
+    grid-template-columns: auto auto;
   }
 }
 
