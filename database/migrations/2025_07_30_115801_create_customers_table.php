@@ -24,7 +24,7 @@ return new class extends Migration
           $table->string('billing_postal_code');
           $table->string('billing_city');
           $table->string('billing_country');
-          $table->string('billing_phone');
+          $table->string('billing_phone')->nullable();
 
           // Shipping address fields (optional, for alternate shipping)
           $table->string('shipping_first_name')->nullable();
