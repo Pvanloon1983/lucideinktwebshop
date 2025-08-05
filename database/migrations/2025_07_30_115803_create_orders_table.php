@@ -15,7 +15,7 @@ return new class extends Migration
           $table->id();
           $table->foreignId('customer_id')->constrained()->cascadeOnDelete();
           $table->decimal('total', 10, 2);
-          $table->string('status')->default('in behandeling');
+          $table->string('status')->default('pending');
           $table->softDeletes();
           $table->timestamps();
         });

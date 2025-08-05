@@ -23,9 +23,17 @@
 				</div>
 				<div class="meta-data">
 					<h1 class="title">{{ $product->title }}</h1>
-					<p class="category">{{ $product->category->name }}</p>
-					<p class="price">€ {{ $product->price }}</p>
-					<p class="short_description">{{ $product->short_description }}</p>
+					@if(isset($product->category) && !empty($product->category->name))
+							<p class="category">{{ $product->category->name }}</p>
+					@endif
+
+					@if(isset($product->price) && !empty($product->price))
+							<p class="price">€ {{ $product->price }}</p>
+					@endif
+
+					@if(isset($product->short_description) && !empty($product->short_description))
+							<p class="short_description">{{ $product->short_description }}</p>
+					@endif
 					<form action="{{ route('addToCart') }}" method="POST">
 						@csrf
 						<input type="hidden" name="product_id" value="{{ $product->id }}">

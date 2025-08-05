@@ -13,17 +13,31 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
           $table->id();
-          $table->string('first_name');
-          $table->string('last_name');
-          $table->string('email');
-          $table->string('company')->nullable();
-          $table->string('street');
-          $table->string('house_number');
-          $table->string('house_number_addition')->nullable();
-          $table->string('postal_code');
-          $table->string('city');
-          $table->string('country');
-          $table->string('phone');
+          // Billing address fields
+          $table->string('billing_first_name');
+          $table->string('billing_last_name');
+          $table->string('billing_email');
+          $table->string('billing_company')->nullable();
+          $table->string('billing_street');
+          $table->string('billing_house_number');
+          $table->string('billing_house_number_addition')->nullable();
+          $table->string('billing_postal_code');
+          $table->string('billing_city');
+          $table->string('billing_country');
+          $table->string('billing_phone');
+
+          // Shipping address fields (optional, for alternate shipping)
+          $table->string('shipping_first_name')->nullable();
+          $table->string('shipping_last_name')->nullable();
+          $table->string('shipping_company')->nullable();
+          $table->string('shipping_street')->nullable();
+          $table->string('shipping_house_number')->nullable();
+          $table->string('shipping_house_number_addition')->nullable();
+          $table->string('shipping_postal_code')->nullable();
+          $table->string('shipping_city')->nullable();
+          $table->string('shipping_country')->nullable();
+          $table->string('shipping_phone')->nullable();
+
           $table->softDeletes();
           $table->timestamps();
         });

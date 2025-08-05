@@ -65,4 +65,5 @@ Route::post('/winkel/cart/remove', [CartController::class, 'removeCart'])->name(
 Route::delete('/winkel/cart/delete', [CartController::class, 'deleteItemFromCart'])->name('deleteItemFromCart');
 
 // Checkout
-Route::get('/winkel/checkout', [CheckoutController::class, 'index'])->name('checkoutPage');
+Route::get('/winkel/checkout', [CheckoutController::class, 'create'])->name('checkoutPage');
+Route::post('/winkel/checkout', [CheckoutController::class, 'store'])->name('storeCheckout');

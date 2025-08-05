@@ -1,12 +1,12 @@
 <x-layout>
 	<main class="container page cart">
 		<h2>Winkelwagen</h2>
-		@if(session('success'))
+		{{-- @if(session('success'))
 		<div class="alert alert-success" style="position: relative;">
 			{{ session('success') }}
 			<button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
 		</div>
-		@endif
+		@endif --}}
 
 		@if(session('error'))
 		<div class="alert alert-error" style="position: relative;">
