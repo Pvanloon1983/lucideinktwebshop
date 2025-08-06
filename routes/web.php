@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductCategoryController;
 
@@ -67,3 +69,15 @@ Route::delete('/winkel/cart/delete', [CartController::class, 'deleteItemFromCart
 // Checkout
 Route::get('/winkel/checkout', [CheckoutController::class, 'create'])->name('checkoutPage');
 Route::post('/winkel/checkout', [CheckoutController::class, 'store'])->name('storeCheckout');
+
+// Orders
+Route::get('/dashboard/orders', [OrderController::class, 'index'])->name('orderIndex')->middleware('auth');
+Route::get('/dashboard/orders/{id}', [OrderController::class, 'show'])->name('orderShow')->middleware('auth');
+
+// My Orders
+Route::get('/dashboard/my-orders', [OrderController::class, 'showMyOrders'])->name('showMyOrders')->middleware('auth');
+Route::get('/dashboard/my-orders/{id}', [OrderController::class, 'showMyOrder'])->name('showMyOrder')->middleware('auth');
+
+// Customers
+Route::get('/dashboard/customers', [CustomerController::class, 'index'])->name('customerIndex')->middleware('auth');
+Route::get('/dashboard/customers/{id}', [CustomerController::class, 'show'])->name('customerShow')->middleware('auth');

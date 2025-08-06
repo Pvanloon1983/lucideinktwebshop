@@ -22,6 +22,29 @@ class Order extends Model
         'paid_at',
     ];
 
+    public function getStatusLabelAttribute()
+    {
+        $labels = [
+            'pending' => 'In afwachting',
+            'shipped' => 'Verzonden',
+            'cancelled' => 'Geannuleerd',
+            // Add more as needed
+        ];
+        return $labels[$this->status] ?? ucfirst($this->status);
+    }
+
+    public function getPaymentStatusLabelAttribute()
+    {
+        $labels = [
+            'pending' => 'In afwachting',
+            'paid' => 'Betaald',
+            'failed' => 'Mislukt',
+            'refunded' => 'Terugbetaald',
+            // Add more as needed
+        ];
+        return $labels[$this->payment_status] ?? ucfirst($this->payment_status);
+    }
+
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);

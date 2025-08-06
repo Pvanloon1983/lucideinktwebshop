@@ -1140,27 +1140,58 @@ i {
 }
 
 .page.shop .book-box {
-  display: flex;
+  display: grid;
+  /* Auto-fit creates responsive columns that adjust to container size */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
+  align-items: stretch;
 }
 
 .page.shop .book-box .card {
   background-color: #fff;
   padding: 20px;
   border: 1px solid #d8d8d8;
-  flex: 1 1 0;
   display: flex;
   flex-direction: column;
   height: 100%;
 }
 
-.page.shop .book-box {
-  align-items: stretch;
+/* Large tablets and small desktops (1200px and down) */
+@media only screen and (max-width: 1200px) {
+  .page.shop .book-box {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+  }
 }
 
-@media only screen and (max-width: 600px) {
+/* Medium tablets (992px and down) */
+@media only screen and (max-width: 992px) {
   .page.shop .book-box {
-    display: flex;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+  }
+
+  .page.shop .book-box .card {
+    padding: 15px;
+  }
+}
+
+/* Small tablets (768px and down) */
+@media only screen and (max-width: 768px) {
+  .page.shop .book-box {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .page.shop .book-box .card {
+    padding: 12px;
+  }
+}
+
+/* Mobile phones (480px and down) */
+@media only screen and (max-width: 480px) {
+  .page.shop .book-box {
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
 
@@ -1169,22 +1200,25 @@ i {
   }
 }
 
-.page.shop 
-.card .image-container {
-  /* Optional: set a fixed aspect ratio or size if needed */
-  /* aspect-ratio: 1/1; */
-  /* overflow: hidden; */
+/* Very small screens (360px and down) */
+@media only screen and (max-width: 360px) {
+  .page.shop .book-box {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .page.shop .book-box .card {
+    padding: 15px;
+  }
 }
 
 .page.shop 
 .card img {
   width: 100%;
-  height: auto;
+  object-fit: cover; /* Crop image to fit */
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
   image-rendering: pixelated;
-  /* For retina/high-dpi screens */
-  /* If you use srcset, provide higher-res images */
 }
 
 .page.shop 
@@ -1208,7 +1242,8 @@ i {
 
 /*=== Product page ===*/
 .single-product {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
   gap: 30px;
   background-color: #fff;
   max-width: 1000px;
@@ -1235,11 +1270,19 @@ i {
   font-weight: bold;
 }
 
-.single-product
-.image img {
+.single-product .image img {
+  width: 100%;
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
   image-rendering: pixelated;
+}
+
+@media only screen and (max-width: 992px) {
+  .single-product {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
 }
 
 .page.product
@@ -1620,6 +1663,55 @@ i {
     box-sizing: border-box;
   }
 
+}
+
+/*=== Order Details Page ===*/
+.order-info {
+  background: #fff;
+  padding: 15px;
+  margin: 20px 0;
+  border: 1px solid #d8d8d8;
+}
+
+.order-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.order-info
+.order-info-item {
+  background-color: #f4f4f4;
+  padding: 10px;
+}
+
+.order-info h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--main-font-color);
+  font-size: 18px;
+}
+
+.order-info p {
+  margin: 5px 0;
+}
+
+@media only screen and (max-width: 768px) {
+  .order-info-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .order-info {
+    padding: 12px;
+  }
+}
+
+.table-empty-state {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
 }
 
 

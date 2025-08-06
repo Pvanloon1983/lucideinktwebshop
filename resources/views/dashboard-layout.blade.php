@@ -73,14 +73,19 @@
         <span class="{{ request()->routeIs('productCategoryIndex') ? 'active-admin-link' : '' }}">Productcategorieën</span>
         </li>  
       </a>
-      <a href="#">
-        <li class="nav-item {{ request()->routeIs('#') ? 'active-admin-link' : '' }}">
-        <span class="{{ request()->routeIs('#') ? 'active-admin-link' : '' }}">Bestellingen</span>
+      <a href="{{ route('orderIndex') }}">
+        <li class="nav-item {{ request()->routeIs('orderIndex') || request()->routeIs('orderShow') ? 'active-admin-link' : '' }}">
+        <span class="{{ request()->routeIs('orderIndex') || request()->routeIs('orderShow') ? 'active-admin-link' : '' }}">Bestellingen</span>
         </li>  
       </a>
-      <a href="#">
-        <li class="nav-item {{ request()->routeIs('#') ? 'active-admin-link' : '' }}">
-        <span class="{{ request()->routeIs('#') ? 'active-admin-link' : '' }}">Klanten</span>
+      <a href="{{ route('showMyOrders') }}">
+        <li class="nav-item {{ request()->routeIs('showMyOrders') || request()->routeIs('showMyOrder') ? 'active-admin-link' : '' }}">
+        <span class="{{ request()->routeIs('showMyOrders') || request()->routeIs('showMyOrder') ? 'active-admin-link' : '' }}">Mijn bestellingen</span>
+        </li>  
+      </a>
+      <a href="{{ route('customerIndex') }}">
+        <li class="nav-item {{ request()->routeIs('customerIndex') || request()->routeIs('customerShow') ? 'active-admin-link' : '' }}">
+        <span class="{{ request()->routeIs('customerIndex') || request()->routeIs('customerShow') ? 'active-admin-link' : '' }}">Klanten</span>
         </li>  
       </a>
           @auth
