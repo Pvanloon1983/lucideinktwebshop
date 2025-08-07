@@ -77,6 +77,7 @@ Route::get('/dashboard/orders/{id}', [OrderController::class, 'show'])->name('or
 // My Orders
 Route::get('/dashboard/my-orders', [OrderController::class, 'showMyOrders'])->name('showMyOrders')->middleware('auth');
 Route::get('/dashboard/my-orders/{id}', [OrderController::class, 'showMyOrder'])->name('showMyOrder')->middleware('auth');
+Route::get('/dashboard/create', [OrderController::class, 'create'])->name('orderCreatePage');
 
 // Customers
 Route::get('/dashboard/customers', [CustomerController::class, 'index'])->name('customerIndex')->middleware('auth');

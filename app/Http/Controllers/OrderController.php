@@ -38,4 +38,9 @@ class OrderController extends Controller
 				$order->setRelation('items', $items);
 				return view('orders.show', ['order' => $order]);
 		}
+
+		public function create()
+		{
+			return view('orders.create');
+		}
 }

@@ -7,7 +7,7 @@
             <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
         </div>
     @endif
-    <a href="#"><button class="btn">Nieuwe toevoegen</button></a>
+    <a href="{{ route('orderCreatePage') }}"><button class="btn">Nieuwe toevoegen</button></a>
     <div class="table-wrapper">
         <table class="table">
         <thead>
