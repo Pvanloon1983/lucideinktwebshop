@@ -81,3 +81,8 @@ Route::get('/dashboard/my-orders/{id}', [OrderController::class, 'showMyOrder'])
 // Customers
 Route::get('/dashboard/customers', [CustomerController::class, 'index'])->name('customerIndex')->middleware('auth');
 Route::get('/dashboard/customers/{id}', [CustomerController::class, 'show'])->name('customerShow')->middleware('auth');
+
+// Mollie payments
+Route::get('/payment/success/', [CheckoutController::class, 'paymentSuccess'])->name('payment.success');
+Route::post('/webhooks/mollie', [CheckoutController::class, 'payment
+Webhook'])->name('webhooks.mollie');

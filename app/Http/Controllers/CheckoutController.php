@@ -2,11 +2,23 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use App\Models\Customer;
 use Illuminate\Http\Request;
-
+use Mollie\Api\MollieApiClient;
 class CheckoutController extends Controller
 {
+    /**
+     * @var \Mollie\Api\MollieApiClient
+     */
+    protected $mollie;
+
+    public function __construct(MollieApiClient $mollie)
+    {
+        $this->mollie = $mollie;
+        $this->mollie->setApiKey(config('mollie.key'));
+    }
+
     public function create()
     {
         $cart = session()->get('cart', []);
@@ -20,6 +32,7 @@ class CheckoutController extends Controller
 
     public function store(Request $request)
     {
+
         $cart = session()->get('cart', []);
         if (empty($cart)) {
             return redirect('/winkel')->with('error', 'Je winkelwagen is leeg.');
@@ -50,7 +63,6 @@ class CheckoutController extends Controller
             'shipping_phone' => 'nullable|string',
             'shipping_company' => 'nullable|string',
         ];
-
 
         $messages = [
             // Billing
@@ -100,7 +112,7 @@ class CheckoutController extends Controller
                 'shipping_street' => $request->input('shipping_street'),
                 'shipping_house_number' => $request->input('shipping_housenumber'),
                 'shipping_house_number_addition' => $request->input('shipping_housenumber_addition'),
-                'shipping_postal_code' => $request->input('shipping_postal-zip-code'),
+                'shipping_postal_code' => $request->input('shipping-postal-zip-code'),
                 'shipping_city' => $request->input('shipping_city'),
                 'shipping_country' => $request->input('shipping_country'),
                 'shipping_phone' => $request->input('shipping_phone'),
@@ -108,7 +120,7 @@ class CheckoutController extends Controller
         }
 
         // Create customer
-       $customer = Customer::where('billing_email', $request->input('billing-email'))->first();
+        $customer = Customer::where('billing_email', $request->input('billing-email'))->first();
         if ($customer) {
             $customer->update($customerData);
         } else {
@@ -137,9 +149,142 @@ class CheckoutController extends Controller
             ]);
         }
 
-        // Clear cart
-        session()->forget('cart');
+        $webhookUrl = config('app.env') === 'production'
+            ? env('WEBHOOK_URL_PRODUCTION')
+            : (config('app.env') === 'staging'
+                ? env('WEBHOOK_URL_STAGING')
+                : env('WEBHOOK_URL_LOCAL'));
 
-        return redirect()->route('shop')->with('success', 'Je bestelling is geplaatst!');
+        // Maak Mollie payment aan
+        $payment = $this->mollie->payments->create([
+            "amount" => [
+                "currency" => "EUR",
+                "value" => number_format($total, 2, '.', '') // altijd als string, met 2 decimalen
+            ],
+            "description" => "Bestelling #" . $order->id,
+            "redirectUrl" => route('payment.success', ['order' => $order->id]),
+            "webhookUrl"  => $webhookUrl,
+            "metadata"    => [
+                "order_id" => $order->id
+            ],
+        ]);
+
+        // Debug: log Mollie payment object
+        logger()->info('Mollie payment aangemaakt', [
+            'payment_id' => $payment->id ?? null,
+            'payment_object' => $payment
+        ]);
+
+        // Sla Mollie payment id op in de order als je een kolom hebt (optioneel)
+        $updateResult = $order->update(['mollie_payment_id' => $payment->id]);
+
+        // Debug: log update resultaat
+        logger()->info('Order update resultaat', [
+            'order_id' => $order->id,
+            'mollie_payment_id' => $payment->id ?? null,
+            'updateResult' => $updateResult
+        ]);
+
+        // Redirect naar Mollie
+        return redirect($payment->getCheckoutUrl(), 303);
+    }
+
+    // Wordt aangeroepen na succesvolle betaling (redirectUrl)
+    public function paymentSuccess(Request $request)
+    {
+        $orderId = $request->query('order');
+        if (!$orderId) {
+            return view('checkout.success', [
+                'error' => 'Geen order gevonden.',
+                'success' => null,
+                'info' => null,
+            ]);
+        }
+        $order = Order::find($orderId);
+        if (!$order) {
+            return view('checkout.success', [
+                'error' => 'Order niet gevonden.',
+                'success' => null,
+                'info' => null,
+            ]);
+        }
+        // Controleer Mollie payment status
+        if ($order->mollie_payment_id) {
+            $payment = $this->mollie->payments->get($order->mollie_payment_id);
+            if ($payment->isPaid()) {
+                $order->update([
+                    'status' => 'paid',
+                    'payment_status' => 'paid',
+                    'paid_at' => now(),
+                ]);
+                session()->forget('cart');
+                return view('checkout.success', [
+                    'success' => 'Je betaling is geslaagd!',
+                    'error' => null,
+                    'info' => null,
+                ]);
+            } elseif ($payment->isOpen() || $payment->isPending()) {
+                return view('checkout.success', [
+                    'info' => 'Je betaling is nog niet afgerond.',
+                    'success' => null,
+                    'error' => null,
+                ]);
+            } else {
+                $order->update([
+                    'status' => 'cancelled',
+                    'payment_status' => 'failed',
+                ]);
+                return view('checkout.success', [
+                    'error' => 'Je betaling is mislukt of geannuleerd.',
+                    'success' => null,
+                    'info' => null,
+                ]);
+            }
+        }
+        return view('checkout.success', [
+            'error' => 'Geen betaling gevonden bij deze order.',
+            'success' => null,
+            'info' => null,
+        ]);
+    }
+
+    // Wordt aangeroepen door Mollie webhook (webhookUrl)
+    public function paymentWebhook(Request $request)
+    {
+        $paymentId = $request->input('id');
+        if (!$paymentId) {
+            return response()->json(['error' => 'No payment id'], 400);
+        }
+
+        $payment = $this->mollie->payments->get($paymentId);
+        $orderId = $payment->metadata->order_id ?? null;
+        if ($orderId) {
+            $order = Order::find($orderId);
+            if ($order) {
+                if ($payment->isPaid()) {
+                    $order->update([
+                        'status' => 'paid',
+                        'payment_status' => 'paid',
+                        'paid_at' => now(),
+                    ]);
+                } elseif ($payment->isOpen() || $payment->isPending()) {
+                    $order->update([
+                        'status' => 'pending',
+                        'payment_status' => 'pending',
+                    ]);
+                } elseif ($payment->isFailed() || $payment->isExpired() || $payment->isCanceled()) {
+                    $order->update([
+                        'status' => 'cancelled',
+                        'payment_status' => 'failed',
+                    ]);
+                } elseif ($payment->isRefunded()) {
+                    $order->update([
+                        'status' => 'cancelled',
+                        'payment_status' => 'refunded',
+                    ]);
+                }
+            }
+        }
+        return response()->json(['status' => 'ok']);
     }
 }
