@@ -31,7 +31,7 @@
                     <td>€ {{ number_format($customer->orders->sum('total'), 2) }}</td>
                     <td class="table-action">
                         <a href="#">
-                            <i class="fas fa-eye"></i> Bekijken
+                            <i class="fas fa-eye show"></i>
                         </a>
                     </td>
                 </tr>

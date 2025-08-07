@@ -28,6 +28,7 @@ class Order extends Model
             'pending' => 'In afwachting',
             'shipped' => 'Verzonden',
             'cancelled' => 'Geannuleerd',
+            'paid' => 'Betaald'
             // Add more as needed
         ];
         return $labels[$this->status] ?? ucfirst($this->status);
