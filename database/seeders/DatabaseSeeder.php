@@ -91,6 +91,30 @@ class DatabaseSeeder extends Seeder
             'image_1' => 'images/books/natuur.jpg',
             'created_by' => 1,
             'updated_by' => 1,
+          ],
+          [
+            'title' => 'Broederschap en Oprechtheid',
+            'slug' => Str::slug('Broederschap en Oprechtheid'),
+            'short_description' => 'Dit boek beschrijft hoe Islamitische broederschap en oprechtheid in de huidige tijden kunnen worden betracht.',
+            'long_description' => 'Dit boek beschrijft hoe Islamitische broederschap en oprechtheid in de huidige tijden kunnen worden betracht. Oorzaken die broederschap en oprechtheid ondermijnen worden uiteengezet, waarnaast Qur’anische principes worden omschreven die resulteren in de totstandbrenging en handhaving van ware Islamitische broederschap en oprechtheid.',
+            'price' => 7.50,
+            'is_published' => 1,
+            'stock' => 100,
+            'image_1' => 'images/books/broederschap.jpg',
+            'created_by' => 1,
+            'updated_by' => 1,
+          ],
+          [
+            'title' => 'Het Traktaat Voor de Zieken',
+            'slug' => Str::slug('Het Traktaat Voor de Zieken'),
+            'short_description' => 'In dit boek worden vijfentwintig genezingen behandeld.',
+            'long_description' => 'In dit boek worden vijfentwintig genezingen behandeld. Deze genezingen zijn als een zalf, een troost en een spiritueel recept voor zieken geschreven. Daarbij is er een condoleance in verband met het verlies van een kind, een traktaat betreffende de profeet Eyyoub en een brief aan een dokter gevoegd. Dit traktaat zal de lezer erbij helpen om alle soorten ziektes en calamiteiten te boven te komen.',
+            'price' => 5.50,
+            'is_published' => 1,
+            'stock' => 100,
+            'image_1' => 'images/books/zieken.jpg',
+            'created_by' => 1,
+            'updated_by' => 1,
           ]
         ];
 
