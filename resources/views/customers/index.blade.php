@@ -30,7 +30,7 @@
                     <td>{{ count($customer->orders) }}</td>
                     <td>€ {{ number_format($customer->orders->sum('total'), 2) }}</td>
                     <td class="table-action">
-                        <a href="#">
+                        <a href="{{ route('customerShow', $customer->id) }}">
                             <i class="fas fa-eye show"></i>
                         </a>
                     </td>

@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ProductCategory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -34,28 +35,110 @@ class DatabaseSeeder extends Seeder
             'password' => static::$password ??= Hash::make('12345678'),
         ]);
 
-        // Maak categorieën aan
-        
-        // ProductCategory::factory(10)->create();
+        $category = ProductCategory::create([
+              'name' => 'Risale-i Nur',
+              'slug' => Str::slug('Risale-i Nur'),
+              'created_by' => '1',
+              'updated_by' => '1',
+              'is_published' => '1'
+          ]);
 
-        // $categories = ProductCategory::all();
+        $books = [
+          [
+            'title' => 'Afwegingen van Geloof & Ongeloof',
+            'slug' => Str::slug('Afwegingen van Geloof & Ongeloof'),
+            'short_description' => 'In dit boek wordt het verschil tussen de waarnemingen en vruchten van een gelovige visie en een ongelovige visie behandeld.',
+            'long_description' => 'In dit boek wordt het verschil tussen de waarnemingen en vruchten van een gelovige visie en een ongelovige visie behandeld. Zodoende wordt de lezer in staat gesteld om af te wegen welke weg beter voor hem is. De logische, rationele en feitelijke bevindingen in dit boek maken duidelijk dat de ene visie op aarde al helse folteringen veroorzaakt, terwijl de andere visie op aarde al paradijselijke geneugten oplevert. Een objectieve lezer zal ervaren dat dit boek zal bijdragen aan het scherpstellen van zijn levensbeschouwing.',
+            'price' => 15.00,
+            'is_published' => 1,
+            'stock' => 100,
+            'image_1' => 'images/books/afwegingen.jpg',
+            'created_by' => 1,
+            'updated_by' => 1,
+          ],
+          [
+            'title' => 'De Mirakelen van Ahmed',
+            'slug' => Str::slug('De Mirakelen van Ahmed'),
+            'short_description' => 'In dit boek worden er in eerste instantie de wijsheden achter de mirakelen van de profeet Mohammed verklaard.',
+            'long_description' => 'In dit boek worden er in eerste instantie de wijsheden achter de mirakelen van de profeet Mohammed verklaard. Daarna worden de verschillende varianten van zijn mirakelen beschreven. Vervolgens worden er van elke variant een aantal voorbeelden genoemd die volgens de authentiekste overleveringen absoluut hebben plaatsgevonden. Bovendien beschrijft dit boek de geestelijke persoonlijkheid van Mohammed. Iemand die dit boek begrijpend uitleest, zal niet meer in staat zijn om het profeetschap van Mohammed te verloochenen.',
+            'price' => 10.00,
+            'is_published' => 1,
+            'stock' => 100,
+            'image_1' => 'images/books/mirakelen.jpg',
+            'created_by' => 1,
+            'updated_by' => 1,
+          ],
+          [
+            'title' => 'Geloofswaarheden',
+            'slug' => Str::slug('Geloofswaarheden'),
+            'short_description' => 'In dit boek worden verscheidene geloofskwesties behandeld.',
+            'long_description' => 'In dit boek worden verscheidene geloofskwesties behandeld. Waarheden achter bepaalde Islamitische geloofsfundamenten worden verhelderd, waaronder de wijsheid achter de dagelijkse vijf tijdstippen van de geboden gebeden en de wijsheid achter de schepping van de duivel. Dit boek zal voor de lezer vele controversiële punten ontwarren.',
+            'price' => 5.00,
+            'is_published' => 1,
+            'stock' => 100,
+            'image_1' => 'images/books/geloofwaarheden.jpg',
+            'created_by' => 1,
+            'updated_by' => 1,
+          ],
+          [
+            'title' => 'Het Traktaat over de Natuur',
+            'slug' => Str::slug('Het Traktaat over de Natuur'),
+            'short_description' => 'In dit boek wordt vanuit velerlei verscheidene natuurwetenschappelijke gezichtspunten aangetoond dat het onbestaan van een Opperwezen onmogelijk is.',
+            'long_description' => 'Terwijl tegenwoordig vaak de natuur wordt aangekaart om het onbestaan van een God aan te tonen, wordt er in dit boek vanuit velerlei verscheidene natuurwetenschappelijke gezichtspunten aangetoond dat het onbestaan van een Opperwezen juist onmogelijk is. Iemand die dit boek begrijpend leest, kan in geen enkel rationeel opzicht het bestaan en de eenheid van een God verloochenen.',
+            'price' => 2.50,
+            'is_published' => 1,
+            'stock' => 100,
+            'image_1' => 'images/books/natuur.jpg',
+            'created_by' => 1,
+            'updated_by' => 1,
+          ]
+        ];
+
+        foreach ($books as $book) {
+          Product::create([
+            'title' => $book['title'],
+            'slug' => $book['slug'],
+            'short_description' => $book['short_description'],
+            'long_description' => $book['long_description'],
+            'price' => $book['price'],
+            'is_published' => $book['is_published'],
+            'stock' => $book['stock'],
+            'image_1' => $book['image_1'],
+            'created_by' => 1,
+            'updated_by' => 1,
+            'category_id' => $category->id,
+          ]);
+        }
+
+
+        // Maak categorieën aan
+
+      /*
+         ProductCategory::factory(10)->create();
+
+         $categories = ProductCategory::all();
+      */
 
         // Maak producten aan, elk met één random category_id
 
-        // Product::factory(20)->make()->each(function ($product) use ($categories) {
-        //     $product->category_id = $categories->random()->id;
-        //     $product->save();
-        // });
+      /*
+         Product::factory(20)->make()->each(function ($product) use ($categories) {
+             $product->category_id = $categories->random()->id;
+             $product->save();
+         });
+      */
 
         // Parent-logica: wijs willekeurig een parent toe (niet zichzelf)
 
-        // $products = Product::all();
-        // foreach ($products as $product) {
-        //     $possibleParents = $products->where('id', '!=', $product->id);
-        //     if ($possibleParents->count() && rand(0, 1)) {
-        //         $product->parent_id = $possibleParents->random()->id;
-        //         $product->save();
-        //     }
-        // }
+      /*
+         $products = Product::all();
+         foreach ($products as $product) {
+             $possibleParents = $products->where('id', '!=', $product->id);
+             if ($possibleParents->count() && rand(0, 1)) {
+                 $product->parent_id = $possibleParents->random()->id;
+                 $product->save();
+             }
+         }
+      */
     }
 }

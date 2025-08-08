@@ -149,12 +149,14 @@
                         {{-- Preview afbeelding --}}
                         <div id="image_{{ $i }}_preview" style="display: flex; align-items:center;margin-top:5px;">
                             @if($product->{'image_'.$i})
-                                <img 
-                                    src="{{ Str::startsWith($product->{'image_'.$i}, 'https://') 
-                                        ? $product->{'image_'.$i} 
-                                        : asset('storage/' . $product->{'image_'.$i}) }}" 
-                                    alt="" 
-                                    style="max-width:60px;max-height:60px;">
+                                <img
+                                  src="{{ Str::startsWith($product->{'image_'.$i}, 'https://')
+                                    ? $product->{'image_'.$i}
+                                    : (Str::startsWith($product->{'image_'.$i}, 'image/books/')
+                                        ? asset($product->{'image_'.$i})
+                                        : asset('storage/' . $product->{'image_'.$i})) }}"
+                                                                  alt=""
+                                  style="max-width:60px;max-height:60px;">
                             @endif
                         </div>
 

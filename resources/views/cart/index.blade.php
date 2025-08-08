@@ -34,7 +34,17 @@
 					<tr>
 						<td class="td-img" data-label="Afbeelding">
 							<img
-								src="{{ Str::startsWith($item['image_1'], 'https://') ? $item['image_1'] : asset('storage/' . $item['image_1']) }}"
+								src="{{ e(
+										Str::startsWith($item['image_1'], 'https://')
+												? $item['image_1']
+												: (Str::startsWith($item['image_1'], 'image/books/')
+														? asset($item['image_1'])
+														: (Str::startsWith($item['image_1'], 'images/books/')
+																? asset($item['image_1'])
+																: asset('storage/' . $item['image_1'])
+														)
+												)
+								) }}"
 								alt="">
 						</td>
 						<td class="td-title" data-label="Titel">{{ $item['name'] }}</td>

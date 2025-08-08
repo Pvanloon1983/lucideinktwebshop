@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    // Alternate shipping address
+    // Customer account creation
     const altInput = document.querySelector('#alt-shipping');
     const altShipping = document.querySelector('.customer-details.alternate');
 

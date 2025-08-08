@@ -105,7 +105,7 @@
 						</div>
 
 						<div class="form-input">
-							<label for="billing-company">Bedrijsnaam (optioneel)</label>
+							<label for="billing-company">Bedrijfsnaam (optioneel)</label>
 							<input type="text" name="billing-company" autocomplete="organization"
 								value="{{ old('billing-company') }}">
 							@error('billing-company')
@@ -124,10 +124,29 @@
 							@enderror
 						</div>
 
+						<div class="form-input customer-account">
+							<label for="customer-account">Account aanmaken? Vul dan een wachtwoord in.</label>
+						</div>
+
+						<div class="create-account-box">
+							<div class="form-input">
+								<label for="password">Wachtwoord</label>
+								<input type="password" name="password">
+								@error('password')
+								<div class="error">{{ $message }}</div>
+								@enderror
+							</div>
+							<div class="form-input">
+								<label for="password_confirmation">Bevestig wachtwoord</label>
+								<input type="password" name="password_confirmation">
+							</div>
+						</div>
+
 						<div class="form-input alt-shipping">
 							<label for="alt-shipping">Verzenden naar een ander adres?</label>
 							<input type="checkbox" name="alt-shipping" id="alt-shipping">
 						</div>
+
 
 					</div>
 
@@ -208,7 +227,7 @@
 						</div>
 
 						<div class="form-input">
-							<label for="shipping_company">Bedrijsnaam (optioneel)</label>
+							<label for="shipping_company">Bedrijfsnaam (optioneel)</label>
 							<input type="text" name="shipping_company" autocomplete="shipping organization"
 								value="{{ old('shipping_company') }}">
 							@error('shipping_company')

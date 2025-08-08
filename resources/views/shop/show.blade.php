@@ -18,8 +18,18 @@
 		<a href="{{ route('shop') }}" class="back-link">&larr; Terug naar winkel</a>	
 		<div class="single-product">
 			@if ($product)			
-				<div class="image">					
-					<img src="{{ asset('/storage/' . $product->image_1) }}" alt="">
+				<div class="image">
+					<img src="{{ e(
+						Str::startsWith($product->image_1, 'https://')
+								? $product->image_1
+								: (Str::startsWith($product->image_1, 'image/books/')
+										? asset($product->image_1)
+										: (Str::startsWith($product->image_1, 'images/books/')
+												? asset($product->image_1)
+												: asset('storage/' . $product->image_1)
+										)
+								)
+				) }}" alt="">
 				</div>
 				<div class="meta-data">
 					<h1 class="title">{{ $product->title }}</h1>

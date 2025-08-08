@@ -19,7 +19,17 @@
 			<a href="{{ route('productShow', $product->id) }}">
 			<div class="card">
 				<div class="image-container">
-					<img src="{{ asset('/storage/' . $product->image_1) }}" alt="">
+					<img src="{{ e(
+						Str::startsWith($product->image_1, 'https://')
+								? $product->image_1
+								: (Str::startsWith($product->image_1, 'image/books/')
+										? asset($product->image_1)
+										: (Str::startsWith($product->image_1, 'images/books/')
+												? asset($product->image_1)
+												: asset('storage/' . $product->image_1)
+										)
+								)
+				) }}" alt="">
 				</div>
 				<h6 class="title">{{ $product->title }}</h6>
 				@if (isset($product->category) && !empty($product->category->name))

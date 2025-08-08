@@ -30,7 +30,7 @@
                 <tr>
                     <td style="min-width:40px;">{{ $product->id }}</td>
                     <td class="td-img">
-                        <img src="{{ Str::startsWith($product->image_1, 'https://') ? $product->image_1 : asset('storage/' . $product->image_1) }}" alt="">
+                        <img src="{{ Str::startsWith($product->image_1, 'https://') ? $product->image_1 : (Str::startsWith($product->image_1, 'image/books/') ? asset($product->image_1) : asset('storage/' . $product->image_1)) }}" alt="">
                     </td>
                     <td style="min-width:180px;">{{ $product->title }}</td>
                     <td style="min-width:160px;">{{ $product->slug }}</td>

@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Customer;
+use App\Models\User;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Mollie\Api\MollieApiClient;
 class CheckoutController extends Controller
 {
@@ -62,6 +65,8 @@ class CheckoutController extends Controller
             'shipping_country' => 'required_with:alt-shipping|string|nullable',
             'shipping_phone' => 'nullable|string',
             'shipping_company' => 'nullable|string',
+            // Customer account (only if password is filled in)
+            'password' => 'nullable|string|min:8|confirmed',
         ];
 
         $messages = [
@@ -85,8 +90,12 @@ class CheckoutController extends Controller
             'shipping_city.required_with' => 'Plaats is verplicht.',
             'shipping_country.required_with' => 'Land is verplicht.',
             'shipping_phone.required_with' => 'Telefoonnummer voor verzending is verplicht.',
+            // Customer account
+            'password.required' => 'Wachtwoord is verplicht.',
+            'password.min' => 'Wachtwoord moet minimaal 8 tekens bevatten.',
+            'password.confirmed' => 'Wachtwoorden komen niet overeen.',
         ];
-        $validated = $request->validate($rules, $messages);
+        $request->validate($rules, $messages);
 
         // Prepare customer data
         $customerData = [
@@ -119,13 +128,23 @@ class CheckoutController extends Controller
             ]);
         }
 
-        // Create customer
-        $customer = Customer::where('billing_email', $request->input('billing-email'))->first();
-        if ($customer) {
-            $customer->update($customerData);
-        } else {
-            $customer = Customer::create($customerData);
+        // Check if user already exists
+        $user = User::where('email', $request->input('billing-email'))->first();
+        if (!$user && $request->filled('password')) {
+          $user = User::create([
+            'first_name' => $request->input('billing-first_name'),
+            'last_name' => $request->input('billing-last_name'),
+            'email' => $request->input('billing-email'),
+            'password' => Hash::make($request->input('password')),
+          ]);
+          event(new Registered($user));
         }
+
+        // Customer update or create
+        $customer = Customer::updateOrCreate(
+          ['billing_email' => $request->input('billing-email')],
+          $customerData
+        );
 
         // Calculate order total
         $total = collect($cart)->sum(function($item) {

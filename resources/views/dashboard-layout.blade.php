@@ -61,7 +61,7 @@
         <li class="nav-item {{ request()->routeIs('dashboard') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('dashboard') ? 'active-admin-link' : '' }}">Dashboard</span></li>  
       </a>      
       <a href="{{ route('editProfile') }}">
-        <li class="nav-item {{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}">Profiel</span></li>  
+        <li class="nav-item {{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}">Mijn Profiel</span></li>
       </a>
       <a href="{{ route('productIndex') }}">
         <li class="nav-item {{ request()->routeIs('productIndex') || request()->routeIs('productCreatePage') || request()->routeIs('productEditPage') ? 'active-admin-link' : '' }}">
@@ -87,6 +87,11 @@
         <li class="nav-item {{ request()->routeIs('customerIndex') || request()->routeIs('customerShow') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('customerIndex') || request()->routeIs('customerShow') ? 'active-admin-link' : '' }}">Klanten</span>
         </li>  
+      </a>
+      <a href="{{ route('userIndex') }}">
+        <li class="nav-item {{ request()->routeIs('userIndex') || request()->routeIs('userShow') ? 'active-admin-link' : '' }}">
+          <span class="{{ request()->routeIs('userIndex') || request()->routeIs('userShow') ? 'active-admin-link' : '' }}">Gebruikers</span>
+        </li>
       </a>
           @auth
       <li class="nav-item">

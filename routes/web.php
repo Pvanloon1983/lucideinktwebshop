@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
@@ -82,6 +83,10 @@ Route::get('/dashboard/create', [OrderController::class, 'create'])->name('order
 // Customers
 Route::get('/dashboard/customers', [CustomerController::class, 'index'])->name('customerIndex')->middleware('auth');
 Route::get('/dashboard/customers/{id}', [CustomerController::class, 'show'])->name('customerShow')->middleware('auth');
+
+// Users
+Route::get('/dashboard/users', [UserController::class, 'index'])->name('userIndex')->middleware('auth');
+Route::get('/dashboard/users/{id}', [UserController::class, 'show'])->name('userShow')->middleware('auth');
 
 // Mollie payments
 Route::get('/payment/success/', [CheckoutController::class, 'paymentSuccess'])->name('payment.success');

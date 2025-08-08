@@ -1258,7 +1258,7 @@ i {
 .single-product h1 {
   font-size: 30px;
   margin-bottom: 0;
-  margin-top: 20px;
+  margin-top: -12px;
 }
 
 .single-product .category {
@@ -1268,6 +1268,11 @@ i {
 .single-product .price {
   font-size: 18px;
   font-weight: bold;
+}
+
+.single-product .image {
+  display: flex;
+  flex-direction: column;
 }
 
 .single-product .image img {
@@ -1618,6 +1623,27 @@ i {
   display: flex;
   justify-content: flex-end;
   margin-top: 10px;
+}
+
+.page.checkout
+.customer-account {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin-bottom: 7px;
+}
+
+.page.checkout
+.customer-account input {
+  width: 15px;
+  margin-left: 15px;
+  margin-top: 0px;
+  cursor: pointer;
+}
+
+.page.checkout
+.form-input.password {
+  margin-top: -20px;
 }
 
 @media only screen and (max-width: 1400px) {
