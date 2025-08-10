@@ -1,5 +1,5 @@
 <x-layout>
 <main class="container page">
-    <h1>Risale-i Nur</h1>
+    <h2>Risale-i Nur</h2>
 </main>
 </x-layout>

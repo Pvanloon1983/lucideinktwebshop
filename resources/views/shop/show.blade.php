@@ -3,7 +3,7 @@
 			@if(session('success_add_to_cart'))
 			<div class="alert alert-success" style="position: relative;">
 					<div>
-					{{ session('success_add_to_cart') }} <a style="text-decoration: underline;color: #0a3622;" href="{{ route('cartPage') }}"> Bekijk winkelwagen</a>
+					{{ session('success_add_to_cart') }} <a style="" href="{{ route('cartPage') }}"> Bekijk winkelwagen</a>
 					</div>
 					<button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
 			</div>
