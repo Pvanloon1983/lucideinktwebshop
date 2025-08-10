@@ -1803,3 +1803,46 @@ i {
   margin-top: 0px;
   cursor: pointer;
 }
+
+.mp-choice {
+  margin: .5rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.mp-choice label {
+  display: flex;
+  align-items: flex-start;
+  background: #f8f8f8;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: border 0.2s, box-shadow 0.2s;
+  gap: 0.75rem;
+  font-size: 1rem;
+  position: relative;
+}
+.mp-choice label:hover, .mp-choice input[type="radio"]:focus + span {
+  border-color: #b30000;
+  box-shadow: 0 0 0 2px #f3d6d6;
+}
+.mp-choice input[type="radio"] {
+  margin-top: 2px;
+  accent-color: #b30000;
+  width: 1.1em;
+  height: 1.1em;
+  flex-shrink: 0;
+}
+.mp-choice label span {
+  display: block;
+  line-height: 1.4;
+}
+.mp-choice label span + span {
+  color: #2e7d32;
+  font-size: 0.95em;
+  margin-top: 0.2em;
+  font-weight: 500;
+  display: inline-block;
+  margin-left: 0;
+}

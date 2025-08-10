@@ -20,15 +20,30 @@ class Order extends Model
         'status',
         'payment_status',
         'paid_at',
-    ];
 
+        'myparcel_consignment_id',
+        'myparcel_track_trace_url',
+        'myparcel_label_link',
+
+        'myparcel_package_type_id',
+        'myparcel_only_recipient',
+        'myparcel_signature',
+        'myparcel_insurance_amount',
+
+        // nieuw:
+        'myparcel_delivery_json',
+        'myparcel_is_pickup',
+        'myparcel_carrier',
+        'myparcel_delivery_type',
+    ];
+    
     public function getStatusLabelAttribute()
     {
         $labels = [
             'pending' => 'In afwachting',
             'shipped' => 'Verzonden',
             'cancelled' => 'Geannuleerd',
-            'paid' => 'Betaald'
+            'paid' => 'Betaald',
             // Add more as needed
         ];
         return $labels[$this->status] ?? ucfirst($this->status);

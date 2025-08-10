@@ -102,6 +102,20 @@ document.addEventListener('DOMContentLoaded', function () {
     if (altInput && altShipping) {
         altInput.addEventListener('change', function() {
             altShipping.classList.toggle('open');
+            if (!altInput.checked) {
+                // Clear all shipping fields when unchecked
+                altShipping.querySelectorAll('input, select').forEach(function(field) {
+                    if (field.type === 'checkbox' || field.type === 'radio') {
+                        field.checked = false;
+                    } else {
+                        field.value = '';
+                    }
+                });
+            }
+            // Update MyParcel widget after toggling
+            if (typeof updateDeliveryOptionsFromForm === 'function') {
+                updateDeliveryOptionsFromForm();
+            }
         });
     }
 
