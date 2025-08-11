@@ -57,42 +57,64 @@
   </div>
   <nav class="navbar">
     <ul>
+
+      @anyrole('admin','user') 
       <a href="{{ route('dashboard') }}">
         <li class="nav-item {{ request()->routeIs('dashboard') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('dashboard') ? 'active-admin-link' : '' }}">Dashboard</span></li>  
       </a>      
       <a href="{{ route('editProfile') }}">
         <li class="nav-item {{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}">Mijn Profiel</span></li>
       </a>
+      @endanyrole
+
+      @role('admin')
       <a href="{{ route('productIndex') }}">
         <li class="nav-item {{ request()->routeIs('productIndex') || request()->routeIs('productCreatePage') || request()->routeIs('productEditPage') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('productIndex') || request()->routeIs('productCreatePage') || request()->routeIs('productEditPage') ? 'active-admin-link' : '' }}">Producten</span>
         </li>  
       </a>
+      @endrole
+
+      @role('admin')
       <a href="{{ route('productCategoryIndex') }}">
         <li class="nav-item {{ request()->routeIs('productCategoryIndex') || request()->routeIs('productCategoryCreatePage') || request()->routeIs('productCategoryEditPage') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('productCategoryIndex') ? 'active-admin-link' : '' }}">Productcategorieën</span>
         </li>  
       </a>
+      @endrole  
+
+      @role('admin')
       <a href="{{ route('orderIndex') }}">
         <li class="nav-item {{ request()->routeIs('orderIndex') || request()->routeIs('orderShow') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('orderIndex') || request()->routeIs('orderShow') ? 'active-admin-link' : '' }}">Bestellingen</span>
         </li>  
       </a>
+      @endrole  
+
+      @anyrole('admin','user') 
       <a href="{{ route('showMyOrders') }}">
         <li class="nav-item {{ request()->routeIs('showMyOrders') || request()->routeIs('showMyOrder') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('showMyOrders') || request()->routeIs('showMyOrder') ? 'active-admin-link' : '' }}">Mijn bestellingen</span>
         </li>  
       </a>
+      @endanyrole
+
+      @role('admin')
       <a href="{{ route('customerIndex') }}">
         <li class="nav-item {{ request()->routeIs('customerIndex') || request()->routeIs('customerShow') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('customerIndex') || request()->routeIs('customerShow') ? 'active-admin-link' : '' }}">Klanten</span>
         </li>  
       </a>
+      @endrole
+
+      @role('admin')
       <a href="{{ route('userIndex') }}">
         <li class="nav-item {{ request()->routeIs('userIndex') || request()->routeIs('userShow') ? 'active-admin-link' : '' }}">
           <span class="{{ request()->routeIs('userIndex') || request()->routeIs('userShow') ? 'active-admin-link' : '' }}">Gebruikers</span>
         </li>
       </a>
+      @endrole
+
           @auth
       <li class="nav-item">
           <form class="logout-button" action="{{ route('logout') }}" method="POST">

@@ -9,14 +9,18 @@ use Illuminate\Validation\Rule;
 
 class ProductCategoryController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'role:admin']);
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $this->authorize('viewAny', ProductCategory::class);
         $productCategories = ProductCategory::orderBy('created_at', 'desc')
         ->paginate(10);
-
         return view('productcategories.index', ['productCategories' => $productCategories]);
     }
 
@@ -25,6 +29,7 @@ class ProductCategoryController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', ProductCategory::class);
         return view('productcategories.create');
     }
 
@@ -33,6 +38,7 @@ class ProductCategoryController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', ProductCategory::class);
         $validated = $request->validate([
             'name' => [
                 'required',
@@ -76,6 +82,7 @@ class ProductCategoryController extends Controller
     public function edit(string $id)
     {
         $category = ProductCategory::findOrFail($id);
+        $this->authorize('update', $category);
         return view('productcategories.edit', ['category' => $category]);
     }
 
@@ -85,7 +92,7 @@ class ProductCategoryController extends Controller
     public function update(Request $request, string $id)
     {
         $category = ProductCategory::findOrFail($id);
-
+        $this->authorize('update', $category);
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:product_categories,name,' . $category->id,
             'is_published' => 'required|boolean',
@@ -126,6 +133,7 @@ class ProductCategoryController extends Controller
     public function destroy(string $id)
     {
         $category = ProductCategory::findOrFail($id);
+        $this->authorize('delete', $category);
         $category->update([
             'updated_by' => auth()->id(),
             'deleted_by' => auth()->id(),

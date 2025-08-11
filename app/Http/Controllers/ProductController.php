@@ -11,11 +11,17 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'role:admin']);
+    }
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
+        $this->authorize('viewAny', Product::class);
+
         $products = Product::with('category')
             ->orderBy('created_at', 'desc')
             ->paginate(10); // 10 products per page
@@ -28,9 +34,9 @@ class ProductController extends Controller
      */
     public function create()
     {
+        $this->authorize('create', Product::class);
         $products = Product::orderBy('title', 'asc')->get();
         $categories = ProductCategory::orderBy('name', 'asc')->get();
-
         return view('products.create', ['products' => $products, 'categories' => $categories]);  
     }
 
@@ -39,6 +45,7 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('create', Product::class);
         $validated = $request->validate([
             'title' => [
                 'required',
@@ -140,10 +147,10 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
+        $product = Product::findOrFail($id);
+        $this->authorize('update', $product);
         $products = Product::orderBy('title', 'asc')->get();
         $categories = ProductCategory::orderBy('name', 'asc')->get();
-
-        $product = Product::findOrFail($id);
         return view('products.edit', ['product' => $product, 'products' => $products, 'categories' => $categories]);
     }
 
@@ -153,7 +160,7 @@ class ProductController extends Controller
     public function update(Request $request, string $id)
     {
         $product = Product::findOrFail($id);
-
+        $this->authorize('update', $product);
         $validated = $request->validate([
             'title' => [
                 'required',
@@ -273,7 +280,7 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         $product = Product::findOrFail($id);
-
+        $this->authorize('delete', $product);
         // Verwijder afbeeldingen uit storage
         for ($i = 1; $i <= 4; $i++) {
             $imageField = 'image_' . $i;
@@ -281,7 +288,6 @@ class ProductController extends Controller
                 \Storage::disk('public')->delete($product->$imageField);
             }
         }
-
         $product->update([
         'updated_by' => auth()->id(),
         'deleted_by' => auth()->id(),
@@ -291,7 +297,6 @@ class ProductController extends Controller
         'image_4' => '',
         ]);
         $product->delete();
-
         return redirect()->route('productIndex')->with('success', 'Het product is succesvol verwijderd.');
     }
 }

@@ -114,7 +114,7 @@
             </div>
           </div>
 
-          <div class="item customer-details alternate" id="shipping-fields" style="display:none;">
+          <div class="item customer-details alternate" id="shipping-fields">
             <h3>Alternatief verzendadres</h3>
 
             <div class="name-box">
