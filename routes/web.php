@@ -52,9 +52,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	Route::delete('/dashboard/productcategories/delete/{id}', [ProductCategoryController::class, 'destroy'])->name('productCategoryDelete');
 
 	// Orders
+	Route::get('/dashboard/orders/create', [OrderController::class, 'create'])->name('orderCreatePage');
 	Route::get('/dashboard/orders', [OrderController::class, 'index'])->name('orderIndex');
-	Route::get('/dashboard/orders/{id}', [OrderController::class, 'show'])->name('orderShow');
-	Route::get('/dashboard/create', [OrderController::class, 'create'])->name('orderCreatePage');
+	Route::get('/dashboard/orders/{id}', [OrderController::class, 'show'])->name('orderShow');	
+	Route::post('/dashboard/orders/create', [OrderController::class, 'store'])->name('orderStore');
 
 	// Customers
 	Route::get('/dashboard/customers', [CustomerController::class, 'index'])->name('customerIndex');

@@ -789,6 +789,7 @@ i {
   padding-right: 20px;
   padding-top: 100px;
   transition: all 0.3s ease;
+  padding-bottom: 50px;
 }
 
 .container.page.dashboard.close {
@@ -1971,3 +1972,47 @@ i {
   display: inline-block;
   margin-left: 0;
 }
+
+/*--- Order page ---*/
+.product-list {
+  background-color: #fff;
+  padding: 20px 30px;
+  border: 1px solid #d8d8d8;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 20px;
+}
+
+.product-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.product-list
+.input-box {
+  display: flex;
+  flex-direction: column;
+  font-size: 15px;
+}
+
+.product-list
+.input-box span {
+  font-size: 13px;
+}
+
+.product-list
+.input-box label {
+  min-width: 100px;
+}
+
+.product-list
+.input-box input {
+  max-width: 75px;
+  height: 24px;
+  font-size: 13px;
+}
+

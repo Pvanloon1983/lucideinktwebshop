@@ -119,4 +119,61 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // Dashboard place order calculation script - function will loaded directly
+    (function initOrderCalc(){
+        const qtyInputs = document.querySelectorAll('.qty-input');
+        if(!qtyInputs.length) return; // Not on order create page
+
+        const totalEl = document.getElementById('total-price');
+        const discountedEl = document.getElementById('discounted-total');
+        const discountValueEl = document.getElementById('discount_value');
+        const discountTypeEl = document.getElementById('discount_type');
+
+        function formatEuro(val){
+            return '€ ' + val.toFixed(2).replace('.', ',');
+        }
+
+        function updatePrices(){
+            let total = 0;
+            qtyInputs.forEach(input => {
+                const qty = parseFloat(input.value) || 0;
+                const price = parseFloat(input.getAttribute('data-price')) || 0;
+                const id = input.getAttribute('data-id');
+                const subtotal = qty * price;
+                total += subtotal;
+                const subItem = document.getElementById('sub-item-price-' + id);
+                if(subItem){
+                    subItem.innerText = qty > 0 ? formatEuro(subtotal) : '';
+                }
+            });
+
+            if(totalEl){
+                totalEl.innerText = total > 0 ? 'Totaal: ' + formatEuro(total) : '';
+            }
+
+            if(discountValueEl && discountTypeEl && discountedEl){
+                const discountValue = parseFloat(discountValueEl.value) || 0;
+                const discountType = discountTypeEl.value;
+                let discountedTotal = total;
+                if(discountValue > 0){
+                    discountedTotal = discountType === 'percent'
+                        ? total - (total * (discountValue / 100))
+                        : total - discountValue;
+                    if(discountedTotal < 0) discountedTotal = 0;
+                    discountedEl.innerText = 'Totaal na korting: ' + formatEuro(discountedTotal);
+                } else {
+                    discountedEl.innerText = '';
+                }
+            }
+        }
+
+        qtyInputs.forEach(input => {
+            input.addEventListener('input', updatePrices);
+            input.addEventListener('change', updatePrices);
+        });
+        if(discountValueEl){ discountValueEl.addEventListener('input', updatePrices); }
+        if(discountTypeEl){ discountTypeEl.addEventListener('change', updatePrices); }
+        updatePrices();
+    })();
+
 });
