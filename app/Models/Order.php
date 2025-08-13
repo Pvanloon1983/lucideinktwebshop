@@ -16,6 +16,7 @@ class Order extends Model
     protected $fillable = [
         'customer_id',
         'mollie_payment_id',
+    'payment_link',
         'total',
         'status',
         'payment_status',
@@ -35,6 +36,11 @@ class Order extends Model
         'myparcel_is_pickup',
         'myparcel_carrier',
         'myparcel_delivery_type',
+
+    // discounts
+    'discount_type',
+    'discount_value',
+    'discount_price_total',
     ];
     
     public function getStatusLabelAttribute()

@@ -16,6 +16,10 @@
                 <p><strong>Status:</strong> {{ $order->status_label }}</p>
                 <p><strong>Totaal:</strong> € {{ number_format($order->total, 2) }}</p>
                 <p><strong>Betaalstatus:</strong> {{ $order->payment_status_label ?? 'Onbekend' }}</p>
+                @if ($order->payment_status !== 'paid' && $order->payment_link)
+                    <p><strong>Betaallink:</strong> <a href="{{ $order->payment_link }}" target="_blank">{{ $order->payment_link }}</a></p>
+                @endif
+
             </div>
                         <div class="order-info-item">
                 <h3>Factuuradres</h3>
