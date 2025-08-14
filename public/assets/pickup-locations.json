@@ -1,0 +1,26 @@
+[
+  {
+    "locationName": "Cigo Angels1",
+    "street": "Statenweg",
+    "number": "39",
+    "numberSuffix": "",
+    "postalCode": "9724CS",
+    "city": "Emmen"
+  },
+  {
+    "locationName": "Primera Centrum",
+    "street": "Hoofdstraat",
+    "number": "12",
+    "numberSuffix": "A",
+    "postalCode": "9711AA",
+    "city": "Groningen"
+  },
+  {
+    "locationName": "PostNL Pakketpunt Jumbo",
+    "street": "Dorpsplein",
+    "number": "7",
+    "numberSuffix": "",
+    "postalCode": "1012AB",
+    "city": "Amsterdam"
+  }
+]

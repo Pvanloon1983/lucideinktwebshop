@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ShopController;
+use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\MyOrderController;
@@ -12,7 +13,6 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ProductCategoryController;
 
 
 // Both admin and user can access
@@ -104,3 +104,10 @@ Route::get('/contact', function () { return view('contact'); })->name('contact')
 Route::get('/payment/success/', [CheckoutController::class, 'paymentSuccess'])->name('payment.success');
 Route::post('/webhooks/mollie', [CheckoutController::class, 'payment
 Webhook'])->name('webhooks.mollie');
+
+// Admin/custom pickup locations API (used by admin order page custom widget)
+use App\Http\Controllers\PickupLocationController;
+use App\Http\Controllers\ProductCategoryController;
+Route::get('/pickup-locations', [PickupLocationController::class, 'index'])->name('pickup.locations');
+
+Route::get('/test', [TestController::class, 'index']);

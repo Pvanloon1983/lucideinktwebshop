@@ -7,6 +7,8 @@ use App\Models\Product;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Mollie\Api\MollieApiClient;
+use App\Services\MyParcelService;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -44,6 +46,9 @@ class OrderController extends Controller
 
 		public function store(Request $request)
 		{
+			// Normaliseer checkbox: zet naar 1 wanneer aangevinkt, anders 0 (voorkomt 'on')
+			$request->merge(['alt-shipping' => $request->has('alt-shipping') ? 1 : 0]);
+
 			// Validatie (geïnspireerd op CheckoutController)
 			$data = $request->validate([
 				// Productregels
@@ -69,14 +74,14 @@ class OrderController extends Controller
 
 				// Verzendadres (alleen indien aangevinkt)
 				'alt-shipping'             => 'nullable|boolean',
-				'shipping_first_name'      => 'required_with:alt-shipping|string|nullable',
-				'shipping_last_name'       => 'required_with:alt-shipping|string|nullable',
-				'shipping_street'          => 'required_with:alt-shipping|string|nullable',
-				'shipping_housenumber'     => 'required_with:alt-shipping|numeric|nullable',
+				'shipping_first_name'      => 'required_if:alt-shipping,1|string|nullable',
+				'shipping_last_name'       => 'required_if:alt-shipping,1|string|nullable',
+				'shipping_street'          => 'required_if:alt-shipping,1|string|nullable',
+				'shipping_housenumber'     => 'required_if:alt-shipping,1|numeric|nullable',
 				'shipping_housenumber-add' => 'nullable|string',
-				'shipping_postal-zip-code' => 'required_with:alt-shipping|string|nullable',
-				'shipping_city'            => 'required_with:alt-shipping|string|nullable',
-				'shipping_country'         => 'required_with:alt-shipping|string|nullable',
+				'shipping_postal-zip-code' => 'required_if:alt-shipping,1|string|nullable',
+				'shipping_city'            => 'required_if:alt-shipping,1|string|nullable',
+				'shipping_country'         => 'required_if:alt-shipping,1|string|nullable',
 				'shipping_phone'           => 'nullable|string',
 				'shipping_company'         => 'nullable|string',
 
@@ -169,6 +174,8 @@ class OrderController extends Controller
 					'shipping_country'               => $request->input('shipping_country'),
 					'shipping_phone'                 => $request->input('shipping_phone'),
 				]);
+				// Markeer ook dat alternate shipping gebruikt is voor logging of latere logica
+				$customerData['uses_alt_shipping'] = true;
 			}
 
 			$customer = Customer::updateOrCreate(
@@ -229,6 +236,86 @@ class OrderController extends Controller
 				'myparcel_signature'        => (bool) data_get($delivery, 'shipmentOptions.signature'),
 				'myparcel_insurance_amount' => data_get($delivery, 'shipmentOptions.insurance'),
 			]);
+
+			// Zending direct aanmaken bij MyParcel (voor betaling)
+			try {
+				$useShipping = $request->boolean('alt-shipping') && filled($request->input('shipping_street')) && filled($request->input('shipping_housenumber'));
+				$fullStreet = static function ($street, $nr, $add) {
+					$street = trim((string) $street);
+					$nr     = trim((string) $nr);
+					$add    = trim((string) $add);
+					if ($street === '' || $nr === '') return '';
+					return trim($street.' '.$nr.($add ? ' '.$add : ''));
+				};
+
+				$address = [
+					'cc'         => $useShipping ? $request->input('shipping_country') : $request->input('billing_country'),
+					'name'       => $useShipping
+						? trim($request->input('shipping_first_name').' '.$request->input('shipping_last_name'))
+						: trim($request->input('billing_first_name').' '.$request->input('billing_last_name')),
+					'company'    => $useShipping ? $request->input('shipping_company') : $request->input('billing_company'),
+					'email'      => $request->input('billing_email'),
+					'phone'      => $useShipping ? $request->input('shipping_phone') : $request->input('billing_phone'),
+					'fullStreet' => $useShipping
+						? $fullStreet($request->input('shipping_street'), $request->input('shipping_housenumber'), $request->input('shipping_housenumber-add'))
+						: $fullStreet($request->input('billing_street'),  $request->input('billing_housenumber'),  $request->input('billing_housenumber-add')),
+					'postalCode' => preg_replace('/\s+/', '', $useShipping ? $request->input('shipping_postal-zip-code') : $request->input('billing_postal-zip-code')),
+					'city'       => $useShipping ? $request->input('shipping_city') : $request->input('billing_city'),
+				];
+
+				$shipping = [
+					'order_id'  => $order->id,
+					'reference' => 'order-'.$order->id,
+					'carrier'   => $order->myparcel_carrier ?: 'postnl',
+					'address'   => $address,
+					'delivery'  => [
+						'packageTypeId' => $order->myparcel_package_type_id ?: 1,
+						'onlyRecipient' => (bool) $order->myparcel_only_recipient,
+						'signature'     => (bool) $order->myparcel_signature,
+						'insurance'     => $order->myparcel_insurance_amount,
+						'deliveryType'  => $delivery['deliveryType'] ?? 'standard',
+						'is_pickup'     => (bool) ($delivery['isPickup'] ?? false),
+						'pickup'        => $delivery['pickup'] ?? null,
+					],
+				];
+
+				Log::info('MyParcel shipment: creating concept', [
+					'order' => $order->id,
+					'carrier' => $shipping['carrier'],
+					'useShipping' => $useShipping,
+					'addr_cc' => $address['cc'],
+					'addr_name' => $address['name'] ?? null,
+					'addr_fullStreet' => $address['fullStreet'],
+					'addr_postal' => $address['postalCode'],
+					'addr_city' => $address['city'],
+					'deliveryType' => $shipping['delivery']['deliveryType'],
+					'is_pickup' => $shipping['delivery']['is_pickup'],
+					'pickup_cc' => data_get($shipping, 'delivery.pickup.cc'),
+					'retail_network_id' => data_get($shipping, 'delivery.pickup.retail_network_id'),
+					'location_code' => data_get($shipping, 'delivery.pickup.location_code'),
+				]);
+
+				$result = app(MyParcelService::class)->createShipment($shipping);
+
+				if (empty($result['consignment_id'])) {
+					Log::warning('MyParcel shipment: no consignment id returned', [
+						'order' => $order->id,
+						'result' => $result,
+					]);
+				}
+
+				$order->update([
+					'myparcel_consignment_id'  => $result['consignment_id'] ?? null,
+					'myparcel_track_trace_url' => $result['track_trace_url'] ?? null,
+					'myparcel_label_link'      => $result['label_link'] ?? null,
+				]);
+			} catch (\Throwable $e) {
+				Log::error('MyParcel shipment create failed', [
+					'order' => $order->id,
+					'error' => $e->getMessage(),
+				]);
+				// Sla de order op zonder zending indien iets misgaat
+			}
 
 			// Maak een Mollie-betaallink (betaling nog niet voltooid)
 			$webhookUrl = match (config('app.env')) {
