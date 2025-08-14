@@ -13,6 +13,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductCategoryController;
+use App\Http\Controllers\PickupLocationController;
 
 
 // Both admin and user can access
@@ -106,8 +108,4 @@ Route::post('/webhooks/mollie', [CheckoutController::class, 'payment
 Webhook'])->name('webhooks.mollie');
 
 // Admin/custom pickup locations API (used by admin order page custom widget)
-use App\Http\Controllers\PickupLocationController;
-use App\Http\Controllers\ProductCategoryController;
 Route::get('/pickup-locations', [PickupLocationController::class, 'index'])->name('pickup.locations');
-
-Route::get('/test', [TestController::class, 'index']);
