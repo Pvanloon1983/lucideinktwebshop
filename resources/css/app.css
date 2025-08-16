@@ -2118,7 +2118,7 @@ i {
   max-width: 1000px;
   font-family: 'Roca', serif;
   /* Fluid type: clamps across viewports */
-  font-size: clamp(28px, 6vw, 62px);
+  font-size: clamp(28px, 6vw, 58px);
   line-height:1.5;
   text-align: center;
   color: #4b2e19;
@@ -2143,6 +2143,7 @@ i {
   padding: 15px 30px;
   transition: background-color 0.3s ease-in-out;
   border-radius: 6px;
+  font-weight: bold;
 }
 
 .hero__content .btn i { color: #fff; }
@@ -2181,6 +2182,7 @@ i {
     padding-top: 140px; 
     padding-bottom:80px; 
   }
-  .hero__content .btn { margin-top: 30px; }
+  .hero__content .btn { 
+    margin-top: 30px; }
 }
 
