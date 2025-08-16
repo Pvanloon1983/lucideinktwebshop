@@ -2187,6 +2187,9 @@ i {
     padding-bottom:80px; 
   }
   .hero__content .btn { 
-    margin-top: 30px; }
+    margin-top: 30px;
+    padding: 13px 25px;
+  }
+  
 }
 
