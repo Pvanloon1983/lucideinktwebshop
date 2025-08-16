@@ -19,6 +19,12 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Roca';
+  src: url('../fonts/roca/Roca-Black.ttf') format('opentype');
+  font-style: normal;
+}
+
 :root {
   --main-color: #ab0f14;
   --secondary-color: #fffcf4;
@@ -2075,3 +2081,106 @@ i {
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== Hero ===== */
+.hero{
+  position: relative;
+  width:100%;
+  min-height: 100vh;    
+  background-size: cover;
+  background-position: right center;
+  background-repeat: no-repeat;
+  display:flex;
+  align-items:center;
+  justify-content:center; /* text in the middle */
+  text-align:center;
+  padding: 1rem;
+}
+
+/* visibility wrappers for hero variants */
+.hero-desktop { display: block; }
+.hero-mobile  { display: none; }
+
+@media only screen and (max-width: 768px) {
+  .hero-desktop { display: none; }
+  .hero-mobile  { display: block; }
+}
+
+.hero__overlay{
+  position:absolute; inset:0;
+  /* slightly stronger by default for better contrast on text */
+  background: linear-gradient(to bottom, rgba(255,255,255,0.55), rgba(255,255,255,0.35));
+  /* background: rgba(0,0,0,.35);  */
+}
+
+.hero__content{
+  position:relative; /* boven overlay */
+  max-width: 1000px;
+  font-family: 'Roca', serif;
+  /* Fluid type: clamps across viewports */
+  font-size: clamp(28px, 6vw, 62px);
+  line-height:1.5;
+  text-align: center;
+  color: #4b2e19;
+  padding-top: 140px;
+  padding-bottom: 50px;
+}
+
+.hero__content p { margin-bottom: 0; }
+
+.hero__content h1{
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 900;
+  margin-top: 1rem;
+}
+
+.hero__content .btn {
+  display:inline-block;
+  background-color: var(--main-color);
+  color:#fff;
+  text-decoration:none;
+  font-size: clamp(16px, 2vw, 20px);
+  padding: 15px 30px;
+  transition: background-color 0.3s ease-in-out;
+  border-radius: 6px;
+}
+
+.hero__content .btn i { color: #fff; }
+
+.hero__content .btn:hover { 
+  background-color:#c02225 !important; 
+}
+
+/* breakpoints: adjust overlay once and scale text */
+
+/* Adjust overlay and spacing at breakpoints */
+@media only screen and (max-width: 1200px) {
+  .hero__content{ padding-top: 110px; }
+  .hero__overlay{ background: linear-gradient(to bottom, rgba(255,255,255,0.7), rgba(255,255,255,0.5)); }
+}
+
+@media only screen and (max-width: 992px) {
+  .hero{ 
+    min-height: 0vh; 
+  }
+  .hero__content{ 
+    padding-top: 150px;
+    padding-bottom: 90px; 
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  /* On small screens center crop the subject better */
+  .hero{ 
+    background-position: center; 
+    min-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  .hero__content{ 
+    padding-top: 140px; 
+    padding-bottom:80px; 
+  }
+  .hero__content .btn { margin-top: 30px; }
+}
+
