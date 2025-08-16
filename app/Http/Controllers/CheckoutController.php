@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Product;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Mollie\Api\MollieApiClient;
@@ -153,7 +154,38 @@ class CheckoutController extends Controller
             'status' => 'pending',
         ]);
 
+
+
+        $insufficientStock = [];
         foreach ($cart as $item) {
+            $product = Product::find($item['product_id']);
+            if ($product && $product->stock < $item['quantity']) {
+            $insufficientStock[] = "{$product->title}<br>(op voorraad: {$product->stock})";
+            }
+        }
+
+        if (!empty($insufficientStock)) {
+            return back()->withInput()->withErrors([
+                    'stock' => 'Niet voldoende voorraad:<br>' . implode('<br>', $insufficientStock)
+            ]);
+        }
+        
+        foreach ($cart as $item) {
+            // Als voldoende voorraad, verlaag de voorraad
+            if ($product && $product->stock >= $item['quantity']) {
+                $product->stock -= $item['quantity'];
+                $product->save();
+            }
+
+            $order->items()->create([
+                'product_id'  => $item['product_id'],
+                'product_name'=> $item['name'],
+                'quantity'    => $item['quantity'],
+                'unit_price'  => $item['price'],
+                'subtotal'    => $item['price'] * $item['quantity'],
+            ]);
+
+            
             $order->items()->create([
                 'product_id'  => $item['product_id'],
                 'product_name'=> $item['name'],

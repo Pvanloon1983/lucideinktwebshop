@@ -193,8 +193,32 @@ class OrderController extends Controller
 				'discount_price_total' => $discountAmount,
 			]);
 
+
+			// Controleer voorraad vóór het aanmaken van order items
+			$insufficientStock = [];
+			foreach ($lines as $line) {
+				$product = Product::find($line['product_id']);
+				if ($product && $product->stock < $line['qty']) {
+					$insufficientStock[] = "{$product->title}<br>(op voorraad: {$product->stock})";
+				}
+			}
+
+			if (!empty($insufficientStock)) {
+					return back()->withInput()->withErrors([
+							'stock' => 'Niet voldoende voorraad:<br>' . implode('<br>', $insufficientStock)
+					]);
+			}
+
 			// Order items
 			foreach ($lines as $line) {
+
+				$product = Product::find($line['product_id']);
+					// Als voldoende voorraad, verlaag de voorraad
+					if ($product && $product->stock >= $line['product_id']) {
+							$product->stock -= $line['product_id'];
+							$product->save();
+					}
+
 				$order->items()->create([
 					'product_id'   => $line['product_id'],
 					'product_name' => $line['title'],

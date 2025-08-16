@@ -19,14 +19,6 @@
   font-style: normal;
 }
 
-@font-face {
-  font-family: 'Roca';
-  src: url('../fonts/roca/Roca-Black.ttf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-}
-
-
 :root {
   --main-color: #ab0f14;
   --secondary-color: #fffcf4;
@@ -51,7 +43,7 @@ body {
   padding: 0;
   font-family: var(--font-regular);
   color: var(--main-font-color);
-  background: #fff;
+  background: var(--secondary-color);
   line-height: 1.8;
   font-size: var(--text-font-size-page);
 }
@@ -819,6 +811,52 @@ i {
   padding: 0 15px;
 }
 
+.hero-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  max-width: 100vw;
+  min-height: 220px;
+  height: auto;
+  overflow: hidden;
+  padding-top: 100px;
+}
+
+.rotating-image {
+  animation: spin 30s linear infinite;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 600px;
+  min-width: 220px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  display: block;
+}
+
+@media only screen and (max-width: 992px) {
+  .rotating-image {
+    max-width: 550px;
+    min-width: 180px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .hero-image {
+    min-height: 180px;
+  }
+  .rotating-image {
+    max-width: 350px;
+    min-width: 120px;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
 /*=== Admin panel Sidebar ===*/
 .admin-sidebar-toggle {
   display: flex;
@@ -1510,6 +1548,27 @@ i {
   color: var(--main-font-color);
 }
 
+.product-stock {
+  font-size: 15px;
+  margin-top: -20px;
+}
+
+.product-stock .low-stock {
+  color: #2e7d32; /* Better green for low stock */
+}
+
+.product-stock .no-stock {
+  color: #b30000; /* Better red for no stock */
+}
+
+.book-box .product-stock {
+  font-size: 14px;
+}
+
+.book-box .product-stock p {
+  margin-bottom: 10px;
+}
+
 @media only screen and (max-width: 992px) {
   .single-product {
     display: flex;
@@ -1746,7 +1805,10 @@ i {
   border-top: 1px solid #d8d8d8;
 }
 
-  
+.order-details .back-to-cart {
+  margin-bottom: 10px;
+}
+
 .page.checkout .order-details {
   overflow-x: auto;
   max-width: 100%;
@@ -2082,178 +2144,4 @@ i {
   .order-grid {
     grid-template-columns: 1fr;
   }
-}
-
-/* ===== Hero (Animated, no image) ===== */
-.hero {
-  position: relative;
-  width: 100%;
-  min-height: 60vh;
-  display: flex;
-  align-items: center;
-  justify-content: center; /* center text */
-  text-align: center;
-  padding: 0;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-.hero-animated {
-  /* Simple, static background (no animation) */
-  background: linear-gradient(180deg, #fff7f2, #fff);
-  background-position: center;
-  background-repeat: no-repeat;
-  overflow: hidden;
-}
-
-/* Removed decorative blobs/animation */
-
-.hero-animated .hero__overlay {
-  background: linear-gradient(to bottom, rgba(255,255,255,0.60), rgba(255,255,255,0.35));
-}
-
-.hero__overlay {
-  /* Ensure overlay covers the hero and sits above the background */
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-}
-
-.hero__content {
-  max-width: 1000px;
-  font-family: serif;
-  font-size: clamp(28px, 6vw, 62px);
-  line-height: 1.5;
-  color: #4b2e19;
-  padding: 150px 16px 75px 16px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 2; /* Above overlay */
-}
-
-.hero__content p {
-  margin-bottom: 0;
-}
-
-.hero__content .btn {
-  border: none;
-  background-color: var(--main-color);
-  color: #fff;
-  border-radius: 6px;
-  padding: 12px 28px;
-  font-size: clamp(16px, 2vw, 20px);
-  transition: background-color 0.2s ease-in-out;
-}
-.hero__content .btn:hover { background-color: #c02225; }
-
-@media (max-width: 992px) {
-  /* no animated background scaling needed */
-}
-@media (max-width: 768px) {
-  .hero-animated .hero__content { padding-top: 90px; }
-}
-/* No animations used */
-
-/* ===== Hero (Nursi-inspired, serene) ===== */
-.hero-nursi {
-  /* Soft parchment feel using layered gradients, no motion */
-  background:
-    radial-gradient(1200px 800px at 50% 0%, rgba(171,15,20,0.04), rgba(171,15,20,0) 60%),
-    linear-gradient(180deg, #fffbf4 0%, #fffefb 40%, #ffffff 100%);
-}
-
-.hero-nursi .hero__overlay {
-  /* Portrait (top layer) + gentle vignette (bottom layer) */
-  background:
-    url('/images/nursi.png') no-repeat left 150px bottom 0 / clamp(280px, 32vw, 420px),
-    radial-gradient(1200px 800px at center, rgba(255,255,255,0) 60%, rgba(0,0,0,0.03) 100%);
-  opacity: 0.15; /* subtle */
-  transform: scaleX(-1); /* mirror if desired; remove if not needed */
-}
-
-@media (max-width: 1200px) {
-  .hero-nursi .hero__overlay {
-    background:
-      url('/images/nursi.png') no-repeat left 80px bottom 0 / clamp(340px, 36vw, 340px),
-      radial-gradient(1000px 700px at center, rgba(255,255,255,0) 60%, rgba(0,0,0,0.03) 100%);
-  }
-}
-
-@media (max-width: 768px) {
-  .hero-nursi .hero__overlay {
-    /* Smaller portrait and closer to edge on mobile */
-    background:
-      url('/images/nursi.png') no-repeat left 24px bottom 0 / clamp(340px, 40vw, 260px),
-      radial-gradient(900px 600px at center, rgba(255,255,255,0) 60%, rgba(0,0,0,0.03) 100%);
-  }
-}
-
-@media (max-width: 600px) {
-  .hero-nursi .hero__overlay {
-    /* Smaller portrait and closer to edge on mobile */
-    background:
-      url('/images/nursi.png') no-repeat left 24px bottom 0 / clamp(290px, 40vw, 260px),
-      radial-gradient(900px 600px at center, rgba(255,255,255,0) 60%, rgba(0,0,0,0.03) 100%);
-  }
-}
-
-
-.hero-nursi .hero__content {
-  max-width: 900px;
-  color: #5a3e2b; /* warm ink */
-  font-size: clamp(22px, 4.5vw, 44px);
-  line-height: 1.55;
-  padding-top: 150px;
-  padding-bottom: 75px;
-}
-
-@media (max-width: 768px) {
-  .hero-nursi .hero__content {
-    padding-top: 150px;
-    padding-bottom: 75px;
-  }
-  .hero {
-    min-height: 0vh;
-    padding: 0;
-  }
-}
-
-@media (max-width: 600px) {
-  .hero-nursi .hero__content {
-    padding-top: 120px;
-    padding-bottom: 60px;
-  }
-  .hero {
-    min-height: 0vh;
-    padding: 0;
-  }
-}
-
-.hero-nursi .hero__eyebrow {
-  display: block;
-  font-family: 'Barla', serif; /* decorative script */
-  font-size: clamp(22px, 3.2vw, 36px);
-  color: #8a5a3a;
-  margin-bottom: 8px;
-}
-
-.hero-nursi .hero__divider {
-  width: 120px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, #c9b8a8, transparent);
-  margin: 14px auto 18px;
-  position: relative;
-}
-
-.hero-nursi .hero__divider::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: -3px;
-  width: 6px;
-  height: 6px;
-  background: #c9b8a8;
-  transform: translateX(-50%) rotate(45deg);
 }

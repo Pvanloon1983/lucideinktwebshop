@@ -9,6 +9,18 @@
       </div>
     @endif
 
+    @if($errors->has('stock'))
+      <div class="alert alert-error">
+          <div>
+            <div>
+              <a style="text-decoration: none" href="{{ route('cartPage') }}">← Terug naar winkelwagen</a>
+            </div>
+            {!! $errors->first('stock') !!}
+          </div>  
+          <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+       </div>
+    @endif
+
     <form class="form" action="{{ route('storeCheckout') }}" method="POST">
       @csrf
       <div class="checkout-grid">
@@ -183,6 +195,8 @@
         </div>
 
         <div class="item order-details">
+          <p class="back-to-cart"><a href="{{ route('cartPage') }}">← Terug naar winkelwagen</a></p>
+
           <h3>Bestelling</h3>
 
           <table class="order-table" style="width:100%;">

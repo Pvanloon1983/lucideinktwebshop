@@ -9,6 +9,13 @@
       </div>
     @endif
 
+    @if($errors->has('stock'))
+      <div class="alert alert-error">
+          {!! $errors->first('stock') !!}
+          <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
+       </div>
+    @endif
+
     <form class="form" action="{{ route('orderStore') }}" method="POST">
       @csrf
 

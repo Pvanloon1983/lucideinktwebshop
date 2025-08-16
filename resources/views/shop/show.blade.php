@@ -50,6 +50,14 @@
 						<input type="hidden" name="quantity" value="1">
 						<button type="submit" class="add-to-cart-button btn"><span class="loader"></span>Aan winkelmand toevoegen</button>	
 					</form>	
+
+					<div class="product-stock">
+						@if ($product->stock > 0 && $product->stock <= 3)
+							<p class="low-stock">Nog maar {{$product->stock}} op voorraad</p>
+						@elseif ($product->stock == 0)
+							<p class="no-stock">Niet meer op voorraad</p>
+						@endif
+					</div>
 				</div>
 			@else
 				<p>Geen product gevonden</p>

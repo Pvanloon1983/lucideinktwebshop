@@ -32,6 +32,15 @@
 				) }}" alt="">
 				</div>
 				<h6 class="title">{{ $product->title }}</h6>
+
+				<div class="product-stock">
+					@if ($product->stock > 0 && $product->stock <= 3)
+						<p class="low-stock">Nog maar {{$product->stock}} op voorraad</p>
+					@elseif ($product->stock == 0)
+						<p class="no-stock">Niet meer op voorraad</p>
+					@endif
+				</div>
+
 				@if (isset($product->category) && !empty($product->category->name))
 					<p class="category">{{ $product->category->name }}</p>
 				@endif
