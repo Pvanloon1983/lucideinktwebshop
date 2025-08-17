@@ -11,6 +11,8 @@ use Mollie\Api\MollieApiClient;
 use App\Services\MyParcelService;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class CheckoutController extends Controller
 {
@@ -145,57 +147,64 @@ class CheckoutController extends Controller
             $customerData
         );
 
-        // --- Calculating total price
+    // --- Calculating total price (netto som; afronding voor Mollie gebeurt later)
         $total = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
 
-        // --- Order + items
-        $order = $customer->orders()->create([
-            'total'  => $total,
-            'status' => 'pending',
-        ]);
+        // --- Order + items + stock in één transactie
+        // Gebruik een DB-transactie voor atomaire verwerking:
+        // - vergrendelt product-rijen met lockForUpdate
+        // - voorkomt race conditions en halve orders (alles of niets)
+        $order = null;
+        try {
+            DB::transaction(function () use ($cart, $customer, $total, &$order) {
+                $insufficient = [];
+                $locked = [];
+                // Lock producten en valideer voorraad
+                foreach ($cart as $item) {
+                    // lockForUpdate: vergrendelt de productrij tot einde transactie om overselling te voorkomen
+                    $product = Product::whereKey($item['product_id'])->lockForUpdate()->first();
+                    if (!$product) {
+                        $insufficient[] = ($item['name'] ?? 'Onbekend product') . '<br>(niet meer beschikbaar)';
+                        continue;
+                    }
+                    if ($product->stock < $item['quantity']) {
+                        $insufficient[] = $product->title . '<br>(op voorraad: ' . $product->stock . ')';
+                        continue;
+                    }
+                    $locked[] = [$product, $item];
+                }
 
+                // Als er voorraadproblemen zijn: gooi ValidationException -> rollback en nette melding
+                if (!empty($insufficient)) {
+                    throw ValidationException::withMessages([
+                        'stock' => 'Niet voldoende voorraad:<br>' . implode('<br>', $insufficient)
+                    ]);
+                }
 
+                // Order aanmaken
+                $order = $customer->orders()->create([
+                    'total'  => $total,
+                    'status' => 'pending',
+                ]);
 
-        $insufficientStock = [];
-        foreach ($cart as $item) {
-            $product = Product::find($item['product_id']);
-            if ($product && $product->stock < $item['quantity']) {
-            $insufficientStock[] = "{$product->title}<br>(op voorraad: {$product->stock})";
-            }
+                // Voorraad verlagen en orderregels vastleggen (binnen dezelfde transactie)
+                foreach ($locked as [$product, $item]) {
+                    // Atomic decrement van de voorraad binnen de transactie
+                    $product->decrement('stock', (int) $item['quantity']);
+                    $order->items()->create([
+                        'product_id'   => $item['product_id'],
+                        'product_name' => $item['name'],
+                        'quantity'     => $item['quantity'],
+                        'unit_price'   => $item['price'],
+                        'subtotal'     => $item['price'] * $item['quantity'],
+                    ]);
+                }
+            });
+        } catch (ValidationException $e) {
+            return back()->withInput()->withErrors($e->errors());
         }
 
-        if (!empty($insufficientStock)) {
-            return back()->withInput()->withErrors([
-                    'stock' => 'Niet voldoende voorraad:<br>' . implode('<br>', $insufficientStock)
-            ]);
-        }
-        
-        foreach ($cart as $item) {
-            // Als voldoende voorraad, verlaag de voorraad
-            if ($product && $product->stock >= $item['quantity']) {
-                $product->stock -= $item['quantity'];
-                $product->save();
-            }
-
-            $order->items()->create([
-                'product_id'  => $item['product_id'],
-                'product_name'=> $item['name'],
-                'quantity'    => $item['quantity'],
-                'unit_price'  => $item['price'],
-                'subtotal'    => $item['price'] * $item['quantity'],
-            ]);
-
-            
-            $order->items()->create([
-                'product_id'  => $item['product_id'],
-                'product_name'=> $item['name'],
-                'quantity'    => $item['quantity'],
-                'unit_price'  => $item['price'],
-                'subtotal'    => $item['price'] * $item['quantity'],
-            ]);
-        }
-
-    // --- MyParcel widget-output opslaan + server-side validatie voor pickup
+        // --- MyParcel widget-output opslaan + server-side validatie voor pickup
         $deliveryJson = $request->input('myparcel_delivery_options');
         $delivery     = json_decode($deliveryJson ?? '[]', true) ?: [];
 
@@ -226,7 +235,6 @@ class CheckoutController extends Controller
             }
         }
 
-    // Hierna mag je het opslaan zoals je al deed:
         $order->update([
             'myparcel_delivery_json'    => $deliveryJson,
             'myparcel_is_pickup'        => $isPickup,
@@ -238,7 +246,8 @@ class CheckoutController extends Controller
             'myparcel_insurance_amount' => data_get($delivery, 'shipmentOptions.insurance'),
         ]);
 
-        // --- Maak zending direct aan bij MyParcel (voor betaling), net als admin orders
+    // --- Maak zending direct aan bij MyParcel (voor betaling), net als admin orders
+    // Let op: buiten de DB-transactie houden; externe API-calls kunnen traag/foutgevoelig zijn
         try {
             $useShipping = $request->boolean('alt-shipping')
                 && filled($request->input('shipping_street'))
@@ -422,14 +431,15 @@ class CheckoutController extends Controller
             ],
             ];
 
-            // >>> MyParcel zending aanmaken (zorg dat je service pickup ondersteunt – zie snippet hieronder)
-            $result = app(MyParcelService::class)->createShipment($shipping);
-
-            $order->update([
-                'myparcel_consignment_id'  => $result['consignment_id'] ?? null,
-                'myparcel_track_trace_url' => $result['track_trace_url'] ?? null,
-                'myparcel_label_link'      => $result['label_link'] ?? null,
-            ]);
+            // >>> MyParcel zending aanmaken alleen als er nog geen concept is
+            if (!$order->myparcel_consignment_id) {
+                $result = app(MyParcelService::class)->createShipment($shipping);
+                $order->update([
+                    'myparcel_consignment_id'  => $result['consignment_id'] ?? null,
+                    'myparcel_track_trace_url' => $result['track_trace_url'] ?? null,
+                    'myparcel_label_link'      => $result['label_link'] ?? null,
+                ]);
+            }
 
             session()->forget('cart');
             return view('checkout.success', ['success' => 'Je betaling is geslaagd!', 'error' => null, 'info' => null]);
