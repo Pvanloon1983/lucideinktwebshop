@@ -724,4 +724,30 @@ document.addEventListener('DOMContentLoaded', function () {
       hidden.dispatchEvent(new Event('change'));
   }
 
+  // Scroll effect header
+  var header = document.querySelector('.header');
+  var logo = document.querySelector('.logo-container');
+
+  function handleScroll() {
+    if (window.scrollY > 10) {
+      header.classList.add('scrolled');
+      if (window.innerWidth > 992 && logo) {
+        logo.style.display = 'none';
+      }
+    } else {
+      header.classList.remove('scrolled');
+      if (logo) {
+        logo.style.display = '';
+      }
+    }
+  }
+
+  window.addEventListener('scroll', handleScroll);
+  window.addEventListener('resize', function() {
+    // Show logo again if resizing back above 992px and not scrolled
+    if (window.innerWidth > 992 && window.scrollY <= 10 && logo) {
+      logo.style.display = '';
+    }
+  });
+
 });
