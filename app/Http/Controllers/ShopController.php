@@ -16,9 +16,9 @@ class ShopController extends Controller
         return view('shop.index', ['products' => $products]);
     }
 
-    public function show(string $id)
+    public function show(string $slug)
     {
-        $product = Product::findOrFail($id);
+        $product = Product::where('slug', $slug)->firstOrFail();
 
         return view('shop.show', ['product' => $product]);
     }

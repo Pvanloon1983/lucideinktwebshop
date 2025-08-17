@@ -102,6 +102,11 @@ button {
   gap: 5px;
 }
 
+.btn.small {
+  font-size: 14px;
+  padding: 8px 15px;
+}
+
 .btn:hover {
   background-color: #c02225 !important;
 }
@@ -1273,12 +1278,33 @@ i {
 }
 
 .page.shop .book-box .card {
+  position: relative;
   background: #fff;
   box-shadow: rgba(0, 0, 0, 0.1) 0 1px 3px, rgba(0, 0, 0, 0.06) 0 1px 2px;
   padding: 18px 18px 16px;
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.page.shop .book-box .card .product-stock {
+  position: absolute;
+}
+
+.page.shop .book-box .card .product-stock p {
+  margin-bottom: 0;
+}
+
+.page.shop .book-box .card .product-stock .no-stock {
+  background-color: #b30000;
+  color: #fff;
+  padding: 5px 10px;
+}
+
+.page.shop .book-box .card .product-stock .low-stock {
+  background-color: #2e7d32;
+  color: #fff;
+  padding: 5px 10px;
 }
 
 .page.shop .card img {
@@ -1290,17 +1316,16 @@ i {
 }
 
 .page.shop .card .title {
-  font-size: 1.18rem;
+  font-size: 16px;
   font-weight: 600;
   color: var(--main-font-color);
   margin-top: 0.5em;
   letter-spacing: 0.01em;
-  min-height: 2.5em;
   line-height: 1.3;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: normal;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .page.shop .card .category {
@@ -1316,7 +1341,7 @@ i {
   font-weight: bold;
   color: #ab0f14;
   margin-top: auto;
-  margin-bottom: 0.2em;
+  margin-bottom: 0;
   letter-spacing: 0.01em;
   display: flex;
   align-items: center;
@@ -1463,7 +1488,7 @@ i {
 
 .product-stock {
   font-size: 15px;
-  margin-top: -20px;
+  margin-top: -10px;
 }
 
 .product-stock .low-stock {
@@ -1476,6 +1501,7 @@ i {
 
 .book-box .product-stock {
   font-size: 14px;
+  margin-top: 0px;
 }
 
 .book-box .product-stock p {
@@ -1530,6 +1556,7 @@ i {
 @media (max-width: 992px) {
   .total-cart-box .button-box {
     flex-direction: column;
+    align-items: flex-start;
   }
 
   .page.cart .table thead {
