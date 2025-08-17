@@ -11,7 +11,7 @@
             </div>
         @endif
 
-		    @if($errors->has('stock'))
+		@if($errors->has('stock'))
 		<div class="alert alert-error">
 			<div>
 				{!! $errors->first('stock') !!}

@@ -107,9 +107,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
       }
 
-  // Hard reset and schedule a single debounced rebuild
-  try { hardResetMyParcelState(); } catch (_) {}
-  schedulePickupRebuild(260);
+      // Hard reset and schedule a single debounced rebuild
+      try { hardResetMyParcelState(); } catch (_) { }
+      schedulePickupRebuild(260);
     });
   }
 
@@ -176,24 +176,24 @@ document.addEventListener('DOMContentLoaded', function () {
   // Toggle between map and list-only. Set to false to completely avoid Leaflet.
   const USE_MAP = false;
 
-    // Debounce + in-flight guard to prevent multiple mounts/loads
-    let __mpRefreshTimer = null;
-    let __mpLoading = false; // true while a pickup widget load is in-flight
-    function schedulePickupRebuild(delay = 240) {
-      if (__mpLoading) return; // skip scheduling while loading
-      if (__mpRefreshTimer) clearTimeout(__mpRefreshTimer);
-      __mpRefreshTimer = setTimeout(() => {
-        if (__mpLoading) return; // re-check guard
-        toggleShippingBlocks();
-        const mode = document.querySelector('input[name="ship_mode"]:checked')?.value || 'delivery';
-        if (mode === 'pickup') {
-          if (USE_CUSTOM_PICKUP) { mountCustomPickupWidget(); }
-          else { mountPickupWidget(); }
-        } else {
-          setDeliverySelection();
-        }
-      }, delay);
-    }
+  // Debounce + in-flight guard to prevent multiple mounts/loads
+  let __mpRefreshTimer = null;
+  let __mpLoading = false; // true while a pickup widget load is in-flight
+  function schedulePickupRebuild(delay = 240) {
+    if (__mpLoading) return; // skip scheduling while loading
+    if (__mpRefreshTimer) clearTimeout(__mpRefreshTimer);
+    __mpRefreshTimer = setTimeout(() => {
+      if (__mpLoading) return; // re-check guard
+      toggleShippingBlocks();
+      const mode = document.querySelector('input[name="ship_mode"]:checked')?.value || 'delivery';
+      if (mode === 'pickup') {
+        if (USE_CUSTOM_PICKUP) { mountCustomPickupWidget(); }
+        else { mountPickupWidget(); }
+      } else {
+        setDeliverySelection();
+      }
+    }, delay);
+  }
   // Use our own simple pickup widget that loads locations from a JSON file.
   const USE_CUSTOM_PICKUP = true;
 
@@ -206,12 +206,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
   function currentAddress() {
     const alt = document.querySelector('input[name="alt-shipping"]')?.checked;
-    const cc       = alt ? (getTrim('shipping_country') || 'NL') : (getTrim('billing_country') || 'NL');
-    const postal   = (alt ? getTrim('shipping_postal-zip-code') : getTrim('billing_postal-zip-code')).replace(/\s+/g, '').toUpperCase();
-    const street   = alt ? getTrim('shipping_street') : getTrim('billing_street');
-    const number   = alt ? getTrim('shipping_housenumber') : getTrim('billing_housenumber');
-    const suffix   = alt ? getTrim('shipping_housenumber-add') : getTrim('billing_housenumber-add');
-    const city     = alt ? getTrim('shipping_city') : getTrim('billing_city');
+    const cc = alt ? (getTrim('shipping_country') || 'NL') : (getTrim('billing_country') || 'NL');
+    const postal = (alt ? getTrim('shipping_postal-zip-code') : getTrim('billing_postal-zip-code')).replace(/\s+/g, '').toUpperCase();
+    const street = alt ? getTrim('shipping_street') : getTrim('billing_street');
+    const number = alt ? getTrim('shipping_housenumber') : getTrim('billing_housenumber');
+    const suffix = alt ? getTrim('shipping_housenumber-add') : getTrim('billing_housenumber-add');
+    const city = alt ? getTrim('shipping_city') : getTrim('billing_city');
     // Gate on required fields for pickup lookup: cc + postal + number
     if (!number || !postal || !cc) return null;
     return {
@@ -235,9 +235,9 @@ document.addEventListener('DOMContentLoaded', function () {
       widget.style.display = '';
       widget.style.minHeight = '340px';
     }
-        // Strong reset then schedule a single debounced rebuild
-        try { hardResetMyParcelState(); } catch (_) {}
-        schedulePickupRebuild(260);
+    // Strong reset then schedule a single debounced rebuild
+    try { hardResetMyParcelState(); } catch (_) { }
+    schedulePickupRebuild(260);
   }
 
   // Strong reset similar to WooCommerce behavior: replace node, clear state & storage
@@ -260,7 +260,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 3) Drop in-memory config if present
-    try { if (window.MyParcelConfig) delete window.MyParcelConfig; } catch (_) {}
+    try { if (window.MyParcelConfig) delete window.MyParcelConfig; } catch (_) { }
 
     // 4) Purge likely related storage keys
     try {
@@ -275,7 +275,7 @@ document.addEventListener('DOMContentLoaded', function () {
       };
       clearKeys(window.localStorage);
       clearKeys(window.sessionStorage);
-    } catch (_) {}
+    } catch (_) { }
   }
 
   function isElementVisible(el) {
@@ -291,10 +291,10 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function mountPickupWidget(retry = 0) {
-  if (typeof __mpLoading !== 'undefined' && __mpLoading) return;
-  if (typeof __mpLoading !== 'undefined') __mpLoading = true;
+    if (typeof __mpLoading !== 'undefined' && __mpLoading) return;
+    if (typeof __mpLoading !== 'undefined') __mpLoading = true;
     const wrap = document.getElementById('myparcel-wrapper');
-    const msg  = document.getElementById('myparcel-address-message');
+    const msg = document.getElementById('myparcel-address-message');
     const addr = currentAddress();
 
     if (wrap) {
@@ -306,12 +306,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // If wrapper is not visible yet (e.g., due to CSS transitions), retry shortly
     if (wrap && !isElementVisible(wrap)) {
       if (retry < 12) {
-  if (typeof __mpLoading !== 'undefined') __mpLoading = false;
-  return setTimeout(() => mountPickupWidget(retry + 1), 100 + retry * 50);
+        if (typeof __mpLoading !== 'undefined') __mpLoading = false;
+        return setTimeout(() => mountPickupWidget(retry + 1), 100 + retry * 50);
       }
     }
-  // Fully reset before every mount to avoid stale, non-interactive instances
-  hardResetMyParcelState();
+    // Fully reset before every mount to avoid stale, non-interactive instances
+    hardResetMyParcelState();
 
     if (!addr) {
       if (msg) { msg.style.display = ''; msg.textContent = 'Vul eerst een volledig adres in om afhaalpunten te tonen.'; }
@@ -329,7 +329,7 @@ document.addEventListener('DOMContentLoaded', function () {
       containerEl.style.opacity = '1';
     }
 
-  const configuration = {
+    const configuration = {
       selector: '#myparcel-delivery-options',
       address: addr,
       config: {
@@ -337,10 +337,10 @@ document.addEventListener('DOMContentLoaded', function () {
         locale: LOCALE,
         allowDeliveryOptions: false,
         allowPickupLocations: true,
-  // Let the widget handle small address corrections internally (like Woo)
-  allowRetry: true,
-    pickupLocationsDefaultView: USE_MAP ? 'map' : 'list',
-    allowPickupLocationsViewSelection: USE_MAP,
+        // Let the widget handle small address corrections internally (like Woo)
+        allowRetry: true,
+        pickupLocationsDefaultView: USE_MAP ? 'map' : 'list',
+        allowPickupLocationsViewSelection: USE_MAP,
         carrierSettings: { postnl: {} },
         showDeliveryDate: false,
         showPrices: false,
@@ -359,11 +359,11 @@ document.addEventListener('DOMContentLoaded', function () {
     try {
       const evWin = new CustomEvent('myparcel_update_delivery_options', { detail: configuration });
       window.dispatchEvent(evWin);
-    } catch (_) {}
+    } catch (_) { }
     try {
       const evDoc = new CustomEvent('myparcel_update_delivery_options', { detail: configuration });
       document.dispatchEvent(evDoc);
-    } catch (_) {}
+    } catch (_) { }
 
     // Only do resize nudges if we use the map view
     if (USE_MAP) {
@@ -374,12 +374,12 @@ document.addEventListener('DOMContentLoaded', function () {
       try {
         const ev2w = new CustomEvent('myparcel_update_delivery_options', { detail: configuration });
         window.dispatchEvent(ev2w);
-      } catch (_) {}
+      } catch (_) { }
       try {
         const ev2d = new CustomEvent('myparcel_update_delivery_options', { detail: configuration });
         document.dispatchEvent(ev2d);
-      } catch (_) {}
-  if (USE_MAP) setTimeout(() => window.dispatchEvent(new Event('resize')), 120);
+      } catch (_) { }
+      if (USE_MAP) setTimeout(() => window.dispatchEvent(new Event('resize')), 120);
     }, 350);
 
     // Verify render: if container still empty, try a few more times
@@ -392,15 +392,15 @@ document.addEventListener('DOMContentLoaded', function () {
       try {
         const evW = new CustomEvent('myparcel_update_delivery_options', { detail: configuration });
         window.dispatchEvent(evW);
-      } catch (_) {}
+      } catch (_) { }
       try {
         const evD = new CustomEvent('myparcel_update_delivery_options', { detail: configuration });
         document.dispatchEvent(evD);
-      } catch (_) {}
+      } catch (_) { }
       if (USE_MAP) window.dispatchEvent(new Event('resize'));
       setTimeout(() => ensureRendered(attempt + 1), 200 + attempt * 100);
     };
-  setTimeout(() => { try { ensureRendered(0); } finally { if (typeof __mpLoading !== 'undefined') __mpLoading = false; } }, 180);
+    setTimeout(() => { try { ensureRendered(0); } finally { if (typeof __mpLoading !== 'undefined') __mpLoading = false; } }, 180);
   }
 
   function applyMode() {
@@ -416,7 +416,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     // pickup
     if (!USE_CUSTOM_PICKUP) {
-      try { hardResetMyParcelState(); } catch (_) {}
+      try { hardResetMyParcelState(); } catch (_) { }
       if (wrap) {
         wrap.style.display = '';
         wrap.style.visibility = 'visible';
@@ -429,7 +429,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Our custom widget path
-    try { hardResetMyParcelState(); } catch (_) {}
+    try { hardResetMyParcelState(); } catch (_) { }
     if (wrap) {
       wrap.style.display = '';
       wrap.style.visibility = 'visible';
@@ -460,7 +460,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (wrap) {
         wrap.style.display = 'none';
         // Drop widget completely when leaving pickup mode or when address becomes invalid
-        try { hardResetMyParcelState(); } catch (_) {}
+        try { hardResetMyParcelState(); } catch (_) { }
       }
       // Clear any previous selection if we hide the widget
       const hidden = document.getElementById('myparcel_delivery_options');
@@ -483,14 +483,14 @@ document.addEventListener('DOMContentLoaded', function () {
   // Bind address change listeners → refresh widget when pickup active
   (function bindAddressListeners() {
     const names = [
-      'shipping_country','shipping_postal-zip-code','shipping_housenumber','shipping_housenumber-add','shipping_street','shipping_city',
-      'billing_country','billing_postal-zip-code','billing_housenumber','billing_housenumber-add','billing_street','billing_city',
+      'shipping_country', 'shipping_postal-zip-code', 'shipping_housenumber', 'shipping_housenumber-add', 'shipping_street', 'shipping_city',
+      'billing_country', 'billing_postal-zip-code', 'billing_housenumber', 'billing_housenumber-add', 'billing_street', 'billing_city',
       'alt-shipping'
     ];
     names.forEach(name => {
       const el = document.querySelector(`[name="${name}"]`) || document.getElementById(name);
       if (!el) return;
-  const handler = () => schedulePickupRebuild(220);
+      const handler = () => schedulePickupRebuild(220);
       el.addEventListener('input', handler);
       el.addEventListener('change', handler);
     });
@@ -518,11 +518,11 @@ document.addEventListener('DOMContentLoaded', function () {
             // MyParcel/manual fallback path (existing behavior)
             const p = {
               locationName: (document.getElementById('pickup_location_name')?.value || '').trim(),
-              street:       (document.getElementById('pickup_street')?.value || '').trim(),
-              number:       (document.getElementById('pickup_number')?.value || '').trim(),
+              street: (document.getElementById('pickup_street')?.value || '').trim(),
+              number: (document.getElementById('pickup_number')?.value || '').trim(),
               numberSuffix: (document.getElementById('pickup_numberSuffix')?.value || '').trim(),
-              postalCode:   (document.getElementById('pickup_postalCode')?.value || '').trim(),
-              city:         (document.getElementById('pickup_city')?.value || '').trim(),
+              postalCode: (document.getElementById('pickup_postalCode')?.value || '').trim(),
+              city: (document.getElementById('pickup_city')?.value || '').trim(),
             };
             const valid = p.street && p.number && p.postalCode && p.city;
             if (!valid) {
@@ -570,7 +570,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // hide entire wrapper when insufficient data
       const wrap = document.getElementById('myparcel-wrapper');
       if (wrap) wrap.style.display = 'none';
-    if (typeof __mpLoading !== 'undefined') __mpLoading = false;
+      if (typeof __mpLoading !== 'undefined') __mpLoading = false;
       return;
     }
 
@@ -582,7 +582,7 @@ document.addEventListener('DOMContentLoaded', function () {
         allContainers.forEach((el, idx) => { if (idx < allContainers.length - 1) el.remove(); });
       }
       document.querySelectorAll('#custom-pickup-list').forEach(el => el.remove());
-    } catch (_) {}
+    } catch (_) { }
 
     // Ensure wrapper is visible but do not enforce min-height; show a spinner while loading
     const wrap = document.getElementById('myparcel-wrapper');
@@ -593,7 +593,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // Inject spinner styles once
-    (function ensureSpinnerStyles(){
+    (function ensureSpinnerStyles() {
       if (document.getElementById('pickup-spinner-style')) return;
       const style = document.createElement('style');
       style.id = 'pickup-spinner-style';
@@ -602,7 +602,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })();
 
     // Inject pickup card styles once
-    (function ensurePickupCardStyles(){
+    (function ensurePickupCardStyles() {
       if (document.getElementById('pickup-card-style')) return;
       const style = document.createElement('style');
       style.id = 'pickup-card-style';
@@ -642,14 +642,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     if (hadError) {
       // Keep wrapper visible to show error message
-        if (typeof __mpLoading !== 'undefined') __mpLoading = false;
+      if (typeof __mpLoading !== 'undefined') __mpLoading = false;
       return;
     }
 
     // If we have no locations, hide the wrapper
     if (!locations.length) {
       if (wrap) wrap.style.display = 'none';
-        if (typeof __mpLoading !== 'undefined') __mpLoading = false;
+      if (typeof __mpLoading !== 'undefined') __mpLoading = false;
       return;
     }
 
@@ -661,7 +661,7 @@ document.addEventListener('DOMContentLoaded', function () {
     list.style.paddingRight = '4px'; // keep content readable next to scrollbar
     container.appendChild(list);
 
-  const render = () => {
+    const render = () => {
       list.innerHTML = '';
       locations.slice(0, 25).forEach((p) => {
         const card = document.createElement('div');
@@ -677,7 +677,7 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.style.whiteSpace = 'nowrap';
         btn.addEventListener('click', () => {
           // Persist full selection (incl. cc and retail network) and update UI state
-          try { setPickupSelection(p); } catch(_) {}
+          try { setPickupSelection(p); } catch (_) { }
           if (errorBox) errorBox.textContent = '';
           // Ensure only one selection: clear previous
           list.querySelectorAll('.pickup-card.selected').forEach(el => {
@@ -697,31 +697,31 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     render();
-      if (typeof __mpLoading !== 'undefined') __mpLoading = false;
+    if (typeof __mpLoading !== 'undefined') __mpLoading = false;
   }
 
   // When a card is selected, persist full pickup data (including cc and retail network) to hidden input
   function setPickupSelection(p) {
-      const hidden = document.getElementById('myparcel_delivery_options');
-      if (!hidden) return;
-      const payload = {
-          carrier: 'postnl',
-          isPickup: true,
-          deliveryType: 'pickup',
-          pickup: {
-              locationName: p.locationName,
-              street: p.street,
-              number: p.number,
-              numberSuffix: p.numberSuffix || '',
-              postalCode: p.postalCode,
-              city: p.city,
-              cc: p.cc || 'NL',
-              retail_network_id: p.retail_network_id || '',
-              location_code: p.location_code || '',
-          }
-      };
-      hidden.value = JSON.stringify(payload);
-      hidden.dispatchEvent(new Event('change'));
+    const hidden = document.getElementById('myparcel_delivery_options');
+    if (!hidden) return;
+    const payload = {
+      carrier: 'postnl',
+      isPickup: true,
+      deliveryType: 'pickup',
+      pickup: {
+        locationName: p.locationName,
+        street: p.street,
+        number: p.number,
+        numberSuffix: p.numberSuffix || '',
+        postalCode: p.postalCode,
+        city: p.city,
+        cc: p.cc || 'NL',
+        retail_network_id: p.retail_network_id || '',
+        location_code: p.location_code || '',
+      }
+    };
+    hidden.value = JSON.stringify(payload);
+    hidden.dispatchEvent(new Event('change'));
   }
 
   // Scroll effect header
@@ -743,7 +743,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   window.addEventListener('scroll', handleScroll);
-  window.addEventListener('resize', function() {
+  window.addEventListener('resize', function () {
     // Show logo again if resizing back above 992px and not scrolled
     if (window.innerWidth > 992 && window.scrollY <= 10 && logo) {
       logo.style.display = '';

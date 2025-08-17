@@ -17,7 +17,6 @@
             </div>
         @endif
 
-
         @if ($errors->has('stock'))
             <div class="alert alert-error">
                 <div>
@@ -73,7 +72,8 @@
                                     <td style="min-width:80px;" data-label="Totaal">€
                                         {{ $item['quantity'] * $item['price'] }}</td>
                                     <td style="min-width:80px;" data-label="Actie">
-                                        <button type="submit" class="btn small" form="delete-{{ $item['product_id'] }}"
+                                        <button type="submit" class="btn small"
+                                            form="delete-{{ $item['product_id'] }}"
                                             onclick="return confirm('Weet je zeker dat je dit wilt verwijderen?');">
                                             Verwijderen
                                         </button>
@@ -98,13 +98,11 @@
                         </div>
 
                         <div class="button-box">
-
-                            <button class="btn update-qty" type="submit"><span
-                                    class="loader"></span>Winkelwagen bijwerken</button>
+                         <button class="btn update-qty" type="submit"><span class="loader"></span>Winkelwagen bijwerken</button>
                 </form>
 
                 <a href="{{ route('checkoutPage') }}">
-                    <button class="btn checkout">Afrekenen</button>
+                    <button type="button" class="btn checkout">Afrekenen</button>
                 </a>
                 <form action="{{ route('removeCart') }}" method="POST">
                     @csrf
