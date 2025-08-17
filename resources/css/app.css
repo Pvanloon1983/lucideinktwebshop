@@ -483,10 +483,9 @@ button {
   margin: 0 auto;
 }
 
-@media only screen and (max-width: 600px) {
-  .container.page
-  .blog {
-    padding-top: 30px;
+@media only screen and (max-width: 992px) {
+  .container.page {
+    padding-top: 80px;
   }
 }
 
