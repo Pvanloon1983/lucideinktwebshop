@@ -483,10 +483,9 @@ button {
   margin: 0 auto;
 }
 
-@media only screen and (max-width: 600px) {
-  .container.page
-  .blog {
-    padding-top: 30px;
+@media only screen and (max-width: 992px) {
+  .container.page {
+    padding-top: 80px;
   }
 }
 
@@ -814,6 +813,9 @@ i {
 .container {
   max-width: 100%;
   padding: 0 15px;
+  flex-direction: row;
+  height: 80px;
+  background-color: #fff;
 }
 
 .hero-image {
@@ -858,63 +860,88 @@ i {
   box-shadow: 0 4px 24px rgba(98,5,5,0.10);
   position: relative;
   background-color: transparent;
-  }
+}
 
   .hero-image-background .title {
-    position: absolute;
-    top: 25%;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 70%;
-    max-width: 350px;
-    min-width: 80px;
-    z-index: 2;
-    pointer-events: none;
-    text-align: center;
-    object-fit: contain;
-    overflow: hidden;
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  max-width: 350px;
+  min-width: 80px;
+  z-index: 2;
+  pointer-events: none;
+  text-align: center;
+  object-fit: contain;
+  overflow: hidden;
   }
 
   .hero-image-background .sub-title {
-    position: absolute;
-    bottom: 23%;
-    left: 50%;
-    transform: translateX(-50%);
+  position: absolute;
+  bottom: 23%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  max-width: 400px;
+  min-width: 60px;
+  z-index: 2;
+  pointer-events: none;
+  text-align: center;
+  object-fit: contain;
+  overflow: hidden;
+  }
+
+
+@media only screen and (max-width: 1200px) {
+  .hero-image {
+    min-height: 400px;
+    padding-top: 185px;
+  }
+  .hero-image-background {
+    max-width: 600px;
+    min-width: 120px;
+  }
+  .rotating-image {
+    max-width: 500px;
+    min-width: 80px;
+  }
+  .hero-image-background .title {
+    width: 70%;
+    max-width: 350px;
+    top: 25%;
+  }
+  .hero-image-background .sub-title {
     width: 60%;
     max-width: 400px;
+    bottom: 22%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .hero-image {
+    min-height: 220px;
+    padding-top: 80px;
+  }
+  .hero-image-background {
+    max-width: 500px;
+    min-width: 80px;
+  }
+  .rotating-image {
+    max-width: 400px;
     min-width: 60px;
-    z-index: 2;
-    pointer-events: none;
-    text-align: center;
-    object-fit: contain;
-    overflow: hidden;
   }
-
-  @media only screen and (max-width: 1200px) {
-    .hero-image-background .title {
-      width: 70%;
-      max-width: 350px;
-      top: 25%;
-    }
-    .hero-image-background .sub-title {
-      width: 60%;
-      max-width: 400px;
-      bottom: 22%;
-    }
+  .hero-image-background .title {
+    width: 60%;
+    max-width: 200px;
+    top: 25%;
   }
-
-  @media only screen and (max-width: 600px) {
-    .hero-image-background .title {
-      width: 700%;
-      max-width: 200px;
-      top: 25%;
-    }
-    .hero-image-background .sub-title {
-      width: 60%;
-      max-width: 300px;
-      bottom: 22%;
-    }
+  .hero-image-background .sub-title {
+    width: 60%;
+    max-width: 300px;
+    bottom: 22%;
   }
+}
 
 
 @media only screen and (max-width: 992px) {
