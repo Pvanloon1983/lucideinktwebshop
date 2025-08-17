@@ -813,6 +813,9 @@ i {
 .container {
   max-width: 100%;
   padding: 0 15px;
+  flex-direction: row;
+  height: 80px;
+  background-color: #fff;
 }
 
 .hero-image {
