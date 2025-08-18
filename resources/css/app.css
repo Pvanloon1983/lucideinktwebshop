@@ -811,8 +811,8 @@ i {
 /* Inline decorative ring image around the hero */
 .ring-image {
   position: absolute;
-  inset: -6% auto auto -6%;
-  width: 112%;
+  inset: 0% auto auto 0%;
+  width: 108%;
   height: auto;
   left: 50%;
   top: 50%;
