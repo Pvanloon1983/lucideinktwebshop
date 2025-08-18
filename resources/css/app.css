@@ -327,7 +327,8 @@ thead {
 
 /* === Header / Navbar === */
 .active {
-  font-weight: bold;
+  text-decoration: underline;
+  text-underline-offset: 6px;
 }
 
 .header {
@@ -385,6 +386,8 @@ thead {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 20px;
+  margin-bottom: 25px;
 }
 
 .logo-container img {
@@ -399,6 +402,19 @@ thead {
 
 .nav-item .fa-gauge {
   font-size: 20px;
+}
+
+.desktop-navbar-container {
+  background-color: #44605b;
+  padding: 20px 0;
+}
+
+.desktop-navbar-container a {
+  color: #fff;
+}
+
+.desktop-navbar-container .fa-cart-shopping {
+  color: #fff;
 }
 
 @media (max-width: 992px) {
@@ -452,8 +468,13 @@ thead {
 }
 
 /* === Pages === */
+.page.home {
+  padding-bottom: 100px;
+  padding-top: 250px;
+}
+
 .container.page {
-  padding-top: 170px;
+  padding-top: 200px;
 }
 
 .container.page .blog {
@@ -718,6 +739,19 @@ i {
 }
 
 /* === Dashboard === */
+.header.dashboard .desktop-navbar-container {
+  background-color: #fff;
+  color: var(--main-font-color);
+}
+
+.header.dashboard .desktop-navbar-container a {
+  color: var(--main-font-color);
+}
+
+.header.dashboard .desktop-navbar-container i {
+  color: var(--main-font-color);
+}
+
 .page.dashboard h2 {
   margin-top: 0;
 }
@@ -754,16 +788,15 @@ i {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 100vw;
-  min-height: 800px;
+  width: 100%;
+  /* min-height: 800px; */
   overflow: visible;
-  padding-top: 170px;
   background: none;
 }
 
 .rotating-image {
   animation: spin 100s linear infinite;
-  margin: 0 auto;
+  margin: 0 0;
   width: 80%;
   max-width: 600px;
   min-width: 120px;
@@ -773,6 +806,28 @@ i {
   border-radius: 50%;
   box-shadow: 0 8px 32px rgba(98, 5, 5, 0.18);
   background: transparent;
+}
+
+/* Inline decorative ring image around the hero */
+.ring-image {
+  position: absolute;
+  inset: -6% auto auto -6%;
+  width: 112%;
+  height: auto;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+  animation: spinReverse 100s linear infinite;
+  border-radius: 50%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+@keyframes spinReverse {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(-360deg); }
 }
 
 .hero-image-background {
@@ -792,6 +847,9 @@ i {
   position: relative;
   background-color: transparent;
 }
+
+/* Decorative ring around the hero background */
+/* Removed pseudo-element ring; using inline <img.ring-image> instead */
 
 .hero-image-background .title,
 .hero-image-background .sub-title {
@@ -827,15 +885,13 @@ i {
 
 /* Hero responsive (merged duplicates) */
 @media (max-width: 1200px) {
-  .hero-image {
-    min-height: 400px;
-    padding-top: 185px;
-  }
 
   .hero-image-background {
     max-width: 600px;
     min-width: 120px;
   }
+
+  /* ring image sizing handled by .ring-image */
 
   .rotating-image {
     max-width: 500px;
@@ -856,15 +912,30 @@ i {
 }
 
 @media (max-width: 992px) {
-  .hero-image {
-    min-height: 400px;
-    padding-top: 80px;
+  .page.home {
+    padding-top: 150px;
+  }
+
+  .header {
+    background-color: #fff;
+    height: 80px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 1px 3px, rgba(0, 0, 0, 0.06) 0 1px 2px;
+  }
+
+  .header-box {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 20px;
+    align-items: center;
+    height: 80px;
   }
 
   .hero-image-background {
     max-width: 600px;
     min-width: 120px;
   }
+
+  /* ring image sizing handled by .ring-image */
 
   .rotating-image {
     max-width: 500px;
@@ -873,15 +944,16 @@ i {
 }
 
 @media (max-width: 600px) {
-  .hero-image {
-    min-height: 220px;
-    padding-top: 80px;
+  .page.home {
+     padding-top: 130px;
   }
 
   .hero-image-background {
     max-width: 500px;
     min-width: 80px;
   }
+
+  /* ring image sizing handled by .ring-image */
 
   .rotating-image {
     max-width: 400px;

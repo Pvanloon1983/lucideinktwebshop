@@ -14,7 +14,7 @@
 <body>
 
   <header class="header">
-    <div class="container">
+    <div class="header-box">
       <div class="logo-container">
         <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>
       </div>

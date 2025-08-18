@@ -1,5 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+  // Ensure we start at the top on fresh loads and avoid history scroll restoration
+  try {
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+    // Defer to allow CSS/layout to settle, then jump to top once
+    setTimeout(function(){ window.scrollTo(0, 0); }, 0);
+  } catch (_) {}
+
   // -------------------- Menu side bar --------------------
   const toggle = document.querySelector('.sidebar-toggle');
   const closeToggle = document.querySelector('.close-toggle');
