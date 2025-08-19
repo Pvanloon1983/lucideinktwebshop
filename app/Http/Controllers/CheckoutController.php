@@ -359,7 +359,7 @@ class CheckoutController extends Controller
 
         if ($payment->isPaid()) {
             $order->update([
-                'status'         => 'paid',
+                'status'         => 'completed',
                 'payment_status' => 'paid',
                 'paid_at'        => now(),
             ]);
@@ -461,7 +461,7 @@ class CheckoutController extends Controller
         $payment = $this->mollie->payments->get($paymentId);
         $orderId = $payment->metadata->order_id ?? null;
         if ($orderId && ($order = Order::find($orderId))) {
-            if     ($payment->isPaid())                           $order->update(['status' => 'paid',     'payment_status' => 'paid',     'paid_at' => now()]);
+            if     ($payment->isPaid())                           $order->update(['status' => 'completed',     'payment_status' => 'paid',     'paid_at' => now()]);
             elseif ($payment->isOpen() || $payment->isPending())  $order->update(['status' => 'pending',  'payment_status' => 'pending']);
             elseif ($payment->isFailed() || $payment->isExpired() || $payment->isCanceled())
                                                                   $order->update(['status' => 'cancelled','payment_status' => 'failed']);

@@ -39,6 +39,6 @@ class MyOrderController extends Controller
             $order = Order::where('customer_id', $customer->id)->with(['items', 'customer'])->findOrFail($id);
             $items = $order->items()->paginate(10);
             $order->setRelation('items', $items);
-            return view('orders.show', ['order' => $order]);
+            return view('orders.customerOrderShow', ['order' => $order]);
     }
 }

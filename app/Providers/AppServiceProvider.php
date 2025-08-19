@@ -22,12 +22,14 @@ class AppServiceProvider extends ServiceProvider
     {
         // Blade directive: @role('admin') ... @endrole
         Blade::if('role', function (string $role): bool {
+            // First checks if user if logged in
             $user = auth()->user();
             return $user && $user->role === $role;
         });
 
         // Blade directive: @anyrole('admin','user') ... @endanyrole
         Blade::if('anyrole', function (string ...$roles): bool {
+            // First checks if user if logged in
             $user = auth()->user();
             return $user && in_array($user->role, $roles, true);
         });

@@ -299,15 +299,15 @@ thead {
   margin-right: 10px;
 }
 
-.table .table-action .edit {
+.table .edit {
   color: #ffc107;
 }
 
-.table .table-action .delete {
+.table .delete {
   color: #dc3545;
 }
 
-.table .table-action .show {
+.table .show {
   color: #0d6efd;
 }
 
@@ -826,8 +826,13 @@ i {
 }
 
 @keyframes spinReverse {
-  from { transform: translate(-50%, -50%) rotate(0deg); }
-  to   { transform: translate(-50%, -50%) rotate(-360deg); }
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  to {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
 }
 
 .hero-image-background {
@@ -945,7 +950,7 @@ i {
 
 @media (max-width: 600px) {
   .page.home {
-     padding-top: 130px;
+    padding-top: 130px;
   }
 
   .hero-image-background {
@@ -2071,4 +2076,31 @@ i {
   margin-top: 0;
   font-size: 15px;
   font-weight: bold;
+}
+
+/*--- Inline toast message on show order page ---*/
+.copy-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #44605b;
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 6px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .15);
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 9999;
+  pointer-events: none;
+  font-size: 14px;
+}
+
+.copy-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.copy-toast.error {
+  background: #b30000;
 }

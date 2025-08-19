@@ -390,4 +390,27 @@ class OrderController extends Controller
 				'package_small' => 1,
 			][$name] ?? 1;
 		}
+
+		public function update(Request $request, string $id)
+		{
+			$request->validate([
+				'order-status' => [
+					'required',
+					'in:pending,shipped,cancelled,paid,completed'
+				]
+			], [
+				'order-status.required' => 'Selecteer een geldige status voor de bestelling.',
+				'order-status.in' => 'De gekozen status is ongeldig.',
+			]);
+
+			$order = Order::findOrFail($id);
+
+			$order->update(['status' => $request->input('order-status')]);
+
+			return back()->with('success', 'Bestelling is bijgewerkt');
+		}
+
+		public function get () {
+			return redirect()->route('dashboard');
+		}
 }

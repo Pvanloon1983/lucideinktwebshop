@@ -37,11 +37,11 @@ class Order extends Model
         'myparcel_carrier',
         'myparcel_delivery_type',
 
-    // discounts
-    'discount_type',
-    'discount_value',
-    'discount_price_total',
-    ];
+        // discounts
+        'discount_type',
+        'discount_value',
+        'discount_price_total',
+        ];
     
     public function getStatusLabelAttribute()
     {
@@ -49,7 +49,7 @@ class Order extends Model
             'pending' => 'In afwachting',
             'shipped' => 'Verzonden',
             'cancelled' => 'Geannuleerd',
-            'paid' => 'Betaald',
+            'completed' => 'Afgerond',
             // Add more as needed
         ];
         return $labels[$this->status] ?? ucfirst($this->status);

@@ -44,6 +44,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	Route::get('/dashboard/products/edit/{id}', [ProductController::class, 'edit'])->name('productEditPage');
 	Route::put('/dashboard/products/edit/{id}', [ProductController::class, 'update'])->name('productUpdate');
 	Route::delete('/dashboard/products/delete/{id}', [ProductController::class, 'destroy'])->name('productDelete');
+	Route::get('/dashboard/products/delete/{id}', [ProductController::class, 'get'])->name('productDelete_get');
 
 	// Productcategories
 	Route::get('/dashboard/productcategories', [ProductCategoryController::class, 'index'])->name('productCategoryIndex');
@@ -52,12 +53,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	Route::get('/dashboard/productcategories/edit/{id}', [ProductCategoryController::class, 'edit'])->name('productCategoryEditPage');
 	Route::put('/dashboard/productcategories/edit/{id}', [ProductCategoryController::class, 'update'])->name('productCategoryUpdate');
 	Route::delete('/dashboard/productcategories/delete/{id}', [ProductCategoryController::class, 'destroy'])->name('productCategoryDelete');
+	Route::get('/dashboard/productcategories/delete/{id}', [ProductCategoryController::class, 'get'])->name('productCategoryDeleteGet');
 
 	// Orders
 	Route::get('/dashboard/orders/create', [OrderController::class, 'create'])->name('orderCreatePage');
 	Route::get('/dashboard/orders', [OrderController::class, 'index'])->name('orderIndex');
 	Route::get('/dashboard/orders/{id}', [OrderController::class, 'show'])->name('orderShow');	
 	Route::post('/dashboard/orders/create', [OrderController::class, 'store'])->name('orderStore');
+	Route::put('/dashboard/orders/{id}', [OrderController::class, 'update'])->name('orderUpdate');
 
 	// Customers
 	Route::get('/dashboard/customers', [CustomerController::class, 'index'])->name('customerIndex');
@@ -66,6 +69,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	// Users
 	Route::get('/dashboard/users', [UserController::class, 'index'])->name('userIndex');
 	Route::get('/dashboard/users/{id}', [UserController::class, 'show'])->name('userShow');
+	Route::put('/dashboard/users/{id}', [UserController::class, 'update'])->name('userEdit');
 
 })->middleware('auth');
 

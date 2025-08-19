@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', function () {
       history.scrollRestoration = 'manual';
     }
     // Defer to allow CSS/layout to settle, then jump to top once
-    setTimeout(function(){ window.scrollTo(0, 0); }, 0);
-  } catch (_) {}
+    setTimeout(function () { window.scrollTo(0, 0); }, 0);
+  } catch (_) { }
 
   // -------------------- Menu side bar --------------------
   const toggle = document.querySelector('.sidebar-toggle');
@@ -734,8 +734,8 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // Scroll effect header
-  var header = document.querySelector('.header');
-  var logo = document.querySelector('.logo-container');
+  let header = document.querySelector('.header');
+  let logo = document.querySelector('.logo-container');
 
   function handleScroll() {
     if (window.scrollY > 10) {
@@ -758,5 +758,63 @@ document.addEventListener('DOMContentLoaded', function () {
       logo.style.display = '';
     }
   });
+
+  // Copy payment link from show order page if its there
+  let copyBtn = document.getElementById('copy-payment-link');
+  if (!copyBtn) return;
+  let explicitLink = copyBtn.getAttribute('data-payment-link');
+  let anchorLink = (document.getElementById('payment-link') && document.getElementById('payment-link').querySelector('a')) ? document.getElementById('payment-link').querySelector('a').href : '';
+  let linkToCopy = explicitLink || anchorLink || '';
+
+  function ensureToast() {
+    let toast = document.getElementById('copy-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'copy-toast';
+      toast.className = 'copy-toast';
+      document.body.appendChild(toast);
+    }
+    return toast;
+  }
+
+  function showToast(msg, isError) {
+    let toast = ensureToast();
+    toast.textContent = msg;
+    toast.classList.remove('show', 'error');
+    if (isError) toast.classList.add('error');
+    // force reflow to restart animation
+    void toast.offsetWidth;
+    toast.classList.add('show');
+    setTimeout(function () { toast.classList.remove('show'); }, 2000);
+  }
+
+  copyBtn.addEventListener('click', function () {
+    if (!linkToCopy) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(linkToCopy)
+        .then(function () { showToast('Betaallink gekopieerd naar klembord'); })
+        .catch(function () { fallbackCopy(linkToCopy); });
+    } else {
+      fallbackCopy(linkToCopy);
+    }
+  });
+
+  function fallbackCopy(text) {
+    try {
+      let ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'absolute';
+      ta.style.left = '-9999px';
+      document.body.appendChild(ta);
+      ta.select();
+      let ok = document.execCommand('copy');
+      document.body.removeChild(ta);
+      if (ok) showToast('Betaallink gekopieerd naar klembord');
+      else showToast('Kopiëren mislukt, kopieer handmatig', true);
+    } catch (e) {
+      showToast('Kopiëren mislukt, kopieer handmatig', true);
+    }
+  }
 
 });

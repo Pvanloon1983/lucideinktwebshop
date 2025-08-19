@@ -141,4 +141,8 @@ class ProductCategoryController extends Controller
         $category->delete();
         return back()->with('success', 'Productcategorie is succesvol verwijderd.');
     }
+
+    public function get () {
+	    return redirect()->route('dashboard');
+	}
 }

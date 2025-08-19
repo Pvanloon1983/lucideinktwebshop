@@ -299,4 +299,8 @@ class ProductController extends Controller
         $product->delete();
         return redirect()->route('productIndex')->with('success', 'Het product is succesvol verwijderd.');
     }
+
+    public function get () {
+		return redirect()->route('dashboard');
+	}
 }
