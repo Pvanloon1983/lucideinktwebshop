@@ -287,8 +287,9 @@ class CheckoutController extends Controller
                     'signature'     => (bool) $order->myparcel_signature,
                     'insurance'     => $order->myparcel_insurance_amount,
                     'deliveryType'  => $delivery['deliveryType'] ?? 'standard',
-                    'is_pickup'     => (bool) ($delivery['isPickup'] ?? false),
-                    'pickup'        => $delivery['pickup'] ?? null,
+                    'is_pickup'     => (bool) ($delivery['isPickup'] ?? $delivery['is_pickup'] ?? false),
+                    // accept both keys
+                    'pickup'        => $delivery['pickup'] ?? $delivery['pickupLocation'] ?? null,
                 ],
             ];
 
@@ -421,13 +422,14 @@ class CheckoutController extends Controller
             'carrier'   => $order->myparcel_carrier ?: 'postnl', // <— doorgeven
             'address'   => $address,
             'delivery'  => [
-                'packageTypeId' => $order->myparcel_package_type_id ?: 1, //  1 is package
+                'packageTypeId' => $order->myparcel_package_type_id ?: 1,
                 'onlyRecipient' => (bool) $order->myparcel_only_recipient,
                 'signature'     => (bool) $order->myparcel_signature,
                 'insurance'     => $order->myparcel_insurance_amount,
                 'deliveryType'  => $selection['deliveryType'] ?? 'standard',
-                'is_pickup'     => (bool) ($selection['isPickup'] ?? false),
-                'pickup'        => $selection['pickup'] ?? null,
+                'is_pickup'     => (bool) ($selection['isPickup'] ?? $selection['is_pickup'] ?? false),
+                // accept both keys
+                'pickup'        => $selection['pickup'] ?? $selection['pickupLocation'] ?? null,
             ],
             ];
 

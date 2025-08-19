@@ -108,8 +108,16 @@ class MyParcelService
             $deliveryTypeId   = self::DELIVERY_TYPE_IDS[$deliveryTypeName] ?? self::DELIVERY_TYPE_IDS['standard'];
             $consignment->setDeliveryType($deliveryTypeId);
 
-            if (!empty($deliv['is_pickup']) && !empty($deliv['pickup']) && is_array($deliv['pickup'])) {
-                $p = $deliv['pickup'];
+            // Broader pickup detection + support camelCase/snake_case
+            $isPickup = !empty($deliv['is_pickup'])
+                || !empty($deliv['isPickup'])
+                || $deliveryTypeName === 'pickup';
+
+            $pickupData = $deliv['pickup'] ?? $deliv['pickupLocation'] ?? null;
+
+            if ($isPickup && is_array($pickupData)) {
+                $p = $pickupData;
+
                 $consignment
                     ->setPickupLocationName($p['locationName'] ?? $p['name'] ?? '')
                     ->setPickupStreet($p['street'] ?? '')
@@ -120,9 +128,14 @@ class MyParcelService
                     ->setDeliveryType(self::DELIVERY_TYPE_IDS['pickup']);
 
                 // Optional but required by API for pickup consignments: pickup country and retail network id
-                // Some SDK versions expose setters; guard their existence
-                $pickupCc = (string) ($p['cc'] ?? $addr['cc'] ?? 'NL');
-                $retailNetworkId = (string) ($p['retail_network_id'] ?? (($carrierName === 'postnl') ? 'PNPNL-01' : ''));
+                $pickupCc = (string) ($p['cc'] ?? $p['country'] ?? $p['countryCode'] ?? $addr['cc'] ?? 'NL');
+                $retailNetworkId = (string) (
+                    $p['retail_network_id']
+                    ?? $p['retailNetworkId']
+                    ?? (($carrierName === 'postnl') ? 'PNPNL-01' : '')
+                );
+                $locationCode = (string) ($p['location_code'] ?? $p['locationCode'] ?? '');
+
                 try {
                     if (!empty($pickupCc) && method_exists($consignment, 'setPickupCountry')) {
                         $consignment->setPickupCountry($pickupCc);
@@ -138,8 +151,8 @@ class MyParcelService
                     Log::debug('MyParcel SDK: setRetailNetworkId not available or failed', ['e' => $e->getMessage()]);
                 }
                 try {
-                    if (!empty($p['location_code']) && method_exists($consignment, 'setPickupLocationCode')) {
-                        $consignment->setPickupLocationCode((string) $p['location_code']);
+                    if (!empty($locationCode) && method_exists($consignment, 'setPickupLocationCode')) {
+                        $consignment->setPickupLocationCode($locationCode);
                     }
                 } catch (\Throwable $e) {
                     Log::debug('MyParcel SDK: setPickupLocationCode not available or failed', ['e' => $e->getMessage()]);

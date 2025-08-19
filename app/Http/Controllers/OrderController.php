@@ -298,8 +298,9 @@ class OrderController extends Controller
 						'signature'     => (bool) $order->myparcel_signature,
 						'insurance'     => $order->myparcel_insurance_amount,
 						'deliveryType'  => $delivery['deliveryType'] ?? 'standard',
-						'is_pickup'     => (bool) ($delivery['isPickup'] ?? false),
-						'pickup'        => $delivery['pickup'] ?? null,
+						'is_pickup'     => (bool) ($delivery['isPickup'] ?? $delivery['is_pickup'] ?? false),
+						// accept both keys from different widgets
+						'pickup'        => $delivery['pickup'] ?? $delivery['pickupLocation'] ?? null,
 					],
 				];
 
