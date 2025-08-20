@@ -349,8 +349,8 @@ thead {
 }
 
 .header.scrolled {
-  background-color: #fff !important;
-  box-shadow: rgba(0, 0, 0, 0.1) 0 1px 3px, rgba(0, 0, 0, 0.06) 0 1px 2px;
+  background-color: #F8F3E8 !important;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 1px 3px, rgba(0, 0, 0, 0.06) 0 1px 2px
 }
 
 .header .container {
@@ -575,8 +575,8 @@ i {
   width: 225px;
   height: 100vh;
   padding: 20px;
-  background: #fff;
-  box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px;
+  background: #F8F3E8;
+  box-shadow: rgba(0, 0, 0, 0.1) 0 1px 3px, rgba(0, 0, 0, 0.06) 0 1px 2px;
   transition: right 0.3s ease;
   z-index: 20;
 }
@@ -939,9 +939,9 @@ i {
   }
 
   .header {
-    background-color: #fff;
+    background-color: #F8F3E8;
     height: 80px;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0 1px 3px, rgba(0, 0, 0, 0.06) 0 1px 2px;
   }
 
   .header-box {
