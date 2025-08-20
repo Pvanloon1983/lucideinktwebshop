@@ -1,6 +1,6 @@
 <x-layout>
     <main class="container page shop">
-        <h2>Winkel</h2>
+        {{-- <h2>Winkel</h2> --}}
         @if (session('success'))
             <div class="alert alert-success" style="position: relative;">
                 {{ session('success') }}

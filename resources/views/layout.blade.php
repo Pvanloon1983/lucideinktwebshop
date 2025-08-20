@@ -11,7 +11,8 @@
   @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body>
+<body style="position: relative;">
+<div style="position: fixed; inset: 0; z-index: 0; background-image: url('{{ asset('images/sand-texture.jpg') }}'); background-size: cover; background-position: center; opacity: 0.1; pointer-events: none;"></div>
 
   <header class="header">
     <div class="header-box">
