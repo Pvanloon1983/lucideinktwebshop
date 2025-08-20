@@ -12,7 +12,7 @@
 </head>
 
 <body style="position: relative;">
-<div style="position: fixed; inset: 0; z-index: 0; background-image: url('{{ asset('images/sand-texture.jpg') }}'); background-size: cover; background-position: center; opacity: 0.1; pointer-events: none;"></div>
+<div style="position: fixed; inset: 0; z-index: 0; background-image: url('{{ asset('images/sand-texture-min.webp') }}'); background-size: cover; background-position: center; opacity: 0.1; pointer-events: none;"></div>
 
   <header class="header">
     <div class="header-box">
