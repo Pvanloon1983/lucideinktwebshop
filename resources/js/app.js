@@ -733,32 +733,6 @@ document.addEventListener('DOMContentLoaded', function () {
     hidden.dispatchEvent(new Event('change'));
   }
 
-  // Scroll effect header
-  let header = document.querySelector('.header');
-  let logo = document.querySelector('.logo-container');
-
-  function handleScroll() {
-    if (window.scrollY > 10) {
-      header.classList.add('scrolled');
-      if (window.innerWidth > 992 && logo) {
-        logo.style.display = 'none';
-      }
-    } else {
-      header.classList.remove('scrolled');
-      if (logo) {
-        logo.style.display = '';
-      }
-    }
-  }
-
-  window.addEventListener('scroll', handleScroll);
-  window.addEventListener('resize', function () {
-    // Show logo again if resizing back above 992px and not scrolled
-    if (window.innerWidth > 992 && window.scrollY <= 10 && logo) {
-      logo.style.display = '';
-    }
-  });
-
   // Copy payment link from show order page if its there
   let copyBtn = document.getElementById('copy-payment-link');
   if (!copyBtn) return;
@@ -817,4 +791,153 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
+  // --- Custom modal for cart item removal and empty cart ---
+  let confirmModalOpen = false;
+  function showConfirmModal(message, onConfirm) {
+    if (confirmModalOpen) return;
+    confirmModalOpen = true;
+    document.querySelectorAll('.custom-confirm-modal').forEach(m => m.remove());
+    const modal = document.createElement('div');
+    modal.className = 'custom-confirm-modal';
+    modal.innerHTML = `
+      <div class="custom-confirm-modal-backdrop"></div>
+      <div class="custom-confirm-modal-content">
+        <div class="custom-confirm-modal-message">${message}</div>
+        <div class="custom-confirm-modal-actions">
+          <button class="btn confirm-btn" type="button">Ja, verwijderen</button>
+          <button class="btn cancel-btn" type="button">Annuleren</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.querySelector('.confirm-btn').focus();
+    modal.querySelector('.confirm-btn').onclick = function () {
+      confirmModalOpen = false;
+      modal.remove();
+      if (onConfirm) onConfirm();
+    };
+    modal.querySelector('.cancel-btn').onclick = function () {
+      confirmModalOpen = false;
+      modal.remove();
+    };
+    modal.querySelector('.custom-confirm-modal-backdrop').onclick = function () {
+      confirmModalOpen = false;
+      modal.remove();
+    };
+  }
+
+  // Intercept submit for all delete-cart-item forms
+  document.querySelectorAll('form.delete-cart-item').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      // Only intercept if not already confirmed
+      if (!form.__confirmed) {
+        e.preventDefault();
+        showConfirmModal('Weet je zeker dat je dit product uit je winkelwagen wilt verwijderen?', function () {
+          form.__confirmed = true;
+          form.submit();
+        });
+      } else {
+        // Reset flag for next submit
+        form.__confirmed = false;
+      }
+    });
+  });
+
+  // Intercept submit for all empty-cart-btn forms
+  document.querySelectorAll('form.empty-cart-btn').forEach(function (form) {
+    form.addEventListener('submit', function (e) {
+      if (!form.__confirmed) {
+        e.preventDefault();
+        showConfirmModal('Weet je zeker dat je de hele winkelwagen wilt legen?', function () {
+          form.__confirmed = true;
+          form.submit();
+        });
+      } else {
+        form.__confirmed = false;
+      }
+    });
+  });
+
 });
+
+(function () {
+  // Create modal once if not present
+  if (!document.getElementById('confirmModal')) {
+    const modal = document.createElement('div');
+    modal.id = 'confirmModal';
+    modal.className = 'confirm-backdrop';
+    modal.hidden = true;
+    modal.innerHTML = `
+      <div class="confirm-dialog" role="dialog" aria-modal="true"
+           aria-labelledby="confirmTitle" aria-describedby="confirmDesc">
+        <h3 id="confirmTitle">Bevestig actie</h3>
+        <p id="confirmDesc">Weet je zeker dat je wilt doorgaan?</p>
+        <div class="confirm-actions">
+          <button type="button" class="btn cancel">Annuleren</button>
+          <button type="button" class="btn confirm">Ja, doorgaan</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  const modal = document.getElementById('confirmModal');
+  const titleEl = modal.querySelector('#confirmTitle');
+  const descEl  = modal.querySelector('#confirmDesc');
+  const btnOK   = modal.querySelector('.confirm');
+  const btnNo   = modal.querySelector('.cancel');
+
+  let pendingForm = null;
+  let lastFocused = null;
+
+  function openModal(message, title) {
+    lastFocused = document.activeElement;
+    titleEl.textContent = title || 'Bevestig actie';
+    descEl.textContent  = message || 'Weet je zeker dat je wilt doorgaan?';
+    modal.hidden = false;
+    modal.style.display = 'flex';
+    btnOK.focus();
+    document.addEventListener('keydown', onKeydown);
+  }
+  function closeModal() {
+    modal.hidden = true;
+    modal.style.display = 'none';
+    document.removeEventListener('keydown', onKeydown);
+    // --- Loader/disabled fix ---
+    if (pendingForm) {
+      const submitBtn = pendingForm.querySelector('[type="submit"]');
+      if (submitBtn) submitBtn.disabled = false;
+      const loader = submitBtn ? submitBtn.querySelector('.loader') : null;
+      if (loader) loader.style.display = 'none';
+    }
+    if (lastFocused && lastFocused.focus) lastFocused.focus();
+    pendingForm = null;
+  }
+  function onKeydown(e) {
+    if (e.key === 'Escape') closeModal();
+  }
+
+  document.addEventListener('submit', (e) => {
+    const form = e.target.closest('form');
+    if (!form || !form.classList.contains('needs-confirm')) return;
+    if (form.dataset.confirmed === 'true') return;
+    e.preventDefault();
+    pendingForm = form;
+    openModal(form.dataset.confirm, form.dataset.confirmTitle);
+  }, true);
+
+  btnNo.addEventListener('click', closeModal);
+  btnOK.addEventListener('click', () => {
+    if (!pendingForm) return closeModal();
+    const submitBtn = pendingForm.querySelector('[type="submit"]');
+    if (submitBtn) submitBtn.disabled = true;
+    pendingForm.dataset.confirmed = 'true';
+    if (pendingForm.requestSubmit) pendingForm.requestSubmit();
+    else pendingForm.submit();
+    closeModal();
+  });
+
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+})();

@@ -73,8 +73,7 @@
                                         {{ $item['quantity'] * $item['price'] }}</td>
                                     <td style="min-width:80px;" data-label="Actie">
                                         <button type="submit" class="btn small"
-                                            form="delete-{{ $item['product_id'] }}"
-                                            onclick="return confirm('Weet je zeker dat je dit wilt verwijderen?');">
+                                            form="delete-{{ $item['product_id'] }}">
                                             Verwijderen
                                         </button>
                                     </td>
@@ -104,17 +103,17 @@
                 <a href="{{ route('checkoutPage') }}">
                     <button type="button" class="btn checkout">Afrekenen</button>
                 </a>
-                <form action="{{ route('removeCart') }}" method="POST">
+                <form action="{{ route('removeCart') }}" method="POST" class="empty-cart-btn needs-confirm"
+      data-confirm="Weet je zeker dat je de hele winkelwagen wilt legen?" data-confirm-title="Bevestig legen">
                     @csrf
-                    <button type="submit" class="btn delete"
-                        onclick="return confirm('Weet je zeker dat je dit wilt verwijderen?');"><span
-                            class="loader"></span>Winkelwagen legen</button>
+                    <button type="submit" class="btn delete"><span class="loader"></span>Winkelwagen legen</button>
                 </form>
             </div>
 
             @foreach ($cart as $item)
                 <form id="delete-{{ $item['product_id'] }}" action="{{ route('deleteItemFromCart') }}" method="POST"
-                    style="display:none;">
+                    style="display:none;" class="delete-cart-item needs-confirm"
+        data-confirm="Weet je zeker dat je dit product uit je winkelwagen wilt verwijderen?" data-confirm-title="Bevestig verwijderen">
                     @csrf
                     @method('DELETE')
                     <input type="hidden" name="product_id" value="{{ $item['product_id'] }}">
