@@ -429,6 +429,8 @@ thead {
 @media (max-width: 992px) {
   .header {
     padding: 0;
+    position: fixed;
+    width: 100%;
   }
 
   .header .container {
@@ -568,7 +570,7 @@ thead {
 
 @media (max-width: 992px) {
   .container.page {
-    padding-top: 20px;
+    padding-top: 100px;
   }
 }
 
@@ -982,7 +984,7 @@ i {
 
 @media (max-width: 992px) {
   .page.home {
-    padding-top: 60px;
+    padding-top: 120px;
   }
 
   .header {
@@ -1012,7 +1014,7 @@ i {
 
 @media (max-width: 600px) {
   .page.home {
-    padding-top: 15px;
+    padding-top: 100px;
   }
 
   .hero-image-background {
@@ -2316,6 +2318,7 @@ i {
   margin-top: 5px;
   line-height: 1.4em;
   font-size: 40px;
+  font-weight: 700px;
 }
 
 .hero-text .sub-text {
@@ -2388,6 +2391,11 @@ i {
 @media (max-width: 600px) {
   .hero-text-image {
     margin-top: -20px;
+  }
+
+  .hero-text .sub-text {
+    font-size: 18px;
+    margin-bottom: 20px;
   }
 
   .btn-box {
