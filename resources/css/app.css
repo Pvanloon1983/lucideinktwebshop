@@ -549,6 +549,8 @@ thead {
 /* === Pages === */
 .page.home {
   padding: 60px 0 100px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .container.page {
@@ -1010,7 +1012,7 @@ i {
 
 @media (max-width: 600px) {
   .page.home {
-    padding-top: 40px;
+    padding-top: 15px;
   }
 
   .hero-image-background {
@@ -2283,3 +2285,120 @@ i {
 }
 
 #confirmModal[hidden] { display: none !important; }
+
+
+
+.hero-section {
+  display: grid;
+  gap: 50px;
+  grid-template-columns: 1fr 1fr;
+  padding: 0 15px;
+  margin-top: 30px;
+}
+
+.hero-image,
+.hero-text {
+  height: 100%;         /* <-- fill parent height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-text-image {
+  width: 400px;
+}
+
+.hero-text {
+  margin-top: -40px;
+}
+
+.hero-text .main-heading {
+  margin-top: 5px;
+  line-height: 1.4em;
+  font-size: 40px;
+}
+
+.hero-text .sub-text {
+  margin-top: -10px;
+  font-size: 19px;
+}
+
+.btn-box {
+  display: flex;
+  gap: 20px;
+}
+
+.btn-box .btn {
+  font-size: 18px;
+  border: 1px solid var(--main-color);
+}
+
+.btn-box .btn.outlined {
+  background-color: var(--surface-1);
+  border: 2px solid var(--main-font-color);
+  color: var(--main-font-color);
+}
+
+
+@media (max-width: 1200px) { 
+  .hero-text {
+    margin-top: 0px;
+  }
+}
+
+/* Responsive: stack and remove min-height on mobile */
+@media (max-width: 992px) {
+  .hero-section {
+    grid-template-columns: 1fr;
+    min-height: unset;
+    gap: 50px;
+  }
+  .hero-image,
+  .hero-text {
+    height: auto;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .hero-text {
+    margin-top: 20px;
+  }
+  
+
+  .hero-text-image {
+    width: 300px;
+    display: block;
+    margin: 0 auto;
+  }
+ 
+  .hero-text .main-heading {
+    margin-top: 25px;
+    font-size: 25px;
+    margin-bottom: 30px;
+  }
+
+  .hero-text .sub-text {
+    font-size: 18px;
+    margin-bottom: 20px;
+  }
+
+
+}
+
+@media (max-width: 600px) {
+  .hero-text-image {
+    margin-top: -20px;
+  }
+
+  .btn-box {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .btn-box .btn {
+    padding: 10px 13px;
+    text-align: center;
+  }
+
+}
