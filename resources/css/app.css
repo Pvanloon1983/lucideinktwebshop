@@ -710,7 +710,7 @@ i {
 
 @media (max-width: 992px) {
   .container.auth-page {
-    padding-top: calc(var(--header-height) - 24px);
+    padding-top: calc(var(--header-height) + 40px);
     align-items: flex-start;
   }
 }
@@ -1336,6 +1336,13 @@ i {
   padding-bottom: 50px;
 }
 
+.page.shop .book-box .card {
+  background-color: var(--surface-1);
+  padding: 15px;
+  border-radius: 4px;
+  box-shadow: var(--shadow-1);
+}
+
 .page h1,
 .page h2 {
   margin-top: 20px;
@@ -1364,6 +1371,7 @@ i {
   .page.shop .book-box {
     grid-template-columns: repeat(2, 1fr);
     gap: 20px;
+    margin-top: 20px;
   }
 }
 
@@ -1378,6 +1386,10 @@ i {
   .page.shop .book-box {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+
+  .page.shop .book-box .card {
+    padding: 10px;
   }
 }
 
