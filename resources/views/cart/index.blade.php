@@ -97,14 +97,16 @@
                         </div>
 
                         <div class="button-box">
-                         <button class="btn update-qty" type="submit"><span class="loader"></span>Winkelwagen bijwerken</button>
+                            <button class="btn update-qty" type="submit"><span class="loader"></span>Winkelwagen
+                                bijwerken</button>
                 </form>
 
                 <a href="{{ route('checkoutPage') }}">
                     <button type="button" class="btn checkout">Afrekenen</button>
                 </a>
-                <form action="{{ route('removeCart') }}" method="POST" class="empty-cart-btn needs-confirm"
-      data-confirm="Weet je zeker dat je de hele winkelwagen wilt legen?" data-confirm-title="Bevestig legen">
+                <form action="{{ route('removeCart') }}" method="POST" class="needs-confirm"
+                    data-confirm="Weet je zeker dat je de hele winkelwagen wilt legen?"
+                    data-confirm-title="Bevestig legen">
                     @csrf
                     <button type="submit" class="btn delete"><span class="loader"></span>Winkelwagen legen</button>
                 </form>
@@ -112,8 +114,9 @@
 
             @foreach ($cart as $item)
                 <form id="delete-{{ $item['product_id'] }}" action="{{ route('deleteItemFromCart') }}" method="POST"
-                    style="display:none;" class="delete-cart-item needs-confirm"
-        data-confirm="Weet je zeker dat je dit product uit je winkelwagen wilt verwijderen?" data-confirm-title="Bevestig verwijderen">
+                    style="display:none;" class="needs-confirm"
+                    data-confirm="Weet je zeker dat je dit product uit je winkelwagen wilt verwijderen?"
+                    data-confirm-title="Bevestig verwijderen">
                     @csrf
                     @method('DELETE')
                     <input type="hidden" name="product_id" value="{{ $item['product_id'] }}">

@@ -68,6 +68,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 	// Users
 	Route::get('/dashboard/users', [UserController::class, 'index'])->name('userIndex');
+	Route::get('/dashboard/users/create', [UserController::class, 'create'])->name('userCreate');
+	Route::post('/dashboard/users/create', [UserController::class, 'store'])->name('userStore');
 	Route::get('/dashboard/users/{id}', [UserController::class, 'show'])->name('userShow');
 	Route::put('/dashboard/users/{id}', [UserController::class, 'update'])->name('userEdit');
 
@@ -91,8 +93,6 @@ Route::post('/winkel/checkout', [CheckoutController::class, 'store'])->name('sto
 
 
 // Auth pages
-Route::get('/register', [AuthController::class, 'registerPage'])->name('register')->middleware('guest');
-Route::post('/register', [AuthController::class, 'registerUser'])->name('registerUser')->middleware('guest');
 Route::get('/login', [AuthController::class, 'loginPage'])->name('login')->middleware('guest');
 Route::post('/login', [AuthController::class, 'loginUser'])->name('loginUser')->middleware('guest');
 Route::get('/logout', [AuthController::class, 'logoutGet'])->name('logout_get')->middleware('guest');

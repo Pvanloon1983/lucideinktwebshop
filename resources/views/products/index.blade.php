@@ -66,10 +66,10 @@
                     <td style="min-width:110px;">{{ $product->created_at->format('d-m-Y') }}</td>
                     <td class="table-action" style="min-width:100px;">
                         <a href="{{ route('productEditPage', $product->id) }}"><i class="fa-regular fa-pen-to-square edit action-btn"></i></a>
-                        <form action="{{ route('productDelete', $product->id) }}" method="POST">
+                        <form action="{{ route('productDelete', $product->id) }}" method="POST" class="needs-confirm" data-confirm="Weet je zeker dat je dit product wilt verwijderen?" data-confirm-title="Product verwijderen">
                             @csrf
                             @method('DELETE')
-                            <button onclick="return confirm('Weet je zeker dat je dit wilt verwijderen?');" style="background-color: transparent; border: none;padding: 0;" type="submit"><i class="fa-regular fa-trash-can delete action-btn"></i></button>
+                            <button style="background-color: transparent; border: none;padding: 0;" type="submit"><i class="fa-regular fa-trash-can delete action-btn"></i></button>
                         </form>
                     </td>
                 </tr>

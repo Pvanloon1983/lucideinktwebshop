@@ -1,13 +1,14 @@
 <x-layout>
-  <main class="container auth-page">
+  <main class="container auth-page page">
     <form action="{{ route('loginUser') }}" method="POST" class="form">
       @csrf
-      @if(session('success'))
-        <div class="alert alert-success" style="position: relative;">
-          {{ session('success') }}
-          <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
-        </div>
-      @endif
+        @if (session('success'))
+            <div class="alert alert-success" style="position: relative;">
+                {{ session('success') }}
+                <button type="button" class="alert-close"
+                    onclick="this.parentElement.style.display='none';">&times;</button>
+            </div>
+        @endif
       @if(session('error'))
         <div class="alert alert-error">
           {{ session('error') }}
@@ -36,9 +37,6 @@
       </div>
       <div class="form-input">
         <button type="submit" class="btn"><span class="loader"></span>Inloggen</button>
-      </div>
-      <div class="form-input">
-        <span>Nog geen account? <a href="{{ route('register') }}">Registreren</a></span>
       </div>
     </form>
   </main>

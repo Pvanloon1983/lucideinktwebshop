@@ -38,11 +38,10 @@
                         <td class="table-action" style="min-width:80px;">
                             <a href="{{ route('productCategoryEditPage', $productCategory->id) }}"><i
                                     class="fa-regular fa-pen-to-square edit action-btn"></i></a>
-                            <form action="{{ route('productCategoryDelete', $productCategory->id) }}" method="POST">
+                            <form action="{{ route('productCategoryDelete', $productCategory->id) }}" method="POST" class="needs-confirm" data-confirm="Weet je zeker dat je deze categorie wilt verwijderen?" data-confirm-title="Categorie verwijderen">
                                 @csrf
                                 @method('DELETE')
-                                <button onclick="return confirm('Weet je zeker dat je dit wilt verwijderen?');"
-                                    style="background-color: transparent; border: none;padding: 0;" type="submit"><i
+                                <button style="background-color: transparent; border: none;padding: 0;" type="submit"><i
                                         class="fa-regular fa-trash-can delete action-btn"></i></button>
                             </form>
                         </td>

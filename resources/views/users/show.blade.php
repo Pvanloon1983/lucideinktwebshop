@@ -25,7 +25,7 @@
                                 'user' => 'Gebruiker',
                             ];
                         @endphp
-                        <select style="width: fit-content;" name="user-role">
+                        <select style="width: fit-content;" name="user_role">
                             @if (!empty($userRoles))
                                 @foreach ($userRoles as $key => $label)
                                     <option value="{{ $key }}" @if($user->role === $key) selected @endif>{{ $label }}</option>

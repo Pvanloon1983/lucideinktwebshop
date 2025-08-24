@@ -608,7 +608,6 @@ thead {
 .page .alert-error {
   background: var(--surface-4);
   color: var(--error-text);
-  border: 1px solid var(--border-2);
   border-left: 4px solid var(--red-1);
   max-width: fit-content;
   margin-bottom: 20px;
@@ -786,15 +785,19 @@ i {
 }
 
 .auth-page .form .alert-success {
-  background: var(--success-bg);
-  color: var(--success-text);
-  border: 1px solid var(--success-border);
+  background: var(--surface-4);
+  color: var(--ink-1);
+  border-left: 4px solid #28a745;
+  margin-bottom: 0px;
+  width: 100%;
 }
 
 .auth-page .form .alert-error {
-  background: var(--error-bg);
+  background: var(--surface-4);
   color: var(--error-text);
-  border: 1px solid var(--error-border);
+  border-left: 4px solid var(--red-1);
+  width: 100%;
+  margin-bottom: 0px;
 }
 
 .remember-me-box {

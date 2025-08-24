@@ -7,6 +7,7 @@
         <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
       </div>
     @endif
+    <a href="{{ route('userCreate') }}"><button class="btn">Gebruiker toevoegen</button></a>
     <div class="table-wrapper">
       <table class="table">
         <thead>

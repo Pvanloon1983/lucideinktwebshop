@@ -826,37 +826,7 @@ document.addEventListener('DOMContentLoaded', function () {
     };
   }
 
-  // Intercept submit for all delete-cart-item forms
-  document.querySelectorAll('form.delete-cart-item').forEach(function (form) {
-    form.addEventListener('submit', function (e) {
-      // Only intercept if not already confirmed
-      if (!form.__confirmed) {
-        e.preventDefault();
-        showConfirmModal('Weet je zeker dat je dit product uit je winkelwagen wilt verwijderen?', function () {
-          form.__confirmed = true;
-          form.submit();
-        });
-      } else {
-        // Reset flag for next submit
-        form.__confirmed = false;
-      }
-    });
-  });
-
-  // Intercept submit for all empty-cart-btn forms
-  document.querySelectorAll('form.empty-cart-btn').forEach(function (form) {
-    form.addEventListener('submit', function (e) {
-      if (!form.__confirmed) {
-        e.preventDefault();
-        showConfirmModal('Weet je zeker dat je de hele winkelwagen wilt legen?', function () {
-          form.__confirmed = true;
-          form.submit();
-        });
-      } else {
-        form.__confirmed = false;
-      }
-    });
-  });
+  // Remove old cart-specific confirmation logic. Use only the general modal for forms with .needs-confirm
 
 });
 
@@ -940,4 +910,6 @@ document.addEventListener('DOMContentLoaded', function () {
   modal.addEventListener('click', (e) => {
     if (e.target === modal) closeModal();
   });
+
+
 })();

@@ -24,21 +24,29 @@ class OrderController extends Controller
 
 		public function index() 
 		{
-				$orders = Order::with(['items', 'customer'])->paginate(10);
+			$this->authorize('viewAny', Order::class);
 
-				return view('orders.index', ['orders' => $orders]);
+			$orders = Order::with(['items', 'customer'])->paginate(10);
+
+			return view('orders.index', ['orders' => $orders]);
 		}
 
 		public function show(string $id)
 		{
-				$order = Order::with(['items', 'customer'])->findOrFail($id);
-				$items = $order->items()->paginate(10);
-				$order->setRelation('items', $items);
-        return view('orders.show', ['order' => $order]);
+			$order = Order::with(['items', 'customer'])->findOrFail($id);
+
+			$this->authorize('view', $order);
+
+			$items = $order->items()->paginate(10);
+			$order->setRelation('items', $items);
+
+			return view('orders.show', ['order' => $order]);
 		}
 
 		public function create()
 		{
+			$this->authorize('create', Order::class);
+
 			$products = Product::with('category')->orderBy('title', 'asc')->get();
 
 			return view('orders.create', ['products' => $products]);
@@ -46,6 +54,8 @@ class OrderController extends Controller
 
 		public function store(Request $request)
 		{
+			$this->authorize('create', Order::class);
+
 			// Normaliseer checkbox: zet naar 1 wanneer aangevinkt, anders 0 (voorkomt 'on')
 			$request->merge(['alt-shipping' => $request->has('alt-shipping') ? 1 : 0]);
 
@@ -394,6 +404,9 @@ class OrderController extends Controller
 
 		public function update(Request $request, string $id)
 		{
+			$order = Order::findOrFail($id);
+			$this->authorize('update', $order);
+
 			$request->validate([
 				'order-status' => [
 					'required',
