@@ -98,6 +98,14 @@ Route::post('/login', [AuthController::class, 'loginUser'])->name('loginUser')->
 Route::get('/logout', [AuthController::class, 'logoutGet'])->name('logout_get')->middleware('guest');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
+// Forgot password
+Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.request')->middleware('guest');
+Route::post('/forgot-password', [AuthController::class, 'sendPasswordResetLink'])
+	->name('password.email')
+	->middleware(['guest', 'throttle:3,10']); // max 3 requests per 10 minutes
+Route::get('/reset-password/{token}', [AuthController::class, 'resetPassword'])->name('password.reset')->middleware('guest');
+Route::get('/reset-password', [AuthController::class, 'get'])->name('resetNoToken')->middleware('guest');
+Route::post('/reset-password', [AuthController::class, 'resetPasswordHandler'])->name('password.update')->middleware('guest');
 
 // Pages
 Route::get('/', function () { return view('home'); })->name('home');
