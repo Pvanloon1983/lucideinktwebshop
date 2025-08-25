@@ -90,7 +90,7 @@ Route::delete('/winkel/cart/delete', [CartController::class, 'deleteItemFromCart
 // Checkout
 Route::get('/winkel/checkout', [CheckoutController::class, 'create'])->name('checkoutPage');
 Route::post('/winkel/checkout', [CheckoutController::class, 'store'])->name('storeCheckout');
-
+Route::get('/winkel/checkout/success', [CheckoutController::class, 'checkoutSuccess'])->name('checkoutSuccessPage');
 
 // Auth pages
 Route::get('/login', [AuthController::class, 'loginPage'])->name('login')->middleware('guest');

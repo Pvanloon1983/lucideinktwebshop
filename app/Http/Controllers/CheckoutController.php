@@ -448,7 +448,9 @@ class CheckoutController extends Controller
             Mail::to($order->customer->billing_email)->send(new OrderPaidMail($order));
 
             session()->forget('cart');
-            return view('checkout.success', ['success' => 'Je betaling is geslaagd!', 'error' => null, 'info' => null]);            
+            // Store order info in session and redirect to a clean success page
+            session()->flash('checkout_success_order_id', $order->id);
+            return redirect()->route('checkoutSuccessPage');
         }
 
         if ($payment->isOpen() || $payment->isPending()) {
@@ -457,6 +459,21 @@ class CheckoutController extends Controller
 
         $order->update(['status' => 'cancelled', 'payment_status' => 'failed']);
         return view('checkout.success', ['error' => 'Je betaling is mislukt of geannuleerd.', 'success' => null, 'info' => null]);
+    }
+
+    public function checkoutSuccess()
+    {
+        $orderId = session('checkout_success_order_id');
+        if (!$orderId) {
+            return redirect()->route('home');
+        }
+        $order = \App\Models\Order::with('items')->find($orderId);
+        return view('checkout.success', [
+            'success' => true,
+            'order' => $order,
+            'error' => null,
+            'info' => null,
+        ]);
     }
 
     public function paymentWebhook(Request $request)
