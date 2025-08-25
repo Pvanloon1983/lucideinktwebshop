@@ -68,9 +68,9 @@
                                                 value="{{ $item['quantity'] }}" min="1" style="width: 70px;">
                                         </div>
                                     </td>
-                                    <td style="min-width:80px;" data-label="Stukprijs">€ {{ $item['price'] }}</td>
+                                    <td style="min-width:80px;" data-label="Stukprijs">€ {{ number_format($item['price'], 2, ',', '.') }}</td>
                                     <td style="min-width:80px;" data-label="Totaal">€
-                                        {{ $item['quantity'] * $item['price'] }}</td>
+                                        {{  number_format($item['quantity'] * $item['price'], 2, ',', '.') }}</td>
                                     <td style="min-width:80px;" data-label="Actie">
                                         <button type="submit" class="btn small"
                                             form="delete-{{ $item['product_id'] }}">

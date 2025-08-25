@@ -6,12 +6,14 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Customer;
+use App\Mail\OrderPaidMail;
 use Illuminate\Http\Request;
 use Mollie\Api\MollieApiClient;
 use App\Services\MyParcelService;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Validation\ValidationException;
 
 class CheckoutController extends Controller
@@ -443,8 +445,10 @@ class CheckoutController extends Controller
                 ]);
             }
 
+            Mail::to($order->customer->billing_email)->send(new OrderPaidMail($order));
+
             session()->forget('cart');
-            return view('checkout.success', ['success' => 'Je betaling is geslaagd!', 'error' => null, 'info' => null]);
+            return view('checkout.success', ['success' => 'Je betaling is geslaagd!', 'error' => null, 'info' => null]);            
         }
 
         if ($payment->isOpen() || $payment->isPending()) {
