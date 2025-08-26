@@ -31,19 +31,17 @@
                 </div>
                 <div class="order-info-item">
                     <h3>Verzendadres</h3>
-                    @if (!empty($order->customer->shipping_street))
-                    <p><strong>Straatnaam:</strong> {{ $order->customer->shipping_street }}</p>
-                    <p><strong>Huisnummer:</strong> {{ $order->customer->shipping_house_number }}</p>
-                    <p><strong>Huisnummer toevoeging:</strong> {{ $order->customer->shipping_house_number_addition ??
-                        '-' }}</p>
-                    <p><strong>Postcode:</strong> {{ $order->customer->shipping_postal_code }}</p>
-                    <p><strong>Plaats:</strong> {{ $order->customer->shipping_city }}</p>
-                    <p><strong>Land:</strong> {{ $order->customer->shipping_country }}</p>
+                    @if (!empty($order->shipping_street))
+                    <p><strong>Straatnaam:</strong> {{ $order->shipping_street }}</p>
+                    <p><strong>Huisnummer:</strong> {{ $order->shipping_house_number }}</p>
+                    <p><strong>Huisnummer toevoeging:</strong> {{ $order->shipping_house_number_addition ?? '-' }}</p>
+                    <p><strong>Postcode:</strong> {{ $order->shipping_postal_code }}</p>
+                    <p><strong>Plaats:</strong> {{ $order->shipping_city }}</p>
+                    <p><strong>Land:</strong> {{ $order->shipping_country }}</p>
                     @else
                     <p><strong>Straatnaam:</strong> {{ $order->customer->billing_street }}</p>
                     <p><strong>Huisnummer:</strong> {{ $order->customer->billing_house_number }}</p>
-                    <p><strong>Huisnummer toevoeging:</strong> {{ $order->customer->billing_house_number_addition ?? '-'
-                        }}</p>
+                    <p><strong>Huisnummer toevoeging:</strong> {{ $order->customer->billing_house_number_addition ?? '-' }}</p>
                     <p><strong>Postcode:</strong> {{ $order->customer->billing_postal_code }}</p>
                     <p><strong>Plaats:</strong> {{ $order->customer->billing_city }}</p>
                     <p><strong>Land:</strong> {{ $order->customer->billing_country }}</p>

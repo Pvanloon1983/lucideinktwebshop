@@ -25,17 +25,6 @@ class Customer extends Model
         'billing_country',
         'billing_phone',
 
-        // Shipping fields (optional)
-        'shipping_first_name',
-        'shipping_last_name',
-        'shipping_company',
-        'shipping_street',
-        'shipping_house_number',
-        'shipping_house_number_addition',
-        'shipping_postal_code',
-        'shipping_city',
-        'shipping_country',
-        'shipping_phone',
     ];
 
     /**

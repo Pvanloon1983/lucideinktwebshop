@@ -130,7 +130,7 @@ class CheckoutController extends Controller
             'shipping_country'               => $request->input('shipping_country'),
             'shipping_phone'                 => $request->input('shipping_phone'),
             ]);
-        }
+        } 
 
         // --- Create user (optional)
         $user = User::where('email', $request->input('billing_email'))->first();
@@ -144,10 +144,37 @@ class CheckoutController extends Controller
         event(new Registered($user));
         }
 
-        $customer = Customer::updateOrCreate(
-            ['billing_email' => $request->input('billing_email')],
-            $customerData
-        );
+        $customer = Customer::where('billing_email', $request->input('billing_email'))->first();
+        if (!$customer) {
+            $customer = Customer::create([
+                'billing_first_name'             => $request->input('billing_first_name'),
+                'billing_last_name'              => $request->input('billing_last_name'),
+                'billing_email'                  => $request->input('billing_email'),
+                'billing_company'                => $request->input('billing_company'),
+                'billing_street'                 => $request->input('billing_street'),
+                'billing_house_number'           => $request->input('billing_housenumber'),
+                'billing_house_number_addition'  => $request->input('billing_housenumber-add'),
+                'billing_postal_code'            => $request->input('billing_postal-zip-code'),
+                'billing_city'                   => $request->input('billing_city'),
+                'billing_country'                => $request->input('billing_country'),
+                'billing_phone'                  => $request->input('billing_phone'),
+            ]);
+        } else {
+            $customer->update([
+                'billing_first_name'             => $request->input('billing_first_name'),
+                'billing_last_name'              => $request->input('billing_last_name'),
+                'billing_email'                  => $request->input('billing_email'),
+                'billing_company'                => $request->input('billing_company'),
+                'billing_street'                 => $request->input('billing_street'),
+                'billing_house_number'           => $request->input('billing_housenumber'),
+                'billing_house_number_addition'  => $request->input('billing_housenumber-add'),
+                'billing_postal_code'            => $request->input('billing_postal-zip-code'),
+                'billing_city'                   => $request->input('billing_city'),
+                'billing_country'                => $request->input('billing_country'),
+                'billing_phone'                  => $request->input('billing_phone'),
+            ]);
+        }
+
 
     // --- Calculating total price (netto som; afronding voor Mollie gebeurt later)
         $total = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
@@ -158,7 +185,7 @@ class CheckoutController extends Controller
         // - voorkomt race conditions en halve orders (alles of niets)
         $order = null;
         try {
-            DB::transaction(function () use ($cart, $customer, $total, &$order) {
+            DB::transaction(function () use ($cart, $customer, $total, &$order, $request) {
                 $insufficient = [];
                 $locked = [];
                 // Lock producten en valideer voorraad
@@ -184,10 +211,37 @@ class CheckoutController extends Controller
                 }
 
                 // Order aanmaken
-                $order = $customer->orders()->create([
-                    'total'  => $total,
-                    'status' => 'pending',
-                ]);
+                if ($request->boolean('alt-shipping')) {
+                    $order = $customer->orders()->create([
+                        'total'  => $total,
+                        'status' => 'pending',
+                        'shipping_first_name'            => $request->input('shipping_first_name'),
+                        'shipping_last_name'             => $request->input('shipping_last_name'),
+                        'shipping_company'               => $request->input('shipping_company'),
+                        'shipping_street'                => $request->input('shipping_street'),
+                        'shipping_house_number'          => $request->input('shipping_housenumber'),
+                        'shipping_house_number_addition' => $request->input('shipping_housenumber-add'),
+                        'shipping_postal_code'           => $request->input('shipping_postal-zip-code'),
+                        'shipping_city'                  => $request->input('shipping_city'),
+                        'shipping_country'               => $request->input('shipping_country'),
+                        'shipping_phone'                 => $request->input('shipping_phone'),
+                    ]);
+                } else {
+                    $order = $customer->orders()->create([
+                        'total'  => $total,
+                        'status' => 'pending',
+                        'shipping_first_name'            => $request->input('billing_first_name'),
+                        'shipping_last_name'             => $request->input('billing_last_name'),
+                        'shipping_company'               => $request->input('billing_company'),
+                        'shipping_street'                => $request->input('billing_street'),
+                        'shipping_house_number'          => $request->input('billing_housenumber'),
+                        'shipping_house_number_addition' => $request->input('billing_housenumber-add'),
+                        'shipping_postal_code'           => $request->input('billing_postal-zip-code'),
+                        'shipping_city'                  => $request->input('billing_city'),
+                        'shipping_country'               => $request->input('billing_country'),
+                        'shipping_phone'                 => $request->input('billing_phone'),
+                    ]);          
+                }
 
                 // Voorraad verlagen en orderregels vastleggen (binnen dezelfde transactie)
                 foreach ($locked as [$product, $item]) {

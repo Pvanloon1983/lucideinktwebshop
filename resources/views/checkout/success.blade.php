@@ -1,5 +1,6 @@
 <x-layout>
-	<main class="container page checkout">
+	<main class="container page checkout success">
+
 		@if(isset($error) && $error)
 			<div class="checkout-message error">
 				<strong>Er is iets misgegaan</strong>
@@ -12,47 +13,82 @@
 				<p>{{ $info }}</p>
 				<a class="link-back" href="{{ route('shop') }}">Terug naar de shop</a>
 			</div>
-		@elseif(isset($success) && $success)
-			<div class="checkout-message success">
-				<strong>Betaling geslaagd!</strong>
-				<p>Bedankt voor je bestelling! Je betaling is succesvol verwerkt.<br>
-				Je ontvangt zo snel mogelijk een bevestiging per e-mail met alle ordergegevens en een factuur als PDF.</p>
-				<a class="link-back" href="{{ route('shop') }}">Verder winkelen</a>
-			</div>
-
-			@php
-				$order = $order ?? null;
-			@endphp
-
-			@if($order)
-				<div class="order-summary" style="margin-top:2rem;">
-					<h2>Jouw bestelling</h2>
-					<p><strong>Ordernummer:</strong> {{ $order->id }}<br>
-					<strong>Besteldatum:</strong> {{ $order->created_at->format('d-m-Y H:i') }}</p>
-					<table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;margin-bottom:18px;">
-						<thead>
-							<tr style="background:#f7f7f7;">
-								<th align="left">Product</th>
-								<th align="center">Aantal</th>
-								<th align="right">Stukprijs</th>
-								<th align="right">Subtotaal</th>
-							</tr>
-						</thead>
-						<tbody>
-							@foreach($order->items as $item)
-							<tr>
-								<td>{{ $item->product_name }}</td>
-								<td align="center">{{ $item->quantity }}</td>
-								<td align="right">€ {{ number_format($item->unit_price, 2, ',', '.') }}</td>
-								<td align="right">€ {{ number_format($item->subtotal, 2, ',', '.') }}</td>
-							</tr>
-							@endforeach
-						</tbody>
-					</table>
-					<p><strong>Totaal:</strong> € {{ number_format($order->total, 2, ',', '.') }}</p>
-					<p style="color:#888;font-size:15px;">Je ontvangt een bevestiging en factuur per e-mail. Bewaar deze e-mail voor je administratie.</p>
+		@elseif(isset($success) && $success && isset($order) && $order)
+			<div class="order-summary">
+				<h2 class="order-summary-title">Jouw bestelling</h2>
+				<div class="order-bestelling-box">
+					<div class="order-bestelling-header">
+						<span class="order-bestelling-col product">Product</span>
+						<span class="order-bestelling-col subtotal">Subtotaal</span>
+					</div>
+					@foreach($order->items as $item)
+					<div class="order-bestelling-row">
+						<span class="order-bestelling-product">
+							{{ $item->quantity }} × {{ $item->product_name }}
+						</span>
+						<span class="order-bestelling-subtotal">€ {{ number_format($item->subtotal, 2, ',', '.') }}</span>
+					</div>
+					@endforeach
+					<div class="order-bestelling-divider"></div>
+					<div class="order-bestelling-total-row">
+						<span class="order-bestelling-total-label"><strong>Totaal</strong></span>
+						<span class="order-bestelling-total-value"><strong>€ {{ number_format($order->total, 2, ',', '.') }}</strong></span>
+					</div>
 				</div>
-			@endif
+
+				<div class="order-addresses">
+					<div class="order-address-block">
+						<h3>Factuuradres</h3>
+						<div class="address-details">
+							{{ $order->customer->billing_first_name }} {{ $order->customer->billing_last_name }}<br>
+							@if($order->customer->billing_company)
+								{{ $order->customer->billing_company }}<br>
+							@endif
+							{{ $order->customer->billing_street }} {{ $order->customer->billing_house_number }}{{ $order->customer->billing_house_number_addition ? ' '.$order->customer->billing_house_number_addition : '' }}<br>
+							{{ $order->customer->billing_postal_code }} {{ $order->customer->billing_city }}<br>
+							{{ $order->customer->billing_country }}<br>
+							@if($order->customer->billing_phone)
+								Tel: {{ $order->customer->billing_phone }}<br>
+							@endif
+							<span class="address-email">Email: {{ $order->customer->billing_email }}</span>
+						</div>
+					</div>
+					@if($order->shipping_street)
+					<div class="order-address-block">
+						<h3>Verzendadres</h3>
+						<div class="address-details">
+							{{ $order->shipping_first_name }} {{ $order->shipping_last_name }}<br>
+							@if($order->shipping_company)
+								{{ $order->shipping_company }}<br>
+							@endif
+							{{ $order->shipping_street }} {{ $order->shipping_house_number }}{{ $order->shipping_house_number_addition ? ' '.$order->shipping_house_number_addition : '' }}<br>
+							{{ $order->shipping_postal_code }} {{ $order->shipping_city }}<br>
+							{{ $order->shipping_country }}<br>
+							@if($order->shipping_phone)
+								Tel: {{ $order->shipping_phone }}<br>
+							@endif
+						</div>
+					</div>
+					@else
+					<div class="order-address-block">
+						<h3>Verzendadres</h3>
+						<div class="address-details">
+							{{ $order->customer->billing_first_name }} {{ $order->customer->billing_last_name }}<br>
+							@if($order->customer->billing_company)
+								{{ $order->customer->billing_company }}<br>
+							@endif
+							{{ $order->customer->billing_street }} {{ $order->customer->billing_house_number }}{{ $order->customer->billing_house_number_addition ? ' '.$order->customer->billing_house_number_addition : '' }}<br>
+							{{ $order->customer->billing_postal_code }} {{ $order->customer->billing_city }}<br>
+							{{ $order->customer->billing_country }}<br>
+							@if($order->customer->billing_phone)
+								Tel: {{ $order->customer->billing_phone }}<br>
+							@endif
+						</div>
+					</div>
+					@endif
+				</div>
+				<p class="order-summary-note">Je ontvangt een bevestiging en factuur per e-mail. Bewaar deze e-mail voor je administratie.</p>
+			</div>
 		@endif
 	</main>
 </x-layout>

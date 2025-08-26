@@ -17,7 +17,20 @@
       margin: 40px auto;
       background: #fff;
       border-radius: 4px;
-      padding: 32px 28px;
+      padding: 32px 12px;
+      overflow-x: auto;
+      box-sizing: border-box;
+    }
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-bottom: 18px;
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+    table {
+      min-width: 400px;
     }
     h1 {
       color: #ab0f14;
@@ -60,7 +73,8 @@
 <p><strong>{{ __('Ordernummer', [], 'nl') }}:</strong> {{ $order->id }}<br>
 <strong>{{ __('Besteldatum', [], 'nl') }}:</strong> {{ $order->created_at->format('d-m-Y H:i') }}</p>
 
-<table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;margin-bottom:18px;">
+<div class="table-responsive">
+<table width="100%" cellpadding="8" cellspacing="0" style="border-collapse:collapse;">
   <thead>
     <tr style="background:#f7f7f7;">
       <th align="left">{{ __('Product', [], 'nl') }}</th>
@@ -79,7 +93,8 @@
     </tr>
     @endforeach
   </tbody>
-</table>
+  </table>
+</div>
 
 <p><strong>{{ __('Totaal', [], 'nl') }}:</strong> € {{ number_format($order->total, 2, ',', '.') }}</p>
 
