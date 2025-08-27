@@ -19,7 +19,7 @@
                     <p><strong>Betaalstatus:</strong> {{ $order->payment_status_label ?? 'Onbekend' }}</p>
                     @if (!empty($order->invoice_pdf_path))
                         <p><strong>Factuur:</strong> 
-                                <a style="text-decoration: underline" href="{{ route('my_orders.invoice', $order) }}" target="_blank">Download factuur</a>
+                                <a style="text-decoration: underline" href="{{ route('my_orders.invoice', $order->id) }}" target="_blank">Download factuur</a>
                         </p>
                     @endif
                 </div>

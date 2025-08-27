@@ -61,7 +61,7 @@
                     @endif
                     @if (!empty($order->invoice_pdf_path))
                         <p><strong>Factuur:</strong> 
-                                <a style="text-decoration: underline" href="{{ route('orders.invoice', $order) }}" target="_blank">Download factuur</a>
+                                <a style="text-decoration: underline" href="{{ route('orders.invoice', $order->id) }}" target="_blank">Download factuur</a>
                         </p>
                     @endif
                     <button class="btn" type="submit">Bestelling bijwerken</button>

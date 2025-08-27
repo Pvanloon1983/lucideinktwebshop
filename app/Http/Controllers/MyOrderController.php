@@ -54,7 +54,7 @@ class MyOrderController extends Controller
         $isAdmin = $user->role === 'admin';
         $isCustomer = $customer && $order->customer_id === $customer->id;
         if (!$isAdmin && !$isCustomer) {
-            return redirect()->route('dashboard');
+            abort(403, 'Je hebt geen toegang tot deze factuur.');
         }
 
         // Check if invoice path is set
@@ -62,11 +62,49 @@ class MyOrderController extends Controller
             abort(404, 'Factuur niet gevonden.');
         }
 
+        return $this->streamInvoiceDownload($order);
+    }
+
+    /**
+     * Zelfde streaming aanpak als admin controller om host issues te vermijden.
+     */
+    private function streamInvoiceDownload(Order $order)
+    {
+        $relativePath = trim($order->invoice_pdf_path);
+        if (str_contains($relativePath, '..')) {
+            abort(400, 'Ongeldig pad.');
+        }
+
         $disk = Storage::disk('public');
-        $path = $order->invoice_pdf_path;
-        if (!$disk->exists($path)) {
+        if (!$disk->exists($relativePath)) {
             abort(404, 'Factuurbestand ontbreekt.');
         }
-        return $disk->download($path, 'factuur_'.$order->id.'.pdf');
+
+        $fullPath = method_exists($disk, 'path') ? $disk->path($relativePath) : storage_path('app/public/'.$relativePath);
+        if (!is_file($fullPath) || !is_readable($fullPath)) {
+            abort(500, 'Factuur kan niet worden gelezen.');
+        }
+
+        while (ob_get_level() > 0) { @ob_end_clean(); }
+
+        $fileSize = @filesize($fullPath) ?: null;
+        $downloadName = 'factuur_'.$order->id.'.pdf';
+        $headers = [
+            'Content-Type' => 'application/pdf',
+            'Cache-Control' => 'private, no-store, max-age=0, must-revalidate',
+            'Pragma' => 'public',
+        ];
+        if ($fileSize) { $headers['Content-Length'] = (string) $fileSize; }
+
+        return response()->streamDownload(function () use ($fullPath) {
+            $h = fopen($fullPath, 'rb');
+            if ($h === false) { return; }
+            try {
+                while (!feof($h)) {
+                    echo fread($h, 8192);
+                    flush();
+                }
+            } finally { fclose($h); }
+        }, $downloadName, $headers);
     }
 }
