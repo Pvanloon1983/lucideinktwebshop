@@ -431,14 +431,13 @@ class OrderController extends Controller
 
 		public function download_invoice($id)
 		{
-			$order = Order::findOrFail($id); // Force fresh fetch from DB
+			$order = Order::findOrFail($id);
 
-			// Security check: only the owner of the order OR admins can download
+			// Alleen admin mag downloaden (of voeg klant-check toe)
 			if (auth()->user()->role !== 'admin') {
-				return redirect()->route('dashboard');
+				abort(403, 'Je hebt geen toegang tot deze factuur.');
 			}
 
-			// Check if invoice path is set
 			if (empty($order->invoice_pdf_path)) {
 				abort(404, 'Factuur niet gevonden.');
 			}
