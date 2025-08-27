@@ -46,7 +46,7 @@
 							@endif
 							{{ $order->customer->billing_street }} {{ $order->customer->billing_house_number }}{{ $order->customer->billing_house_number_addition ? ' '.$order->customer->billing_house_number_addition : '' }}<br>
 							{{ $order->customer->billing_postal_code }} {{ $order->customer->billing_city }}<br>
-							{{ $order->customer->billing_country }}<br>
+							{{ config('countries.' . $order->customer->billing_country) ?? $order->customer->billing_country }}<br>
 							@if($order->customer->billing_phone)
 								Tel: {{ $order->customer->billing_phone }}<br>
 							@endif
@@ -63,7 +63,7 @@
 							@endif
 							{{ $order->shipping_street }} {{ $order->shipping_house_number }}{{ $order->shipping_house_number_addition ? ' '.$order->shipping_house_number_addition : '' }}<br>
 							{{ $order->shipping_postal_code }} {{ $order->shipping_city }}<br>
-							{{ $order->shipping_country }}<br>
+							{{ config('countries.' . $order->shipping_country) ?? $order->shipping_country }}<br>
 							@if($order->shipping_phone)
 								Tel: {{ $order->shipping_phone }}<br>
 							@endif
@@ -79,7 +79,7 @@
 							@endif
 							{{ $order->customer->billing_street }} {{ $order->customer->billing_house_number }}{{ $order->customer->billing_house_number_addition ? ' '.$order->customer->billing_house_number_addition : '' }}<br>
 							{{ $order->customer->billing_postal_code }} {{ $order->customer->billing_city }}<br>
-							{{ $order->customer->billing_country }}<br>
+							{{ config('countries.' . $order->customer->billing_country) ?? $order->customer->billing_country }}<br>
 							@if($order->customer->billing_phone)
 								Tel: {{ $order->customer->billing_phone }}<br>
 							@endif
