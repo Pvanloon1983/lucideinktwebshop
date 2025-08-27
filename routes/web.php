@@ -29,8 +29,9 @@ Route::middleware(['auth', 'role:admin,user'])->group(function () {
 
 	// My Orders
 	Route::get('/dashboard/my-orders', [MyOrderController::class, 'showMyOrders'])->name('showMyOrders');
-	Route::get('/dashboard/my-orders/{id}', [MyOrderController::class, 'showMyOrder'])->name('showMyOrder');
-    
+	Route::get('/dashboard/my-orders/{id}', [MyOrderController::class, 'showMyOrder'])->name('showMyOrder');	
+	Route::get('/dashboard/my-orders/{id}/invoice', [MyOrderController::class, 'download_invoice'])->name('my_orders.invoice');
+   
 })->middleware('auth');
 
 
@@ -60,7 +61,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	Route::get('/dashboard/orders', [OrderController::class, 'index'])->name('orderIndex');
 	Route::get('/dashboard/orders/{id}', [OrderController::class, 'show'])->name('orderShow');	
 	Route::post('/dashboard/orders/create', [OrderController::class, 'store'])->name('orderStore');
-	Route::put('/dashboard/orders/{id}', [OrderController::class, 'update'])->name('orderUpdate');
+	Route::put('/dashboard/orders/{id}', [OrderController::class, 'update'])->name('orderUpdate');	
+	Route::get('/dashboard/orders/{id}/invoice', [OrderController::class, 'download_invoice'])->name('orders.invoice');
 
 	// Customers
 	Route::get('/dashboard/customers', [CustomerController::class, 'index'])->name('customerIndex');
@@ -122,47 +124,3 @@ Webhook'])->name('webhooks.mollie');
 // Admin/custom pickup locations API (used by admin order page custom widget)
 Route::get('/pickup-locations', [PickupLocationController::class, 'index'])->name('pickup.locations');
 
-Route::get('/invoice', function () {
-	$order = [
-		'id' => 1234,
-		'customer' => [
-			'billing_first_name' => 'Jan',
-			'billing_last_name' => 'Jansen',
-			'billing_street' => 'Hoofdstraat',
-			'billing_house_number' => '12',
-			'billing_house_number_addition' => 'A',
-			'billing_postal_code' => '1234 AB',
-			'billing_city' => 'Amsterdam',
-			'billing_country' => 'NL',
-			'billing_email' => 'jan@example.com',
-			'billing_company' => 'Jan Jansen BV',
-			'billing_phone' => '0612345678',
-		],
-		'shipping_first_name' => 'Piet',
-		'shipping_last_name' => 'Pietersen',
-		'shipping_street' => 'Dorpsstraat',
-		'shipping_house_number' => '34',
-		'shipping_house_number_addition' => '',
-		'shipping_postal_code' => '5678 CD',
-		'shipping_city' => 'Rotterdam',
-		'shipping_country' => 'NL',
-		'shipping_company' => 'Pietersen Logistics',
-		'shipping_phone' => '0687654321',
-		'items' => [
-			[
-				'product_name' => 'Boek A',
-				'quantity' => 1,
-				'unit_price' => 10.00,
-				'subtotal' => 10.00,
-			],
-			[
-				'product_name' => 'Boek B',
-				'quantity' => 2,
-				'unit_price' => 7.50,
-				'subtotal' => 15.00,
-			],
-		],
-		'total' => 25.00,
-	];
-	return view('invoices.order-style', compact('order'));
-});

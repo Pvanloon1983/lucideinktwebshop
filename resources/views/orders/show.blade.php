@@ -59,6 +59,11 @@
                             </div>
                         </p>
                     @endif
+                    @if (!empty($order->invoice_pdf_path))
+                        <p><strong>Factuur:</strong> 
+                                <a style="text-decoration: underline" href="{{ route('orders.invoice', $order) }}" target="_blank">Download factuur</a>
+                        </p>
+                    @endif
                     <button class="btn" type="submit">Bestelling bijwerken</button>
                 </form>
                 </div>
@@ -95,14 +100,6 @@
                 </div>
             </div>
         </div>
-        @if (session('success'))
-            <div class="alert alert-success">
-                {{ session('success') }}
-                <button type="button" class="alert-close"
-                    onclick="this.parentElement.style.display='none';">&times;</button>
-            </div>
-        @endif
-
         <div class="table-wrapper">
             <table class="table">
                 <thead>

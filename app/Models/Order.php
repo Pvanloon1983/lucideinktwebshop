@@ -21,6 +21,7 @@ class Order extends Model
         'status',
         'payment_status',
         'paid_at',
+        'invoice_pdf_path',
 
         // Shipping fields
         'shipping_first_name',

@@ -8,12 +8,14 @@ use App\Models\Product;
 use App\Models\Customer;
 use App\Mail\OrderPaidMail;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Mollie\Api\MollieApiClient;
 use App\Services\MyParcelService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 class CheckoutController extends Controller
@@ -499,7 +501,18 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            Mail::to($order->customer->billing_email)->send(new OrderPaidMail($order));
+            // Generate invoice
+            $pdf = Pdf::loadView('invoices.order', ['order' => $order])->output();
+
+            $filename = 'factuur_' . $order->id . '.pdf';
+            $relativePath = 'invoices/' . $filename;
+
+            Storage::disk('public')->put($relativePath, $pdf);
+
+            $order->forceFill(['invoice_pdf_path' => $relativePath])->save();
+
+            // Send mail with fresh model
+            Mail::to($order->customer->billing_email)->send(new OrderPaidMail($order->fresh()));
 
             session()->forget('cart');
             // Store order info in session and redirect to a clean success page

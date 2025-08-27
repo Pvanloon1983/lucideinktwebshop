@@ -3,12 +3,13 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Content;
-use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class OrderPaidMail extends Mailable
 {
@@ -23,22 +24,12 @@ class OrderPaidMail extends Mailable
 
     public function build()
     {
-        // Generate PDF from the Blade view
-        $pdf = Pdf::loadView('invoices.order', ['order' => $this->order])->output();
-
-        // Store the PDF in storage/app/invoices
-        $filename = 'factuur_' . $this->order->id . '.pdf';
-        $dir = storage_path('app/invoices');
-        if (!file_exists($dir)) {
-            mkdir($dir, 0775, true);
-        }
-        $path = $dir . '/' . $filename;
-        file_put_contents($path, $pdf);
+        // Only read/attach – no DB writes here
+        $pathOnDisk = Storage::disk('public')->path($this->order->invoice_pdf_path);
 
         return $this->subject('Uw bestelling bij Lucide Inkt')
-            ->view('emails.orderpaid')
-            ->with(['order' => $this->order])
-            ->attach($path, [
+            ->view('emails.orderpaid', ['order' => $this->order])
+            ->attach($pathOnDisk, [
                 'as' => 'factuur.pdf',
                 'mime' => 'application/pdf',
             ]);

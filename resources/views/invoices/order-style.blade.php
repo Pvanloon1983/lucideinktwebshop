@@ -43,7 +43,7 @@
         </div>
         <div class="address-blocks">
             <div class="address">
-                <strong>{{ __('Factuuradres', [], 'nl') }}</strong><br>
+                <strong>{{ __('Factuuradres') }}</strong><br>
                 {{ $order['customer']['billing_first_name'] }} {{ $order['customer']['billing_last_name'] }}<br>
                 @if(!empty($order['customer']['billing_company']))
                     {{ $order['customer']['billing_company'] }}<br>
@@ -57,7 +57,7 @@
                 Email: {{ $order['customer']['billing_email'] }}
             </div>
             <div class="address">
-                <strong>{{ __('Verzendadres', [], 'nl') }}</strong><br>
+                <strong>{{ __('Verzendadres') }}</strong><br>
                 @if(!empty($order['shipping_street']))
                     {{ $order['shipping_first_name'] }} {{ $order['shipping_last_name'] }}<br>
                     @if(!empty($order['shipping_company']))

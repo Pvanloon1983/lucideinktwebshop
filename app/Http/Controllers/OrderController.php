@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Mollie\Api\MollieApiClient;
 use App\Services\MyParcelService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -426,5 +427,27 @@ class OrderController extends Controller
 
 		public function get () {
 			return redirect()->route('dashboard');
+		}
+
+		public function download_invoice($id)
+		{
+			$order = Order::findOrFail($id); // Force fresh fetch from DB
+
+			// Security check: only the owner of the order OR admins can download
+			if (auth()->user()->role !== 'admin') {
+				return redirect()->route('dashboard');
+			}
+
+			// Check if invoice path is set
+			if (empty($order->invoice_pdf_path)) {
+				abort(404, 'Factuur niet gevonden.');
+			}
+
+			$disk = Storage::disk('public');
+			$path = $order->invoice_pdf_path;
+			if (!$disk->exists($path)) {
+				abort(404, 'Factuurbestand ontbreekt.');
+			}
+			return $disk->download($path, 'factuur_'.$order->id.'.pdf');
 		}
 }
