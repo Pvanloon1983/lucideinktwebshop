@@ -10,9 +10,11 @@ use Mollie\Api\MollieApiClient;
 use App\Services\MyParcelService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Concerns\streamPdf;
 
 class OrderController extends Controller
 {
+	use streamPdf;
 
 	protected MollieApiClient $mollie;
 
@@ -442,71 +444,7 @@ class OrderController extends Controller
 				abort(404, 'Factuur niet gevonden.');
 			}
 
-			return $this->streamInvoiceDownload($order);
-		}
-
-		/**
-		 * Stream de factuur veilig naar de browser i.p.v. Storage::download
-		 * om host-specifieke ERR_INVALID_RESPONSE issues (Cloudways) te vermijden.
-		 */
-		private function streamInvoiceDownload(Order $order)
-		{
-			$relativePath = trim($order->invoice_pdf_path);
-			// Basis security: geen directory traversal
-			if (str_contains($relativePath, '..')) {
-				abort(400, 'Ongeldig pad.');
-			}
-
-			$disk = Storage::disk('public');
-			if (!$disk->exists($relativePath)) {
-				Log::warning('Invoice download: file missing on disk', [
-					'order_id' => $order->id,
-					'path' => $relativePath,
-				]);
-				abort(404, 'Factuurbestand ontbreekt.');
-			}
-
-			// Volledig pad proberen op te halen
-			$fullPath = method_exists($disk, 'path') ? $disk->path($relativePath) : storage_path('app/public/'.$relativePath);
-			if (!is_file($fullPath) || !is_readable($fullPath)) {
-				Log::error('Invoice download: file not readable', [
-					'order_id' => $order->id,
-					'full_path' => $fullPath,
-				]);
-				abort(500, 'Factuur kan niet worden gelezen.');
-			}
-
-			// Probeer bestandsgrootte (niet verplicht)
-			$fileSize = @filesize($fullPath) ?: null;
-			$downloadName = 'factuur_'.$order->id.'.pdf';
-
-			// Leeg alle bestaande output buffers om corrupte responses te voorkomen
-			while (ob_get_level() > 0) {
-				@ob_end_clean();
-			}
-
-			$headers = [
-				'Content-Type' => 'application/pdf',
-				'Cache-Control' => 'private, no-store, max-age=0, must-revalidate',
-				'Pragma' => 'public',
-			];
-			if ($fileSize) {
-				$headers['Content-Length'] = (string) $fileSize;
-			}
-
-			return response()->streamDownload(function () use ($fullPath) {
-				$handle = fopen($fullPath, 'rb');
-				if ($handle === false) {
-					return; // streamDownload zal headers al hebben gestuurd
-				}
-				try {
-					while (!feof($handle)) {
-						echo fread($handle, 8192);
-						flush();
-					}
-				} finally {
-					fclose($handle);
-				}
-			}, $downloadName, $headers);
+			// Comes from streamPdf
+			return $this->streamInvoice($order);
 		}
 }

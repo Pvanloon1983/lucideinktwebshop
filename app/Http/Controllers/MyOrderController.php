@@ -6,9 +6,11 @@ use App\Models\Order;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\Concerns\streamPdf;
 
 class MyOrderController extends Controller
 {
+    use streamPdf;
 
     public function __construct()
     {
@@ -62,49 +64,9 @@ class MyOrderController extends Controller
             abort(404, 'Factuur niet gevonden.');
         }
 
-        return $this->streamInvoiceDownload($order);
-    }
-
-    /**
-     * Zelfde streaming aanpak als admin controller om host issues te vermijden.
-     */
-    private function streamInvoiceDownload(Order $order)
-    {
-        $relativePath = trim($order->invoice_pdf_path);
-        if (str_contains($relativePath, '..')) {
-            abort(400, 'Ongeldig pad.');
-        }
-
-        $disk = Storage::disk('public');
-        if (!$disk->exists($relativePath)) {
-            abort(404, 'Factuurbestand ontbreekt.');
-        }
-
-        $fullPath = method_exists($disk, 'path') ? $disk->path($relativePath) : storage_path('app/public/'.$relativePath);
-        if (!is_file($fullPath) || !is_readable($fullPath)) {
-            abort(500, 'Factuur kan niet worden gelezen.');
-        }
-
-        while (ob_get_level() > 0) { @ob_end_clean(); }
-
-        $fileSize = @filesize($fullPath) ?: null;
-        $downloadName = 'factuur_'.$order->id.'.pdf';
-        $headers = [
-            'Content-Type' => 'application/pdf',
-            'Cache-Control' => 'private, no-store, max-age=0, must-revalidate',
-            'Pragma' => 'public',
-        ];
-        if ($fileSize) { $headers['Content-Length'] = (string) $fileSize; }
-
-        return response()->streamDownload(function () use ($fullPath) {
-            $h = fopen($fullPath, 'rb');
-            if ($h === false) { return; }
-            try {
-                while (!feof($h)) {
-                    echo fread($h, 8192);
-                    flush();
-                }
-            } finally { fclose($h); }
-        }, $downloadName, $headers);
+        // Comes from streamPdf
+        return $this->streamInvoice($order, function (Order $o) use ($isAdmin, $isCustomer) {
+            return $isAdmin || $isCustomer;
+        });
     }
 }
