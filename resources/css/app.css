@@ -2430,6 +2430,11 @@ i {
   max-width: 1000px;
 }
 
+/* === Order show page === */
+.payment-link-box {
+  margin-bottom: 10px;
+}
+
 /* === Bestelling Box (Order Summary Screenshot Style) === */
 .order-bestelling-box {
   background: var(--surface-1);

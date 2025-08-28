@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Customer;
+use App\Mail\OrderPaidMail;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Mollie\Api\MollieApiClient;
 use App\Services\MyParcelService;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Concerns\streamPdf;
 
@@ -431,7 +434,24 @@ class OrderController extends Controller
 			return redirect()->route('dashboard');
 		}
 
-		public function download_invoice($id)
+		public function generateInvoice(string $id)
+		{
+			$order = Order::findOrFail($id);
+
+			// Generate invoice
+            $pdf = Pdf::loadView('invoices.order', ['order' => $order])->output();
+
+            $filename = 'factuur_' . $order->id . '.pdf';
+            $relativePath = 'invoices/' . $filename;
+
+            Storage::disk('public')->put($relativePath, $pdf);
+
+            $order->forceFill(['invoice_pdf_path' => $relativePath])->save();
+
+			return back()->with('success', 'Factuur is aangemaakt');
+		}
+
+		public function download_invoice(string $id)
 		{
 			$order = Order::findOrFail($id);
 
@@ -446,5 +466,15 @@ class OrderController extends Controller
 
 			// Comes from streamPdf
 			return $this->streamInvoice($order);
+		}
+
+		public function sendOrderEmailWithInvoice(string $id)
+		{
+			$order = Order::findOrFail($id);
+			
+			// Send mail with fresh model
+            Mail::to($order->customer->billing_email)->send(new OrderPaidMail($order->fresh()));
+
+			return back()->with('success', 'E-mail met factuur is verstuurd');
 		}
 }

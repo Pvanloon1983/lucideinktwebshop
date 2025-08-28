@@ -52,7 +52,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	Route::get('/dashboard/productcategories/create', [ProductCategoryController::class, 'create'])->name('productCategoryCreatePage');
 	Route::post('/dashboard/productcategories/create', [ProductCategoryController::class, 'store'])->name('productCategoryStore');
 	Route::get('/dashboard/productcategories/edit/{id}', [ProductCategoryController::class, 'edit'])->name('productCategoryEditPage');
-	Route::put('/dashboard/productcategories/edit/{id}', [ProductCategoryController::class, 'update'])->name('productCategoryUpdate');
+	Route::post('/dashboard/productcategories/edit/{id}', [ProductCategoryController::class, 'update'])->name('productCategoryUpdate');
 	Route::delete('/dashboard/productcategories/delete/{id}', [ProductCategoryController::class, 'destroy'])->name('productCategoryDelete');
 	Route::get('/dashboard/productcategories/delete/{id}', [ProductCategoryController::class, 'get'])->name('productCategoryDeleteGet');
 
@@ -62,6 +62,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	Route::get('/dashboard/orders/{id}', [OrderController::class, 'show'])->name('orderShow');	
 	Route::post('/dashboard/orders/create', [OrderController::class, 'store'])->name('orderStore');
 	Route::put('/dashboard/orders/{id}', [OrderController::class, 'update'])->name('orderUpdate');	
+	Route::post('/dashboard/orders/generate-invoice/{id}', [OrderController::class, 'generateInvoice'])->name('generateInvoice');
+	Route::post('/dashboard/orders/send-email/{id}', [OrderController::class, 'sendOrderEmailWithInvoice'])->name('sendOrderEmailWithInvoice');
 	Route::get('/dashboard/orders/{id}/invoice', [OrderController::class, 'download_invoice'])->name('orders.invoice');
 
 	// Customers

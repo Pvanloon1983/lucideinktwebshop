@@ -7,7 +7,6 @@
                 <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
             </div>
         @endif
-
         <div class="order-info">
             <div class="order-info-grid">
                 <div class="order-info-item">
@@ -17,7 +16,26 @@
                     <p><strong>Email:</strong> {{ $order->customer->billing_email }}</p>
                     <p><strong>Telefoonnummer:</strong> {{ $order->customer->billing_phone ?? '-' }}</p>
                     <p><strong>Datum:</strong> {{ $order->created_at->format('d-m-Y H:i') }}</p>
+
+                @if (empty($order->invoice_pdf_path))        
+                <div>
+                    <form action="{{ route('generateInvoice', $order->id) }}" method="POST">
+                        @csrf
+                        <button class="btn" type="submit">Genereer Factuur</button>
+                    </form>
                 </div>
+                @endif
+
+                @if (!empty($order->invoice_pdf_path))        
+                <div>
+                    <form action="{{ route('sendOrderEmailWithInvoice', $order->id) }}" method="POST">
+                        @csrf
+                        <button class="btn" type="submit">Verstuur E-mail met factuur</button>
+                    </form>
+                </div>
+                @endif
+            </div>
+                
 
                 <div class="order-info-item">
                     <h3>Bestelling</h3>
@@ -46,25 +64,25 @@
                     <p><strong>Totaal:</strong> € {{ number_format($order->total, 2) }}</p>
                     <p><strong>Betaalstatus:</strong> {{ $order->payment_status_label ?? 'Onbekend' }}</p>
 
-                    @if ($order->payment_status !== 'paid' && $order->payment_link)
-                        <p><strong>Betaallink:</strong> 
-                            <div class="payment-link-box">
-
-                            <button class="btn" id="payment-link">
-                                <a style="color: #fff;" href="{{ $order->payment_link }}" target="_blank">Ga naar betaallink</a>
-                            </button>
-                            <button class="btn" id="copy-payment-link" data-payment-link="{{ $order->payment_link }}">
-                                Kopieer betaallink
-                            </button>
-                            </div>
-                        </p>
-                    @endif
                     @if (!empty($order->invoice_pdf_path))
                         <p><strong>Factuur:</strong> 
                                 <a style="text-decoration: underline" href="{{ route('orders.invoice', $order->id) }}" target="_blank">Download factuur</a>
                         </p>
                     @endif
-                    <button class="btn" type="submit">Bestelling bijwerken</button>
+
+                    @if ($order->payment_status !== 'paid' && $order->payment_link)
+                        <strong>Betaallink:</strong> 
+                            <div class="payment-link-box">
+
+                            <button class="btn small" id="payment-link">
+                                <a style="color: #fff;" href="{{ $order->payment_link }}" target="_blank">Ga naar betaallink</a>
+                            </button>
+                            <button class="btn small" id="copy-payment-link" data-payment-link="{{ $order->payment_link }}">
+                                Kopieer betaallink
+                            </button>
+                            </div>
+                    @endif
+                    <button class="btn small" type="submit">Bestelling bijwerken</button>
                 </form>
                 </div>
 
