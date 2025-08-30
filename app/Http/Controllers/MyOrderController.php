@@ -26,7 +26,7 @@ class MyOrderController extends Controller
                 $orders = Order::whereRaw('1=0')->paginate(10);
                 return view('orders.customerOrders', ['orders' => $orders]);
             }
-            $orders = Order::where('customer_id', $customer->id)->with(['items', 'customer'])->paginate(10);
+            $orders = Order::where('customer_id', $customer->id)->with(['items', 'customer'])->orderBy('created_at', 'desc')->paginate(10);
             return view('orders.customerOrders', ['orders' => $orders]);
     }
 

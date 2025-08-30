@@ -26,7 +26,13 @@
                     <td># {{ $order->id }}</td>
                     <td>{{ $order->customer->billing_first_name }} {{ $order->customer->billing_last_name }}</td>
                     <td>{{ $order->created_at->format('d-m-Y') }}</td>
-                    <td>€ {{ number_format($order->total, 2) }}</td>
+
+                    @if($order->discount_value > 0)
+                        <td>€ {{ number_format($order->total_after_discount, 2) }}</td>
+                    @else
+                        <td>€ {{ number_format($order->total, 2) }}</td>
+                    @endif
+
                     <td>{{ $order->status_label }}</td>
                     <td class="table-action">
                         <a href="{{ route('orderShow', $order->id) }}" class="action-btn show" onclick="event.stopPropagation()">

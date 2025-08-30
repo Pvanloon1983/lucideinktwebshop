@@ -30,11 +30,40 @@
 					</div>
 					@endforeach
 					<div class="order-bestelling-divider"></div>
+
 					<div class="order-bestelling-total-row">
 						<span class="order-bestelling-total-label"><strong>Totaal</strong></span>
 						<span class="order-bestelling-total-value"><strong>€ {{ number_format($order->total, 2, ',', '.') }}</strong></span>
 					</div>
+
+					@if($order->discount_value > 0)
+						<div class="order-bestelling-total-row">
+							<span class="order-bestelling-total-label"><strong>Korting</strong></span>
+							<span class="order-bestelling-total-value">
+								<strong>
+									@if($order->discount_value > 0 && $order->discount_type == 'percent')
+										{{ (int)$order->discount_value }}%
+									@elseif($order->discount_value > 0 && $order->discount_type == 'amount')
+										€ {{ number_format($order->discount_value, 2, ',', '.') }}
+									@endif
+								</strong></span>
+						</div>
+
+						@if($order->discount_type == 'percent')
+						<div class="order-bestelling-total-row">
+							<span class="order-bestelling-total-label"><strong>Kortingsbedrag</strong></span>
+							<span class="order-bestelling-total-value"><strong>€ {{ number_format($order->discount_price_total, 2, ',', '.') }}</strong></span>
+						</div>
+						@endif
+
+						<div class="order-bestelling-total-row">
+							<span class="order-bestelling-total-label"><strong>Totaal na korting</strong></span>
+							<span class="order-bestelling-total-value"><strong>€ {{ number_format($order->total_after_discount, 2, ',', '.') }}</strong></span>
+						</div>
+					@endif
+
 				</div>
+
 
 				<div class="order-addresses">
 					<div class="order-address-block">

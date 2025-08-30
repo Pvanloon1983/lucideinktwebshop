@@ -919,7 +919,6 @@ i {
 }
 
 .hero-image-background {
-  background-image: url('/images/clockassets/ClockAsset2.webp');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -2496,7 +2495,7 @@ i {
   font-size: 16px;
   color: var(--main-font-color);
   font-weight: bold;
-  padding: 10px 18px 10px 18px;
+  padding: 0px 18px 0px 18px;
 }
 .order-bestelling-total-label {
   flex: 2;

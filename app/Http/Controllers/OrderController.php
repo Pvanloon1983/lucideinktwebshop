@@ -32,7 +32,7 @@ class OrderController extends Controller
 		{
 			$this->authorize('viewAny', Order::class);
 
-			$orders = Order::with(['items', 'customer'])->paginate(10);
+      $orders = Order::with(['items', 'customer'])->orderBy('created_at', 'desc')->paginate(10);
 
 			return view('orders.index', ['orders' => $orders]);
 		}
@@ -126,6 +126,7 @@ class OrderController extends Controller
 					$unitPrice = (float)$product->price;
 					$lineSubtotal = $unitPrice * $qty;
 					$totalBeforeDiscount += $lineSubtotal;
+          $totalBeforeDiscountStore = (float)$totalBeforeDiscount;
 
 					$lines[] = [
 							'product_id' => $product->id,
@@ -143,27 +144,32 @@ class OrderController extends Controller
 			}
 
 			// Korting berekenen
-			$discountValue = (float)($data['discount_value'] ?? 0);
+			$discountValue = $data['discount_value'] ?? 0;
 			$discountType  = $data['discount_type'] ?? null;
 			$discountAmount = 0;
 
 			if ($discountValue > 0 && $discountType) {
-					if ($discountType === 'percent') {
-							$discountAmount = $totalBeforeDiscount * ($discountValue / 100);
-					} else { // amount
-							$discountAmount = $discountValue;
-					}
-			}
+    if ($discountType === 'percent') {
+        // Sla percentage als integer op (10% wordt 10)
+        $discountAmount = round($totalBeforeDiscount * ((int)$discountValue / 100), 2);
+        $discountValue = (int)$discountValue;
+    } else { // amount
+        // Sla bedrag op met 2 decimalen
+        $discountAmount = round((float)$discountValue, 2);
+        $discountValue = round((float)$discountValue, 2);
+    }
+}
 
-			// Niet onder nul
-			if ($discountAmount > $totalBeforeDiscount) {
-					$discountAmount = $totalBeforeDiscount;
-			}
+// Niet onder nul
+if ($discountAmount > $totalBeforeDiscount) {
+    $discountAmount = $totalBeforeDiscount;
+}
 
-			$totalAfterDiscount = $totalBeforeDiscount - $discountAmount;
+$totalBeforeDiscount = round($totalBeforeDiscount, 2);
+$totalAfterDiscount = round($totalBeforeDiscount - $discountAmount, 2);
 
-			// Customer upsert (zoals CheckoutController)
-			$customerData = [
+// Customer upsert (zoals CheckoutController)
+$customerData = [
 				'billing_first_name'             => $request->input('billing_first_name'),
 				'billing_last_name'              => $request->input('billing_last_name'),
 				'billing_email'                  => $request->input('billing_email'),
@@ -201,12 +207,13 @@ class OrderController extends Controller
 
 			// Order opslaan
 			$order = $customer->orders()->create([
-				'status'               => 'pending',
-				'payment_status'       => 'pending',
-				'total'                => $totalAfterDiscount,
-				'discount_type'        => $discountType,
-				'discount_value'       => $discountValue,
-				'discount_price_total' => $discountAmount,
+				'status'                => 'pending',
+				'payment_status'        => 'pending',
+				'total'                 => $totalBeforeDiscountStore,
+        'total_after_discount'  => $totalAfterDiscount,
+				'discount_type'         => $discountType,
+				'discount_value'        => $discountValue,
+				'discount_price_total'  => $discountAmount,
 			]);
 
 

@@ -51,6 +51,7 @@ class Order extends Model
         'myparcel_delivery_type',
 
         // discounts
+        'total_after_discount',
         'discount_type',
         'discount_value',
         'discount_price_total',

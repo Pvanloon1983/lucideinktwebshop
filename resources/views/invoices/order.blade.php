@@ -80,7 +80,6 @@
             </tr>
         </table>
         <table>
-    <table>
             <thead>
                 <tr>
                     <th>Product</th>
@@ -104,15 +103,31 @@
                     <td colspan="3" style="text-align:right;">Totaal</td>
                     <td>€ {{ number_format($order->total, 2, ',', '.') }}</td>
                 </tr>
+                @if(isset($order->discount_type) && $order->discount_price_total > 0)
+                <tr>
+                    <td colspan="3" style="text-align:right;">Korting ({{ $order->discount_type === 'percent' ? intval($order->discount_value) . '%' : '€ ' . number_format($order->discount_value, 2, ',', '.') }})</td>
+                    <td>-€ {{ number_format($order->discount_price_total, 2, ',', '.') }}</td>
+                </tr>
+                <tr>
+                    <td colspan="3" style="text-align:right; font-weight:bold;">Totaal na korting</td>
+                    <td style="font-weight:bold;">€ {{ number_format($order->total - $order->discount_price_total, 2, ',', '.') }}</td>
+                </tr>
+                @endif
             </tfoot>
         </table>
         <div class="summary">
-                @if ($order->payment_status == 'paid' && !empty($order->paid_at))
-                    <strong>Factuur is betaald</strong>
+            @if ($order->payment_status == 'paid' && !empty($order->paid_at))
+                <strong>Factuur is betaald</strong>
+            @else
+                @if($order->discount_value > 0)
+                    <strong>Te betalen:</strong> € {{ number_format($order->total_after_discount, 2, ',', '.') }}<br>
+                    <span>Gelieve het bedrag over te maken naar rekening NL00BANK0123456789 t.n.v. Stichting Lucide Inkt o.v.v. uw ordernummer.</span>
                 @else
                     <strong>Te betalen:</strong> € {{ number_format($order->total, 2, ',', '.') }}<br>
-            <span>Gelieve het bedrag over te maken naar rekening NL00BANK0123456789 t.n.v. Stichting Lucide Inkt o.v.v. uw ordernummer.</span>
+                    <span>Gelieve het bedrag over te maken naar rekening NL00BANK0123456789 t.n.v. Stichting Lucide Inkt o.v.v. uw ordernummer.</span>
                 @endif
+
+            @endif
         </div>
         <div class="payment-info">
             Heeft u vragen over deze factuur? Neem gerust contact op via info@lucideinkt.nl.<br>

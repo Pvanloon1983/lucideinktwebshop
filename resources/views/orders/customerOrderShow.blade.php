@@ -17,11 +17,6 @@
                     <p><strong>Status:</strong> {{ $order->status_label }}</p>
                     <p><strong>Totaal:</strong> € {{ number_format($order->total, 2) }}</p>
                     <p><strong>Betaalstatus:</strong> {{ $order->payment_status_label ?? 'Onbekend' }}</p>
-                    @if (!empty($order->invoice_pdf_path))
-                        <p><strong>Factuur:</strong> 
-                                <a style="text-decoration: underline" href="{{ route('my_orders.invoice', $order->id) }}" target="_blank">Download factuur</a>
-                        </p>
-                    @endif
                 </div>
                 <div class="order-info-item">
                     <h3>Factuuradres</h3>
@@ -91,7 +86,18 @@
                         <td colspan="3" style="text-align: right; font-weight: bold;">Totaal</td>
                         <td style="font-weight: bold;">€ {{ number_format($order->total, 2) }}</td>
                     </tr>
-
+                    @if($order->discount_value > 0)
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: bold;">Korting
+                                ({{ $order->discount_type == 'percent' ? (int)($order->discount_value) . '%' : '€ ' . number_format($order->discount_value, 2) }})
+                            </td>
+                            <td style="font-weight: bold;">-€ {{ number_format($order->discount_price_total, 2) }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: bold;">Totaal na korting</td>
+                            <td style="font-weight: bold;">€ {{ number_format($order->total_after_discount, 2) }}</td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
 

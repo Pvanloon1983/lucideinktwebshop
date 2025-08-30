@@ -184,8 +184,18 @@
         <tfoot>
           <tr>
             <td colspan="3" style="text-align:right;">{{ __('Totaal') }}</td>
-            <td>€ {{ number_format($order->total, 2, ',', '.') }}</td>
+            <td colspan="2">€ {{ number_format($order->total, 2, ',', '.') }}</td>
           </tr>
+          @if(isset($order->discount_type) && $order->discount_price_total > 0)
+          <tr>
+            <td colspan="3" style="text-align:right;">{{ __('Korting') }} ({{ $order->discount_type === 'percent' ? intval($order->discount_value) . '%' : '€ ' . number_format($order->discount_value, 2, ',', '.') }})</td>
+            <td colspan="2">-€ {{ number_format($order->discount_price_total, 2, ',', '.') }}</td>
+          </tr>
+          <tr>
+            <td colspan="3" style="text-align:right; font-weight:bold;">{{ __('Totaal na korting') }}</td>
+            <td colspan="2" style="font-weight:bold;">€ {{ number_format($order->total - $order->discount_price_total, 2, ',', '.') }}</td>
+          </tr>
+          @endif
         </tfoot>
       </table>
     </div>

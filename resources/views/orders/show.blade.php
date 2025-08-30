@@ -21,7 +21,7 @@
                 <div>
                     <form action="{{ route('generateInvoice', $order->id) }}" method="POST">
                         @csrf
-                        <button class="btn" type="submit">Genereer Factuur</button>
+                        <button class="btn small" type="submit">Genereer Factuur</button>
                     </form>
                 </div>
                 @endif
@@ -30,7 +30,7 @@
                 <div>
                     <form action="{{ route('sendOrderEmailWithInvoice', $order->id) }}" method="POST">
                         @csrf
-                        <button class="btn" type="submit">Verstuur E-mail met factuur</button>
+                        <button class="btn small" type="submit">Verstuur E-mail met factuur</button>
                     </form>
                 </div>
                 @endif
@@ -61,8 +61,8 @@
                             @endforeach
                         </select>
                     </p>
-                    <p><strong>Totaal:</strong> € {{ number_format($order->total, 2) }}</p>
-                    <p><strong>Betaalstatus:</strong> {{ $order->payment_status_label ?? 'Onbekend' }}</p>
+
+                     <p><strong>Betaalstatus:</strong> {{ $order->payment_status_label ?? 'Onbekend' }}</p>
 
                     @if (!empty($order->invoice_pdf_path))
                         <p><strong>Factuur:</strong> 
@@ -147,7 +147,18 @@
                         <td colspan="3" style="text-align: right; font-weight: bold;">Totaal</td>
                         <td style="font-weight: bold;">€ {{ number_format($order->total, 2) }}</td>
                     </tr>
-
+                    @if($order->discount_value > 0)
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: bold;">Korting
+                                ({{ $order->discount_type == 'percent' ? (int)($order->discount_value) . '%' : '€ ' . number_format($order->discount_value, 2) }})
+                            </td>
+                            <td style="font-weight: bold;">-€ {{ number_format($order->discount_price_total, 2) }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: bold;">Totaal na korting</td>
+                            <td style="font-weight: bold;">€ {{ number_format($order->total_after_discount, 2) }}</td>
+                        </tr>
+                    @endif
                 </tbody>
             </table>
 
