@@ -25,7 +25,7 @@
                 <tr style="cursor: pointer;" onclick="window.location='{{ route('customerShow', $customer->id) }}'">
                     <td>{{ $customer->id }}</td>
                     <td>{{ $customer->billing_first_name }} {{ $customer->billing_last_name }}</td>
-                    <td>{{ $customer->created_at->format('d-m-Y') }}</td>
+                    <td>{{ $customer->created_at->format('d-m-Y H:i') }}</td>
                     <td>{{ $customer->billing_email }}</td>
                     <td>{{ count($customer->orders) }}</td>
                     <td>€ {{ number_format($customer->orders->sum('total'), 2) }}</td>

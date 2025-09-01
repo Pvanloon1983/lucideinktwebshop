@@ -25,7 +25,7 @@
                 <tr style="cursor: pointer;" onclick="window.location='{{ route('orderShow', $order->id) }}'">
                     <td># {{ $order->id }}</td>
                     <td>{{ $order->customer->billing_first_name }} {{ $order->customer->billing_last_name }}</td>
-                    <td>{{ $order->created_at->format('d-m-Y') }}</td>
+                    <td>{{ $order->created_at->format('d-m-Y H:i') }}</td>
 
                     @if($order->discount_value > 0)
                         <td>€ {{ number_format($order->total_after_discount, 2) }}</td>

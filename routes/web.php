@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DiscountCodeController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
@@ -32,7 +33,7 @@ Route::middleware(['auth', 'role:admin,user'])->group(function () {
 	Route::get('/dashboard/my-orders/{id}', [MyOrderController::class, 'showMyOrder'])->name('showMyOrder');	
 	Route::get('/dashboard/my-orders/{id}/invoice', [MyOrderController::class, 'download_invoice'])->name('my_orders.invoice');
    
-})->middleware('auth');
+});
 
 
 // Only admin can access
@@ -64,7 +65,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	Route::put('/dashboard/orders/{id}', [OrderController::class, 'update'])->name('orderUpdate');	
 	Route::post('/dashboard/orders/generate-invoice/{id}', [OrderController::class, 'generateInvoice'])->name('generateInvoice');
 	Route::post('/dashboard/orders/send-email/{id}', [OrderController::class, 'sendOrderEmailWithInvoice'])->name('sendOrderEmailWithInvoice');
-	Route::get('/dashboard/orders/{id}/invoice', [OrderController::class, 'download_invoice'])->name('orders.invoice');
+	Route::get('/dashboard/orders//invoice/{id}', [OrderController::class, 'download_invoice'])->name('orders.invoice');
 
 	// Customers
 	Route::get('/dashboard/customers', [CustomerController::class, 'index'])->name('customerIndex');
@@ -77,7 +78,16 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	Route::get('/dashboard/users/{id}', [UserController::class, 'show'])->name('userShow');
 	Route::put('/dashboard/users/{id}', [UserController::class, 'update'])->name('userEdit');
 
-})->middleware('auth');
+  //Discount codes
+  Route::get('/dashboard/discount-codes', [DiscountCodeController::class, 'index'])->name('discountIndex');
+  Route::get('/dashboard/discount-codes/create', [DiscountCodeController::class, 'create'])->name('discountCreate');
+  Route::post('/dashboard/discount-codes/create', [DiscountCodeController::class, 'store'])->name('discountStore');
+  Route::get('/dashboard/discount-codes/edit/{id}', [DiscountCodeController::class, 'edit'])->name('discountEdit');
+  Route::put('/dashboard/discount-codes/edit/{id}', [DiscountCodeController::class, 'update'])->name('discountUpdate');
+  Route::delete('/dashboard/discount-codes/delete/{id}', [DiscountCodeController::class, 'destroy'])->name('discountDelete');
+  Route::get('/dashboard/discount-codes/delete/{id}', [DiscountCodeController::class, 'get'])->name('discountDelete_get');
+
+});
 
 
 // Shop

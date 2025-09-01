@@ -88,11 +88,19 @@
 
       @role('admin')
       <a href="{{ route('orderIndex') }}">
-        <li class="nav-item {{ request()->routeIs('orderIndex') || request()->routeIs('orderShow') ? 'active-admin-link' : '' }}">
-        <span class="{{ request()->routeIs('orderIndex') || request()->routeIs('orderShow') ? 'active-admin-link' : '' }}">Bestellingen</span>
+        <li class="nav-item {{ request()->routeIs('orderIndex') || request()->routeIs('orderShow') || request()->routeIs('orderCreatePage') ? 'active-admin-link' : '' }}">
+        <span class="{{ request()->routeIs('orderIndex') || request()->routeIs('orderShow') || request()->routeIs('orderCreatePage') ? 'active-admin-link' : '' }}">Bestellingen</span>
         </li>  
       </a>
-      @endrole  
+      @endrole
+
+      @role('admin')
+      <a href="{{ route('discountIndex') }}">
+        <li class="nav-item {{ request()->routeIs('discountIndex') || request()->routeIs('discountEdit') ? 'active-admin-link' : '' }}">
+          <span class="{{ request()->routeIs('discountIndex') || request()->routeIs('discountEdit') ? 'active-admin-link' : '' }}">Kortingscodes</span>
+        </li>
+      </a>
+      @endrole
 
       @anyrole('admin','user') 
       <a href="{{ route('showMyOrders') }}">
@@ -112,8 +120,8 @@
 
       @role('admin')
       <a href="{{ route('userIndex') }}">
-        <li class="nav-item {{ request()->routeIs('userIndex') || request()->routeIs('userShow') ? 'active-admin-link' : '' }}">
-          <span class="{{ request()->routeIs('userIndex') || request()->routeIs('userShow') ? 'active-admin-link' : '' }}">Gebruikers</span>
+        <li class="nav-item {{ request()->routeIs('userIndex') || request()->routeIs('userShow') || request()->routeIs('userCreate') ? 'active-admin-link' : '' }}">
+          <span class="{{ request()->routeIs('userIndex') || request()->routeIs('userShow') || request()->routeIs('userCreate') ? 'active-admin-link' : '' }}">Gebruikers</span>
         </li>
       </a>
       @endrole

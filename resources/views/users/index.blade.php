@@ -25,7 +25,7 @@
           <tr style="cursor: pointer;" onclick="window.location='{{ route('userShow', $user->id) }}'">
             <td>{{ $user->id }}</td>
             <td>{{ $user->first_name }} {{ $user->last_name }}</td>
-            <td>{{ $user->created_at->format('d-m-Y') }}</td>
+            <td>{{ $user->created_at->format('d-m-Y H:i') }}</td>
             <td>{{ $user->email }}</td>
             <td>{{ $user->role }}</td>
             <td class="table-action">

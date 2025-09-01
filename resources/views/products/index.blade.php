@@ -63,7 +63,7 @@
                             nee
                         @endif
                     </td>
-                    <td style="min-width:110px;">{{ $product->created_at->format('d-m-Y') }}</td>
+                    <td style="min-width:110px;">{{ $product->created_at->format('d-m-Y H:i') }}</td>
                     <td class="table-action" style="min-width:100px;">
                         <a href="{{ route('productEditPage', $product->id) }}"><i class="fa-regular fa-pen-to-square edit action-btn"></i></a>
                         <form action="{{ route('productDelete', $product->id) }}" method="POST" class="needs-confirm" data-confirm="Weet je zeker dat je dit product wilt verwijderen?" data-confirm-title="Product verwijderen">

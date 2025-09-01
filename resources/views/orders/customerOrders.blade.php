@@ -25,7 +25,7 @@
                     <tr style="cursor: pointer;" onclick="window.location='{{ route('showMyOrder', $order->id) }}'">
                         <td># {{ $order->id }}</td>
                         <td>{{ $order->customer->billing_first_name }} {{ $order->customer->billing_last_name }}</td>
-                        <td>{{ $order->created_at->format('d-m-Y') }}</td>
+                        <td>{{ $order->created_at->format('d-m-Y H:i') }}</td>
                         <td>€ {{ number_format($order->total, 2) }}</td>
                         <td>{{ $order->status_label }}</td>
                         <td class="table-action">
