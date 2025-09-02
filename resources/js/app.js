@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 document.addEventListener('DOMContentLoaded', function () {
 
   // Ensure we start at the top on fresh loads and avoid history scroll restoration
@@ -57,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (label) label.textContent = file.name;
         const reader = new FileReader();
         reader.onload = function (ev) {
-          if (preview) preview.innerHTML = '<img src="' + ev.target.result + '" style="max-width:60px;max-height:60px;">';
+          if (preview) preview.innerHTML = '<img src="' + ev.target.result + '" style="max-width:60px;max-height:60px;" alt=\"Preview\">';
         };
         reader.readAsDataURL(file);
         if (removeBtn) removeBtn.style.display = 'inline-block';
@@ -82,10 +84,9 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   // -------------------- Loader button logic --------------------
-  document.querySelectorAll('form').forEach(function (form) {
+  function setupLoaderForForm(form) {
     const button = form.querySelector('button[type="submit"]');
     const loader = button ? button.querySelector('.loader') : null;
-
     if (button && loader) {
       form.addEventListener('submit', function () {
         loader.style.display = 'inline-block';
@@ -95,7 +96,22 @@ document.addEventListener('DOMContentLoaded', function () {
       loader.style.display = 'none';
       button.disabled = false;
     }
+  }
+  // Initial setup for all forms
+  document.querySelectorAll('form').forEach(setupLoaderForForm);
+  // Observe DOM for dynamically added forms
+  const formObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      mutation.addedNodes.forEach(function(node) {
+        if (node.nodeType === 1 && node.tagName === 'FORM') {
+          setupLoaderForForm(node);
+        } else if (node.nodeType === 1) {
+          node.querySelectorAll && node.querySelectorAll('form').forEach(setupLoaderForForm);
+        }
+      });
+    });
   });
+  formObserver.observe(document.body, { childList: true, subtree: true });
 
   // -------------------- Alt shipping panel --------------------
   const altInput = document.querySelector('#alt-shipping');
@@ -279,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
         for (let i = 0; i < storage.length; i++) keys.push(storage.key(i));
         keys.forEach((k) => {
           if (!k) return;
-          if (/myparcel|delivery\-options|pdk/i.test(k)) storage.removeItem(k);
+          if (/myparcel|delivery-options|pdk/i.test(k)) storage.removeItem(k);
         });
       };
       clearKeys(window.localStorage);
@@ -733,7 +749,7 @@ document.addEventListener('DOMContentLoaded', function () {
     hidden.dispatchEvent(new Event('change'));
   }
 
-  // Copy payment link from show order page if its there
+  // Copy payment link from show order page if it's there
   let copyBtn = document.getElementById('copy-payment-link');
   if (!copyBtn) return;
   let explicitLink = copyBtn.getAttribute('data-payment-link');
@@ -911,5 +927,115 @@ document.addEventListener('DOMContentLoaded', function () {
     if (e.target === modal) closeModal();
   });
 
+  // --- Kortingscode UI logica ---
+  function updateDiscountUI(data, code) {
+    const discountRow = document.getElementById('discount-row');
+    const newTotalRow = document.getElementById('new-total-row');
+    const discountAmount = document.getElementById('discount-amount');
+    const orderTotal = document.getElementById('order-total');
+    const orderNewTotal = document.getElementById('order-new-total');
+    const discountCodeLabel = document.getElementById('discount-code-label');
+    const removeDiscountContainer = document.getElementById('remove-discount-container');
+    if (data && data.discount_amount > 0) {
+      const isPercent = data.discount && data.discount.discount_type === 'percent';
+      const shownDiscount = isPercent
+        ? `${Number(data.discount.discount)}%`
+        : ('€ ' + data.discount_amount.toFixed(2).replace('.', ','));
+      if (discountRow) discountRow.style.display = '';
+      if (newTotalRow) newTotalRow.style.display = '';
+      if (discountAmount) discountAmount.textContent = shownDiscount;
+      if (orderNewTotal) orderNewTotal.textContent = '€ ' + data.new_total.toFixed(2).replace('.', ',');
+      if (orderTotal) orderTotal.innerHTML = '€ ' + data.total.toFixed(2).replace('.', ',');
+      if (discountCodeLabel && code) discountCodeLabel.textContent = '(' + code + ')';
+      if (removeDiscountContainer) removeDiscountContainer.style.display = '';
+    } else {
+      if (discountRow) discountRow.style.display = 'none';
+      if (newTotalRow) newTotalRow.style.display = 'none';
+      if (discountAmount) discountAmount.textContent = '0,00';
+      if (orderNewTotal) orderNewTotal.textContent = '€ 0,00';
+      if (orderTotal && data) orderTotal.innerHTML = '€ ' + data.total.toFixed(2).replace('.', ',');
+      if (discountCodeLabel) discountCodeLabel.textContent = '';
+      if (removeDiscountContainer) removeDiscountContainer.style.display = 'none';
+    }
+  }
+
+  // Check discount code
+  const discountButton = document.getElementById('add_discount_code');
+  const discountCodeInput = document.getElementById('discount_code');
+  let discountMsg = document.getElementById('discount_code_msg');
+  if (!discountMsg && discountCodeInput) {
+    discountMsg = document.createElement('div');
+    discountMsg.id = 'discount_code_msg';
+    discountMsg.style.marginTop = '6px';
+    discountMsg.style.fontSize = '15px';
+    discountCodeInput.parentNode.appendChild(discountMsg);
+  }
+
+  if (discountButton && discountCodeInput) {
+    const loader = discountButton.querySelector('.loader');
+    if (loader) loader.style.display = 'none';
+    discountButton.addEventListener('click', function (e) {
+      e.preventDefault();
+      const code = discountCodeInput.value.trim();
+      if (!code) {
+        discountMsg.textContent = 'Vul een kortingscode in.';
+        discountMsg.style.color = '#b30000';
+        return;
+      }
+      if (loader) loader.style.display = 'inline-block';
+      discountButton.disabled = true;
+      axios.post('/winkel/checkout/apply-discount-code', { code }, {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        }
+      })
+        .then(response => {
+          const data = response.data;
+          if (data.success) {
+            discountMsg.textContent = 'Kortingscode toegepast.';
+            discountMsg.style.color = 'green';
+            updateDiscountUI(data, code);
+          } else {
+            discountMsg.textContent = data.message || 'Code bestaat niet.';
+            discountMsg.style.color = '#b30000';
+            updateDiscountUI(null);
+          }
+        })
+        .catch(() => {
+          discountMsg.textContent = 'Er is een fout opgetreden.';
+          discountMsg.style.color = '#b30000';
+        })
+        .finally(() => {
+          if (loader) loader.style.display = 'none';
+          discountButton.disabled = false;
+        });
+    });
+  }
+
+  // Kortingscode verwijderen
+  const removeDiscountBtn = document.getElementById('remove_discount_code');
+  if (removeDiscountBtn) {
+    removeDiscountBtn.addEventListener('click', function () {
+      axios.delete('/winkel/checkout/remove-discount-code', {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        data: {}
+      })
+        .then(response => {
+          const data = response.data;
+          updateDiscountUI(data);
+            discountMsg.textContent = 'Kortingscode verwijderd.';
+            discountMsg.style.color = '#b30000';
+            discountCodeInput.value = '';
+        })
+        .catch(() => {
+          discountMsg.textContent = 'Er is een fout opgetreden.';
+          discountMsg.style.color = '#b30000';
+        });
+    });
+  }
 
 })();

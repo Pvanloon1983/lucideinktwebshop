@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\DiscountCode;
 use App\Models\User;
 use App\Models\Order;
 use App\Models\Product;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
@@ -179,7 +181,30 @@ class CheckoutController extends Controller
 
 
     // --- Calculating total price (netto som; afronding voor Mollie gebeurt later)
-        $total = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+        $totalBeforeDiscount = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+        $discountCode = session('discount_code');
+        $discountAmount = 0;
+        $discountType = null;
+        $discountValue = 0; // raw value (percent number or amount)
+        if ($discountCode) {
+            $discount = DiscountCode::where('code', $discountCode)->first();
+            if ($discount) {
+                $discountType = $discount->discount_type; // 'percent' | 'amount'
+                $discountValue = $discount->discount;     // stored numeric value
+                if ($discountType === 'percent') {
+                    $discountAmount = round($totalBeforeDiscount * ((int)$discountValue / 100), 2);
+                    $discountValue = (int)$discountValue; // store percent as int
+                } else { // amount
+                    $discountAmount = round((float)$discountValue, 2);
+                    $discountValue = round((float)$discountValue, 2);
+                }
+            }
+        }
+        if ($discountAmount > $totalBeforeDiscount) {
+            $discountAmount = $totalBeforeDiscount;
+        }
+        $totalBeforeDiscount = round($totalBeforeDiscount, 2);
+        $totalAfterDiscount = round($totalBeforeDiscount - $discountAmount, 2);
 
         // --- Order + items + stock in één transactie
         // Gebruik een DB-transactie voor atomaire verwerking:
@@ -187,7 +212,7 @@ class CheckoutController extends Controller
         // - voorkomt race conditions en halve orders (alles of niets)
         $order = null;
         try {
-            DB::transaction(function () use ($cart, $customer, $total, &$order, $request) {
+            DB::transaction(function () use ($cart, $customer, &$order, $request, $discountCode, $discountAmount, $discountType, $discountValue, $totalBeforeDiscount, $totalAfterDiscount) {
                 $insufficient = [];
                 $locked = [];
                 // Lock producten en valideer voorraad
@@ -215,7 +240,7 @@ class CheckoutController extends Controller
                 // Order aanmaken
                 if ($request->boolean('alt-shipping')) {
                     $order = $customer->orders()->create([
-                        'total'  => $total,
+                        'total'  => $totalBeforeDiscount,
                         'status' => 'pending',
                         'shipping_first_name'            => $request->input('shipping_first_name'),
                         'shipping_last_name'             => $request->input('shipping_last_name'),
@@ -227,22 +252,36 @@ class CheckoutController extends Controller
                         'shipping_city'                  => $request->input('shipping_city'),
                         'shipping_country'               => $request->input('shipping_country'),
                         'shipping_phone'                 => $request->input('shipping_phone'),
+                        'discount_type'         => $discountType,
+                        'discount_value'        => $discountValue,
+                        'discount_price_total'  => $discountAmount,
+                        'total_after_discount'  => $totalAfterDiscount,
+                        'discount_code_checkout' => $discountCode,
+                        'discount_amount_checkout' => $discountAmount,
+                        'discount_type_checkout' => $discountType,
                     ]);
                 } else {
                     $order = $customer->orders()->create([
-                        'total'  => $total,
+                        'total'  => $totalBeforeDiscount,
                         'status' => 'pending',
                         'shipping_first_name'            => $request->input('billing_first_name'),
                         'shipping_last_name'             => $request->input('billing_last_name'),
                         'shipping_company'               => $request->input('billing_company'),
                         'shipping_street'                => $request->input('billing_street'),
                         'shipping_house_number'          => $request->input('billing_housenumber'),
-                        'shipping_house_number_addition' => $request->input('billing_housenumber-add'),
+                        'shipping_house_number_addition' => $request->input('shipping_housenumber-add'),
                         'shipping_postal_code'           => $request->input('billing_postal-zip-code'),
                         'shipping_city'                  => $request->input('billing_city'),
                         'shipping_country'               => $request->input('billing_country'),
                         'shipping_phone'                 => $request->input('billing_phone'),
-                    ]);          
+                        'discount_type'         => $discountType,
+                        'discount_value'        => $discountValue,
+                        'discount_price_total'  => $discountAmount,
+                        'total_after_discount'  => $totalAfterDiscount,
+                        'discount_code_checkout' => $discountCode,
+                        'discount_amount_checkout' => $discountAmount,
+                        'discount_type_checkout' => $discountType,
+                    ]);
                 }
 
                 // Voorraad verlagen en orderregels vastleggen (binnen dezelfde transactie)
@@ -387,10 +426,28 @@ class CheckoutController extends Controller
             default      => env('WEBHOOK_URL_LOCAL')
         };
 
+        // Gebruik het totaal NA korting voor betaling
+        $amountToPay = $totalAfterDiscount; // eerder berekend
+        // Fallback: als negatief door afronding -> zet op 0
+        if ($amountToPay < 0) { $amountToPay = 0; }
+
+        // Wanneer totaal 0 of lager is: sla Mollie over en markeer direct als betaald
+        if ($amountToPay <= 0) {
+            $order->update([
+                'status'         => 'completed',
+                'payment_status' => 'paid',
+                'paid_at'        => now(),
+            ]);
+            // Clear cart & discount
+            session()->forget('cart');
+            session()->forget('discount_code');
+            return redirect()->route('payment.success', ['order' => $order->id]);
+        }
+
         $payment = $this->mollie->payments->create([
             'amount' => [
                 'currency' => 'EUR',
-                'value'    => number_format($total, 2, '.', ''),
+                'value'    => number_format($amountToPay, 2, '.', ''), // Mollie verwacht string met 2 decimals
             ],
             'description' => 'Bestelling #'.$order->id,
             'redirectUrl' => route('payment.success', ['order' => $order->id]),
@@ -399,6 +456,10 @@ class CheckoutController extends Controller
         ]);
 
         $order->update(['mollie_payment_id' => $payment->id]);
+
+        // Clear cart & discount na initialisatie van betaling
+        session()->forget('cart');
+        session()->forget('discount_code');
 
         return redirect($payment->getCheckoutUrl(), 303);
     }
@@ -501,6 +562,8 @@ class CheckoutController extends Controller
                 ]);
             }
 
+            // Remove discount code application, already applied during order creation
+
             // Generate invoice
             $pdf = Pdf::loadView('invoices.order', ['order' => $order])->output();
 
@@ -555,7 +618,7 @@ class CheckoutController extends Controller
             elseif ($payment->isOpen() || $payment->isPending())  $order->update(['status' => 'pending',  'payment_status' => 'pending']);
             elseif ($payment->isFailed() || $payment->isExpired() || $payment->isCanceled())
                                                                   $order->update(['status' => 'cancelled','payment_status' => 'failed']);
-            elseif ($payment->isRefunded())                       $order->update(['status' => 'cancelled','payment_status' => 'refunded']);
+            elseif ($payment->status === 'refunded') $order->update(['status' => 'cancelled','payment_status' => 'refunded']);
         }
         return response()->json(['status' => 'ok']);
     }
@@ -569,5 +632,46 @@ class CheckoutController extends Controller
             'digital_stamp' => 4,
             'package_small' => 1,
         ][$name] ?? 1;
+    }
+
+    // When applying a code (AJAX)
+    public function applyDiscountCode(Request $request)
+    {
+      $validated = $request->validate(['code' => 'required|string|max:255']);
+      $discount = DiscountCode::where('code', $validated['code'])->first();
+      if (!$discount) {
+        return response()->json(['success' => false, 'message' => 'Code bestaat niet.']);
+      }
+      session(['discount_code' => $discount->code]);
+      // Bereken korting en nieuw totaal
+      $cart = session('cart', []);
+      $total = collect($cart)->sum(fn($item) => ($item['subtotal'] ?? $item['price'] * $item['quantity']));
+      if ($discount->discount_type === 'percent') {
+        $discountAmount = $total * ($discount->discount / 100);
+      } else {
+        $discountAmount = $discount->discount;
+      }
+      $newTotal = max(0, $total - $discountAmount);
+      return response()->json([
+        'success' => true,
+        'discount' => $discount,
+        'discount_amount' => round($discountAmount, 2),
+        'total' => round($total, 2),
+        'new_total' => round($newTotal, 2),
+      ]);
+    }
+
+    // When removing a code
+    public function removeDiscountCode()
+    {
+      session()->forget('discount_code');
+      $cart = session('cart', []);
+      $total = collect($cart)->sum(fn($item) => ($item['subtotal'] ?? $item['price'] * $item['quantity']));
+      return response()->json([
+        'success' => true,
+        'discount_amount' => 0,
+        'total' => round($total, 2),
+        'new_total' => round($total, 2),
+      ]);
     }
 }

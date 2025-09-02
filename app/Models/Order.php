@@ -55,6 +55,7 @@ class Order extends Model
         'discount_type',
         'discount_value',
         'discount_price_total',
+        'discount_code_checkout'
         ];
     
     public function getStatusLabelAttribute()

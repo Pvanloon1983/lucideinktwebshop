@@ -153,4 +153,6 @@ class DiscountCodeController extends Controller
     public function get () {
       return redirect()->route('dashboard');
     }
+
+
 }

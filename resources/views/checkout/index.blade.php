@@ -268,6 +268,16 @@
 
                     <h3>Bestelling</h3>
 
+                    <div class="form-input">
+                        <div style="display: flex;flex-direction: column">
+                            <input style="width: fit-content; margin-bottom: 10px" type="text" name="discount_code" id="discount_code" value="{{ old('discount_code') }}" placeholder="Vul kortingscode in">
+                            <button id="add_discount_code" style="height: 32px" class="btn small"><span class="loader" style="display:none"></span>Kortingscode toepassen</button>
+                        </div>
+                        @error('discount_code')
+                            <div class="error">{{ $message }}</div>
+                        @enderror
+                    </div>
+
                     <table class="order-table" style="width:100%;">
                         <thead>
                             <tr>
@@ -286,14 +296,25 @@
                             @endforeach
                         </tbody>
                         <tfoot>
-                            <tr class="total-price">
+                            <tr class="total-price" id="total-row">
                                 <td><strong>Totaal</strong></td>
-                                <td style="text-align:right"><strong>&euro;
+                                <td style="text-align:right"><strong id="order-total">&euro;
                                         {{ number_format(collect($cart)->sum(fn($i) => $i['price'] * $i['quantity']), 2, ',', '.') }}</strong>
                                 </td>
                             </tr>
+                            <tr id="discount-row" style="display:none">
+                                <td><span>Korting</span> <span id="discount-code-label" style="font-size:12px;color:#666;"></span></td>
+                                <td style="text-align:right;color:#b30000;">-<span id="discount-amount">0,00</span></td>
+                            </tr>
+                            <tr id="new-total-row" style="display:none">
+                                <td><strong>Totaal na korting</strong></td>
+                                <td style="text-align:right"><strong id="order-new-total">&euro; 0,00</strong></td>
+                            </tr>
                         </tfoot>
                     </table>
+                    <div id="remove-discount-container" style="display:none;margin-bottom:10px;">
+                        <button type="button" id="remove_discount_code" class="btn small" style="background:#eee;color:#b30000;">Verwijder kortingscode</button>
+                    </div>
 
                     <!-- 1) CSS van de widget -->
                     <link rel="stylesheet"
@@ -328,7 +349,8 @@
                     <div class="place-order">
                         <button type="submit" class="btn"><span class="loader"></span>Plaats bestelling</button>
                     </div>
-
+                </div>
+            </div>
         </form>
     </main>
 </x-layout>

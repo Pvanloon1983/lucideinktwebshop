@@ -105,6 +105,9 @@ Route::delete('/winkel/cart/delete', [CartController::class, 'deleteItemFromCart
 Route::get('/winkel/checkout', [CheckoutController::class, 'create'])->name('checkoutPage');
 Route::post('/winkel/checkout', [CheckoutController::class, 'store'])->name('storeCheckout');
 Route::get('/winkel/checkout/success', [CheckoutController::class, 'checkoutSuccess'])->name('checkoutSuccessPage');
+Route::post('/winkel/checkout/apply-discount-code', [CheckoutController::class, 'applyDiscountCode'])->name('applyDiscountCode');
+Route::delete('/winkel/checkout/remove-discount-code', [CheckoutController::class, 'removeDiscountCode'])->name('removeDiscountCode');
+
 
 // Auth pages
 Route::get('/login', [AuthController::class, 'loginPage'])->name('login')->middleware('guest');

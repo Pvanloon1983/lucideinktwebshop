@@ -44,7 +44,7 @@
 									@if($order->discount_value > 0 && $order->discount_type == 'percent')
 										{{ (int)$order->discount_value }}%
 									@elseif($order->discount_value > 0 && $order->discount_type == 'amount')
-										€ {{ number_format($order->discount_value, 2, ',', '.') }}
+										- € {{ number_format($order->discount_value, 2, ',', '.') }}
 									@endif
 								</strong></span>
 						</div>
