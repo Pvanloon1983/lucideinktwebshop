@@ -2567,3 +2567,17 @@ i {
     width: 100%;
   }
 }
+
+.mp-not-sr-only {
+  display: none;
+}
+
+.myparcel-delivery-options .mp-grid  button:after {
+  content: "\25BC"; /* ▼ Unicode dropdown arrow */
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 1em;
+  color: var(--main-font-color);
+  vertical-align: middle;
+  transition: transform 0.2s;
+}

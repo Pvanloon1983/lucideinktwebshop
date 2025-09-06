@@ -10,6 +10,14 @@
             </div>
         @endif
 
+        @if (session('error'))
+            <div class="alert alert-error" style="position: relative;">
+                {{ session('error') }}
+                <button type="button" class="alert-close"
+                        onclick="this.parentElement.style.display='none';">&times;</button>
+            </div>
+        @endif
+
         @if ($errors->has('stock'))
             <div class="alert alert-error">
                 <div>
@@ -23,7 +31,7 @@
             </div>
         @endif
 
-        <form class="form" action="{{ route('storeCheckout') }}" method="POST">
+        <form class="form checkout" action="{{ route('storeCheckout') }}" method="POST">
             @csrf
             <div class="checkout-grid">
 
@@ -89,10 +97,10 @@
                         </div>
 
                         <div class="form-input">
-                            <label for="billing_postal-zip-code">Postcode</label>
-                            <input type="text" name="billing_postal-zip-code" autocomplete="postal-code"
-                                value="{{ old('billing_postal-zip-code') }}">
-                            @error('billing_postal-zip-code')
+                            <label for="billing_postal_code">Postcode</label>
+                            <input type="text" name="billing_postal_code" autocomplete="postal-code"
+                                value="{{ old('billing_postal_code') }}">
+                            @error('billing_postal_code')
                                 <div class="error">{{ $message }}</div>
                             @enderror
                         </div>
@@ -215,10 +223,10 @@
                         </div>
 
                         <div class="form-input">
-                            <label for="shipping_postal-zip-code">Postcode</label>
-                            <input type="text" name="shipping_postal-zip-code" autocomplete="shipping postal-code"
-                                value="{{ old('shipping_postal-zip-code') }}">
-                            @error('shipping_postal-zip-code')
+                            <label for="shipping_postal_code">Postcode</label>
+                            <input type="text" name="shipping_postal_code" autocomplete="shipping postal-code"
+                                value="{{ old('shipping_postal_code') }}">
+                            @error('shipping_postal_code')
                                 <div class="error">{{ $message }}</div>
                             @enderror
                         </div>
@@ -316,41 +324,18 @@
                         <button type="button" id="remove_discount_code" class="btn small" style="background:#eee;color:#b30000;">Verwijder kortingscode</button>
                     </div>
 
-                    <!-- 1) CSS van de widget -->
-                    <link rel="stylesheet"
-                        href="https://cdn.jsdelivr.net/npm/@myparcel/delivery-options@6.3.1/dist/style.css" />
-
-                    <!-- 2) Keuze met radiobuttons (alleen tonen bij compleet adres) -->
-                    <div class="mp-choice" id="mp-choice-block" style="margin:.5rem 0 1rem; display:none;">
-                        <label>
-                            <input type="radio" name="ship_mode" value="delivery" checked>
-                            <span>Bezorgd op het opgegeven adres</span>
-                        </label>
-                        <label>
-                            <input type="radio" name="ship_mode" value="pickup">
-                            <span>Ophalen bij een gekozen afhaalpunt</span>
-                        </label>
-                    </div>
-
-                    <!-- 3) De widget wrapper (alleen zichtbaar bij 'pickup') -->
-                    <div id="myparcel-wrapper" style="display:none;margin:.5rem 0">
-                        <div id="myparcel-address-message" style="display:none;padding:1em;color:#b30000;"></div>
-                        <div id="myparcel-delivery-options" style="display:none;"></div>
-                        <div id="myparcel-error" class="error" style="margin-top:.5rem"></div>
-                    </div>
-
-                    <!-- 4) Hierin bewaren we de selectie (bezorging of pickup) -->
-                    <input type="hidden" name="myparcel_delivery_options" id="myparcel_delivery_options">
-
-                    <!-- 5) JS van de widget -->
-                    <script src="https://cdn.jsdelivr.net/npm/@myparcel/delivery-options@6.3.1/dist/myparcel.js"></script>
-                    <!-- Gebruik dezelfde init-logica als in resources/js/app.js (custom pickup widget) -->
+                    <div id="myparcel-delivery-options"></div>
+                    <input type="hidden" name="myparcel_delivery_options" id="myparcel_delivery_options" />
 
                     <div class="place-order">
+                        @error('myparcel_delivery_options')
+                            <div class="error" style="color:#b30000; margin-bottom:10px;">{{ $message }}</div>
+                        @enderror
                         <button type="submit" class="btn"><span class="loader"></span>Plaats bestelling</button>
                     </div>
                 </div>
             </div>
         </form>
     </main>
+
 </x-layout>

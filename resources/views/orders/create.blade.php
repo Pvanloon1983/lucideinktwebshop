@@ -16,7 +16,7 @@
        </div>
     @endif
 
-    <form class="form" action="{{ route('orderStore') }}" method="POST">
+    <form class="form order" action="{{ route('orderStore') }}" method="POST">
       @csrf
 
       <div class="order-grid">
@@ -125,9 +125,9 @@
           </div>
 
           <div class="form-input">
-            <label for="billing_postal-zip-code">Postcode</label>
-            <input type="text" name="billing_postal-zip-code" autocomplete="postal-code" value="{{ old('billing_postal-zip-code') }}">
-            @error('billing_postal-zip-code') <div class="error">{{ $message }}</div> @enderror
+            <label for="billing_postal_code">Postcode</label>
+            <input type="text" name="billing_postal_code" autocomplete="postal-code" value="{{ old('billing_postal_code') }}">
+            @error('billing_postal_code') <div class="error">{{ $message }}</div> @enderror
           </div>
 
           <div class="form-input">
@@ -157,79 +157,8 @@
             @error('billing_country') <div class="error">{{ $message }}</div> @enderror
           </div>
 
-          {{-- MyParcel keuze + widget --}}
-          @error('myparcel_delivery_options')
-            <div class="alert alert-error">{{ $message }}</div>
-          @enderror
-
-          {{-- Widget CSS/JS (load once) --}}
-          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@myparcel/delivery-options@6.3.1/dist/style.css" />
-          <script src="https://cdn.jsdelivr.net/npm/@myparcel/delivery-options@6.3.1/dist/myparcel.js"></script>
-
-          {{-- Radiokeuze (tonen bij compleet adres) --}}
-          <div class="mp-choice" id="mp-choice-block" style="margin:.5rem 0 1rem; display:none;">
-            <label>
-              <input type="radio" name="ship_mode" value="delivery" checked>
-              <span>Bezorgd op het opgegeven adres</span>
-            </label>
-            <label>
-              <input type="radio" name="ship_mode" value="pickup">
-              <span>Ophalen bij een gekozen afhaalpunt</span>
-            </label>
-          </div>
-
-          {{-- Widget wrapper (niet verbergen met display:none in pickup) --}}
-          <div id="myparcel-wrapper" style="margin:.5rem 0">
-            <div id="myparcel-address-message" style="display:none;padding:1em;color:#b30000;"></div>
-            <div id="myparcel-delivery-options"></div>
-            <div id="myparcel-error" class="error" style="margin-top:.5rem"></div>
-          </div>
-
-          {{-- Hidden selectie --}}
-          <input type="hidden" name="myparcel_delivery_options" id="myparcel_delivery_options">
-
-          {{-- Handmatige afhaalpunt invoer (fallback/alternatief voor admin) --}}
-          <fieldset id="manual-pickup" style="margin:.75rem 0; display:none;">
-            <legend style="font-weight:600; margin-bottom:.25rem;">Afhaalpunt handmatig invoeren (admin)</legend>
-            <div class="name-box">
-              <div class="form-input">
-                <label for="pickup_location_name">Naam locatie</label>
-                <input type="text" name="pickup_location_name" id="pickup_location_name" value="{{ old('pickup_location_name') }}">
-                @error('pickup_location_name') <div class="error">{{ $message }}</div> @enderror
-              </div>
-            </div>
-            <div class="street-box">
-              <div class="form-input">
-                <label for="pickup_street">Straat</label>
-                <input type="text" name="pickup_street" id="pickup_street" value="{{ old('pickup_street') }}">
-                @error('pickup_street') <div class="error">{{ $message }}</div> @enderror
-              </div>
-              <div class="housnumber-box">
-                <div class="form-input">
-                  <label for="pickup_number">Nr</label>
-                  <input type="text" name="pickup_number" id="pickup_number" value="{{ old('pickup_number') }}">
-                  @error('pickup_number') <div class="error">{{ $message }}</div> @enderror
-                </div>
-                <div class="form-input">
-                  <label for="pickup_numberSuffix">Toevoeging</label>
-                  <input type="text" name="pickup_numberSuffix" id="pickup_numberSuffix" value="{{ old('pickup_numberSuffix') }}">
-                </div>
-              </div>
-            </div>
-            <div class="name-box">
-              <div class="form-input">
-                <label for="pickup_postalCode">Postcode</label>
-                <input type="text" name="pickup_postalCode" id="pickup_postalCode" value="{{ old('pickup_postalCode') }}">
-                @error('pickup_postalCode') <div class="error">{{ $message }}</div> @enderror
-              </div>
-              <div class="form-input">
-                <label for="pickup_city">Plaats</label>
-                <input type="text" name="pickup_city" id="pickup_city" value="{{ old('pickup_city') }}">
-                @error('pickup_city') <div class="error">{{ $message }}</div> @enderror
-              </div>
-            </div>
-            <p style="font-size:.9em;color:#555;margin-top:.25rem;">Als de widget niet laadt, vul het afhaalpunt hier in. Deze gegevens worden meegestuurd naar MyParcel als pick-up.</p>
-          </fieldset>
+          <div id="myparcel-delivery-options"></div>
+          <input type="hidden" name="myparcel_delivery_options" id="myparcel_delivery_options" />
 
           <div class="place-order">
             <button type="submit" class="btn"><span class="loader"></span>Plaats bestelling</button>
@@ -279,9 +208,9 @@
           </div>
 
           <div class="form-input">
-            <label for="shipping_postal-zip-code">Postcode</label>
-            <input type="text" name="shipping_postal-zip-code" autocomplete="shipping postal-code" value="{{ old('shipping_postal-zip-code') }}">
-            @error('shipping_postal-zip-code') <div class="error">{{ $message }}</div> @enderror
+            <label for="shipping_postal_code">Postcode</label>
+            <input type="text" name="shipping_postal_code" autocomplete="shipping postal-code" value="{{ old('shipping_postal_code') }}">
+            @error('shipping_postal_code') <div class="error">{{ $message }}</div> @enderror
           </div>
 
           <div class="form-input">

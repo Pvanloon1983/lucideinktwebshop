@@ -2,680 +2,458 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\WelcomeMail;
-use App\Models\DiscountCode;
-use App\Models\User;
-use App\Models\Order;
-use App\Models\Product;
-use App\Models\Customer;
 use App\Mail\OrderPaidMail;
-use Illuminate\Http\Request;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Mollie\Api\MollieApiClient;
+use App\Mail\WelcomeMail;
+use App\Models\{Customer, DiscountCode, Order, Product, User};
 use App\Services\MyParcelService;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\{DB, Hash, Log, Mail, Storage};
 use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Log;
+use Mollie\Api\MollieApiClient;
 
 class CheckoutController extends Controller
 {
-    protected MollieApiClient $mollie;
+  protected MollieApiClient $mollie;
 
-    public function __construct(MollieApiClient $mollie)
-    {
-        $this->mollie = $mollie;
-        $this->mollie->setApiKey(config('mollie.key'));
+  public function __construct(MollieApiClient $mollie)
+  {
+    $this->mollie = $mollie;
+    $this->mollie->setApiKey(config('mollie.key'));
+  }
+
+  /* ------------------ Checkout Flow ------------------ */
+
+  public function create()
+  {
+    $cart = session('cart', []);
+    return empty($cart)
+      ? redirect('/winkel')->with('error', 'Je winkelwagen is leeg.')
+      : view('checkout.index', compact('cart'));
+  }
+
+  public function store(Request $request)
+  {
+    $cart = session('cart', []);
+    if (empty($cart)) {
+      return redirect('/winkel')->with('error', 'Je winkelwagen is leeg.');
     }
 
-    public function create()
-    {
-        $cart = session()->get('cart', []);
-        if (empty($cart)) {
-            return redirect('/winkel')->with('error', 'Je winkelwagen is leeg.');
-        }
-        return view('checkout.index', ['cart' => $cart]);
+    $this->normalizeCheckboxes($request);
+    $this->validateCheckout($request);
+
+    $user = $this->createUserIfNeeded($request);
+    $customer = $this->createOrUpdateCustomer($request);
+
+    [$discountCode, $discountType, $discountValue, $discountAmount, $totalBefore, $totalAfter] =
+      $this->calculateDiscount($cart);
+
+    $order = $this->createOrderWithItems(
+      $cart,
+      $customer,
+      $request,
+      $discountCode,
+      $discountType,
+      $discountValue,
+      $discountAmount,
+      $totalBefore,
+      $totalAfter
+    );
+
+    $this->validateAndSaveMyParcel($order, $request);
+
+    return $this->createMolliePayment($order, $totalAfter);
+  }
+
+  public function paymentSuccess(Request $request)
+  {
+    $order = Order::find($request->query('order'));
+    if (!$order) {
+      return $this->checkoutError('Order niet gevonden.');
+    }
+    if (!$order->mollie_payment_id) {
+      return $this->checkoutError('Geen betaling gevonden bij deze order.');
     }
 
-    public function store(Request $request)
-    {
-        $cart = session()->get('cart', []);
-        if (empty($cart)) {
-            return redirect('/winkel')->with('error', 'Je winkelwagen is leeg.');
-        }
+    $payment = $this->mollie->payments->get($order->mollie_payment_id);
 
-    // Normaliseer checkbox: zet naar 1 wanneer aangevinkt, anders 0 (voorkomt 'on'/'off')
+    if ($payment->isPaid()) {
+      return $this->handlePaidOrder($order);
+    }
+
+    if ($payment->isOpen() || $payment->isPending()) {
+      return $this->checkoutInfo('Je betaling is nog niet afgerond.');
+    }
+
+    $order->update(['status' => 'cancelled', 'payment_status' => 'failed']);
+    return $this->checkoutError('Je betaling is mislukt of geannuleerd.');
+  }
+
+  public function checkoutSuccess()
+  {
+    $orderId = session('checkout_success_order_id');
+    if (!$orderId) return redirect()->route('home');
+
+    $order = Order::with('items')->find($orderId);
+    return view('checkout.success', ['success' => true, 'order' => $order]);
+  }
+
+  public function paymentWebhook(Request $request)
+  {
+    $paymentId = $request->input('id');
+    if (!$paymentId) return response()->json(['error' => 'No payment id'], 400);
+
+    $payment = $this->mollie->payments->get($paymentId);
+    $order = Order::find($payment->metadata->order_id ?? null);
+
+    if ($order) {
+      $this->updateOrderPaymentStatus($order, $payment);
+    }
+
+    return response()->json(['status' => 'ok']);
+  }
+
+  /* ------------------ Discount ------------------ */
+
+  public function applyDiscountCode(Request $request)
+  {
+    $validated = $request->validate(['code' => 'required|string|max:255']);
+    $discount = DiscountCode::where('code', $validated['code'])->first();
+
+    if (!$discount) {
+      return response()->json(['success' => false, 'message' => 'Code bestaat niet.']);
+    }
+
+    session(['discount_code' => $discount->code]);
+
+    $cart = session('cart', []);
+    $total = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+    $discountAmount = $discount->discount_type === 'percent'
+      ? $total * ($discount->discount / 100)
+      : $discount->discount;
+
+    return response()->json([
+      'success' => true,
+      'discount' => $discount,
+      'discount_amount' => round($discountAmount, 2),
+      'total' => round($total, 2),
+      'new_total' => max(0, round($total - $discountAmount, 2)),
+    ]);
+  }
+
+  public function removeDiscountCode()
+  {
+    session()->forget('discount_code');
+    $cart = session('cart', []);
+    $total = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+
+    return response()->json([
+      'success' => true,
+      'discount_amount' => 0,
+      'total' => round($total, 2),
+      'new_total' => round($total, 2),
+    ]);
+  }
+
+  /* ------------------ Private Helpers ------------------ */
+
+  private function normalizeCheckboxes(Request $request): void
+  {
     $request->merge(['alt-shipping' => $request->has('alt-shipping') ? 1 : 0]);
+  }
 
-        // --- Validation
-    $rules = [
-            // Billing
-            'billing_email'            => 'required|email',
-            'billing_first_name'       => 'required|string',
-            'billing_last_name'        => 'required|string',
-            'billing_street'           => 'required|string',
-            'billing_housenumber'      => 'required|numeric',
-            'billing_housenumber-add'  => 'nullable|string',
-            'billing_postal-zip-code'  => 'required|string',
-            'billing_city'             => 'required|string',
-            'billing_country'          => 'required|string',
-            'billing_phone'            => 'nullable|string',
-            'billing_company'          => 'nullable|string',
+  private function validateCheckout(Request $request): void
+  {
+    $request->validate([
+      'billing_email' => 'required|email',
+      'billing_first_name' => 'required|string',
+      'billing_last_name' => 'required|string',
+      'billing_street' => 'required|string',
+      'billing_housenumber' => 'required|numeric',
+      'billing_postal_code' => 'required|string',
+      'billing_city' => 'required|string',
+      'billing_country' => 'required|string',
+      'password' => 'nullable|string|min:8|confirmed',
+      'shipping_first_name' => 'required_if:alt-shipping,1|string|nullable',
+      'shipping_last_name' => 'required_if:alt-shipping,1|string|nullable',
+      'shipping_street' => 'required_if:alt-shipping,1|string|nullable',
+      'shipping_housenumber' => 'required_if:alt-shipping,1|numeric|nullable',
+      'shipping_postal_code' => 'required_if:alt-shipping,1|string|nullable',
+      'shipping_city' => 'required_if:alt-shipping,1|string|nullable',
+      'shipping_country' => 'required_if:alt-shipping,1|string|nullable',
+    ]);
+  }
 
-            // Shipping (alleen wanneer alt-shipping actief is)
-            'alt-shipping'             => 'nullable|boolean',
-            'shipping_first_name'      => 'required_if:alt-shipping,1|string|nullable',
-            'shipping_last_name'       => 'required_if:alt-shipping,1|string|nullable',
-            'shipping_street'          => 'required_if:alt-shipping,1|string|nullable',
-            'shipping_housenumber'     => 'required_if:alt-shipping,1|numeric|nullable',
-            'shipping_housenumber-add' => 'nullable|string',
-            'shipping_postal-zip-code' => 'required_if:alt-shipping,1|string|nullable',
-            'shipping_city'            => 'required_if:alt-shipping,1|string|nullable',
-            'shipping_country'         => 'required_if:alt-shipping,1|string|nullable',
-            'shipping_phone'           => 'nullable|string',
-            'shipping_company'         => 'nullable|string',
+  private function createUserIfNeeded(Request $request): ?User
+  {
+    if (User::where('email', $request->billing_email)->exists() || !$request->filled('password')) {
+      return null;
+    }
 
-            // Account
-            'password'                 => 'nullable|string|min:8|confirmed',
-        ];
+    $user = User::create([
+      'first_name' => $request->billing_first_name,
+      'last_name' => $request->billing_last_name,
+      'email' => $request->billing_email,
+      'password' => Hash::make($request->password),
+    ]);
 
-        $messages = [
-            'billing_email.required'            => 'E-mailadres is verplicht.',
-            'billing_email.email'               => 'Vul een geldig e-mailadres in.',
-            'billing_first_name.required'       => 'Voornaam is verplicht.',
-            'billing_last_name.required'        => 'Achternaam is verplicht.',
-            'billing_street.required'           => 'Straatnaam is verplicht.',
-            'billing_housenumber.required'      => 'Huisnummer is verplicht.',
-            'billing_housenumber.numeric'       => 'Huisnummer moet een getal zijn.',
-            'billing_postal-zip-code.required'  => 'Postcode is verplicht.',
-            'billing_city.required'             => 'Plaats is verplicht.',
-            'billing_country.required'          => 'Land is verplicht.',
+    event(new Registered($user));
+    Mail::to($user->email)->send(new WelcomeMail($user));
 
-            'shipping_first_name.required_with'      => 'Voornaam is verplicht.',
-            'shipping_last_name.required_with'       => 'Achternaam is verplicht.',
-            'shipping_street.required_with'          => 'Straatnaam is verplicht.',
-            'shipping_housenumber.required_with'     => 'Huisnummer is verplicht.',
-            'shipping_postal-zip-code.required_with' => 'Postcode is verplicht.',
-            'shipping_city.required_with'            => 'Plaats is verplicht.',
-            'shipping_country.required_with'         => 'Land is verplicht.',
+    return $user;
+  }
 
-            'password.min'       => 'Wachtwoord moet minimaal 8 tekens bevatten.',
-            'password.confirmed' => 'Wachtwoorden komen niet overeen.',
-        ];
+  private function createOrUpdateCustomer(Request $request): Customer
+  {
+    return Customer::updateOrCreate(
+      ['billing_email' => $request->billing_email],
+      $request->only([
+        'billing_first_name', 'billing_last_name', 'billing_email', 'billing_company',
+        'billing_street', 'billing_housenumber', 'billing_housenumber-add',
+        'billing_postal_code', 'billing_city', 'billing_country', 'billing_phone'
+      ])
+    );
+  }
 
-        $request->validate($rules, $messages);
+  private function calculateDiscount(array $cart): array
+  {
+    $totalBefore = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+    $discountCode = session('discount_code');
+    $discountType = $discountValue = $discountAmount = 0;
 
-        $customerData = [
-            'billing_first_name'             => $request->input('billing_first_name'),
-            'billing_last_name'              => $request->input('billing_last_name'),
-            'billing_email'                  => $request->input('billing_email'),
-            'billing_company'                => $request->input('billing_company'),
-            'billing_street'                 => $request->input('billing_street'),
-            'billing_house_number'           => $request->input('billing_housenumber'),
-            'billing_house_number_addition'  => $request->input('billing_housenumber-add'),
-            'billing_postal_code'            => $request->input('billing_postal-zip-code'),
-            'billing_city'                   => $request->input('billing_city'),
-            'billing_country'                => $request->input('billing_country'),
-            'billing_phone'                  => $request->input('billing_phone'),
-        ];
+    if ($discountCode && ($discount = DiscountCode::where('code', $discountCode)->first())) {
+      $discountType = $discount->discount_type;
+      $discountValue = $discount->discount;
 
-        if ($request->boolean('alt-shipping')) {
-            $customerData = array_merge($customerData, [
-            'shipping_first_name'            => $request->input('shipping_first_name'),
-            'shipping_last_name'             => $request->input('shipping_last_name'),
-            'shipping_company'               => $request->input('shipping_company'),
-            'shipping_street'                => $request->input('shipping_street'),
-            'shipping_house_number'          => $request->input('shipping_housenumber'),
-            'shipping_house_number_addition' => $request->input('shipping_housenumber-add'),
-            'shipping_postal_code'           => $request->input('shipping_postal-zip-code'),
-            'shipping_city'                  => $request->input('shipping_city'),
-            'shipping_country'               => $request->input('shipping_country'),
-            'shipping_phone'                 => $request->input('shipping_phone'),
-            ]);
-        } 
+      $discountAmount = $discountType === 'percent'
+        ? round($totalBefore * ($discountValue / 100), 2)
+        : round($discountValue, 2);
 
-        // --- Create user (optional)
-        $user = User::where('email', $request->input('billing_email'))->first();
-        if (!$user && $request->filled('password')) {
-        $user = User::create([
-            'first_name' => $request->input('billing_first_name'),
-            'last_name'  => $request->input('billing_last_name'),
-            'email'      => $request->input('billing_email'),
-            'password'   => Hash::make($request->input('password')),
+      $discountAmount = min($discountAmount, $totalBefore);
+    }
+
+    $totalAfter = round($totalBefore - $discountAmount, 2);
+
+    return [$discountCode, $discountType, $discountValue, $discountAmount, round($totalBefore, 2), $totalAfter];
+  }
+
+  private function createOrderWithItems(
+    array $cart,
+    Customer $customer,
+    Request $request,
+    ?string $discountCode,
+    ?string $discountType,
+    float|int $discountValue,
+    float $discountAmount,
+    float $totalBefore,
+    float $totalAfter
+  ): Order {
+    return DB::transaction(function () use (
+      $cart, $customer, $request, $discountCode, $discountType,
+      $discountValue, $discountAmount, $totalBefore, $totalAfter
+    ) {
+      $order = $customer->orders()->create([
+        'total' => $totalBefore,
+        'status' => 'pending',
+        'shipping_first_name' => $request->input('alt-shipping') ? $request->shipping_first_name : $request->billing_first_name,
+        'shipping_last_name'  => $request->input('alt-shipping') ? $request->shipping_last_name  : $request->billing_last_name,
+        'shipping_company'    => $request->input('alt-shipping') ? $request->shipping_company    : $request->billing_company,
+        'shipping_street'     => $request->input('alt-shipping') ? $request->shipping_street     : $request->billing_street,
+        'shipping_house_number' => $request->input('alt-shipping') ? $request->shipping_housenumber : $request->billing_housenumber,
+        'shipping_postal_code'  => $request->input('alt-shipping') ? $request->shipping_postal_code : $request->billing_postal_code,
+        'shipping_city'       => $request->input('alt-shipping') ? $request->shipping_city : $request->billing_city,
+        'shipping_country'    => $request->input('alt-shipping') ? $request->shipping_country : $request->billing_country,
+        'discount_type'       => $discountType,
+        'discount_value'      => $discountValue,
+        'discount_price_total' => $discountAmount,
+        'total_after_discount' => $totalAfter,
+        'discount_code_checkout' => $discountCode,
+      ]);
+
+      foreach ($cart as $item) {
+        $product = Product::lockForUpdate()->find($item['product_id']);
+        if (!$product || $product->stock < $item['quantity']) {
+          throw ValidationException::withMessages([
+            'stock' => "Niet voldoende voorraad voor {$item['name']}"
+          ]);
+        }
+
+        $product->decrement('stock', $item['quantity']);
+        $order->items()->create([
+          'product_id' => $product->id,
+          'product_name' => $item['name'],
+          'quantity' => $item['quantity'],
+          'unit_price' => $item['price'],
+          'subtotal' => $item['price'] * $item['quantity'],
         ]);
-
-          event(new Registered($user));
-
-          // Send welcome email
-          Mail::to($user->email)->send(new WelcomeMail($user));
-
-        }
-
-        $customer = Customer::where('billing_email', $request->input('billing_email'))->first();
-        if (!$customer) {
-            $customer = Customer::create([
-                'billing_first_name'             => $request->input('billing_first_name'),
-                'billing_last_name'              => $request->input('billing_last_name'),
-                'billing_email'                  => $request->input('billing_email'),
-                'billing_company'                => $request->input('billing_company'),
-                'billing_street'                 => $request->input('billing_street'),
-                'billing_house_number'           => $request->input('billing_housenumber'),
-                'billing_house_number_addition'  => $request->input('billing_housenumber-add'),
-                'billing_postal_code'            => $request->input('billing_postal-zip-code'),
-                'billing_city'                   => $request->input('billing_city'),
-                'billing_country'                => $request->input('billing_country'),
-                'billing_phone'                  => $request->input('billing_phone'),
-            ]);
-        } else {
-            $customer->update([
-                'billing_first_name'             => $request->input('billing_first_name'),
-                'billing_last_name'              => $request->input('billing_last_name'),
-                'billing_email'                  => $request->input('billing_email'),
-                'billing_company'                => $request->input('billing_company'),
-                'billing_street'                 => $request->input('billing_street'),
-                'billing_house_number'           => $request->input('billing_housenumber'),
-                'billing_house_number_addition'  => $request->input('billing_housenumber-add'),
-                'billing_postal_code'            => $request->input('billing_postal-zip-code'),
-                'billing_city'                   => $request->input('billing_city'),
-                'billing_country'                => $request->input('billing_country'),
-                'billing_phone'                  => $request->input('billing_phone'),
-            ]);
-        }
-
-
-    // --- Calculating total price (netto som; afronding voor Mollie gebeurt later)
-        $totalBeforeDiscount = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
-        $discountCode = session('discount_code');
-        $discountAmount = 0;
-        $discountType = null;
-        $discountValue = 0; // raw value (percent number or amount)
-        if ($discountCode) {
-            $discount = DiscountCode::where('code', $discountCode)->first();
-            if ($discount) {
-                $discountType = $discount->discount_type; // 'percent' | 'amount'
-                $discountValue = $discount->discount;     // stored numeric value
-                if ($discountType === 'percent') {
-                    $discountAmount = round($totalBeforeDiscount * ((int)$discountValue / 100), 2);
-                    $discountValue = (int)$discountValue; // store percent as int
-                } else { // amount
-                    $discountAmount = round((float)$discountValue, 2);
-                    $discountValue = round((float)$discountValue, 2);
-                }
-            }
-        }
-        if ($discountAmount > $totalBeforeDiscount) {
-            $discountAmount = $totalBeforeDiscount;
-        }
-        $totalBeforeDiscount = round($totalBeforeDiscount, 2);
-        $totalAfterDiscount = round($totalBeforeDiscount - $discountAmount, 2);
-
-        // --- Order + items + stock in één transactie
-        // Gebruik een DB-transactie voor atomaire verwerking:
-        // - vergrendelt product-rijen met lockForUpdate
-        // - voorkomt race conditions en halve orders (alles of niets)
-        $order = null;
-        try {
-            DB::transaction(function () use ($cart, $customer, &$order, $request, $discountCode, $discountAmount, $discountType, $discountValue, $totalBeforeDiscount, $totalAfterDiscount) {
-                $insufficient = [];
-                $locked = [];
-                // Lock producten en valideer voorraad
-                foreach ($cart as $item) {
-                    // lockForUpdate: vergrendelt de productrij tot einde transactie om overselling te voorkomen
-                    $product = Product::whereKey($item['product_id'])->lockForUpdate()->first();
-                    if (!$product) {
-                        $insufficient[] = ($item['name'] ?? 'Onbekend product') . '<br>(niet meer beschikbaar)';
-                        continue;
-                    }
-                    if ($product->stock < $item['quantity']) {
-                        $insufficient[] = $product->title . '<br>(op voorraad: ' . $product->stock . ')';
-                        continue;
-                    }
-                    $locked[] = [$product, $item];
-                }
-
-                // Als er voorraadproblemen zijn: gooi ValidationException -> rollback en nette melding
-                if (!empty($insufficient)) {
-                    throw ValidationException::withMessages([
-                        'stock' => 'Niet voldoende voorraad:<br>' . implode('<br>', $insufficient)
-                    ]);
-                }
-
-                // Order aanmaken
-                if ($request->boolean('alt-shipping')) {
-                    $order = $customer->orders()->create([
-                        'total'  => $totalBeforeDiscount,
-                        'status' => 'pending',
-                        'shipping_first_name'            => $request->input('shipping_first_name'),
-                        'shipping_last_name'             => $request->input('shipping_last_name'),
-                        'shipping_company'               => $request->input('shipping_company'),
-                        'shipping_street'                => $request->input('shipping_street'),
-                        'shipping_house_number'          => $request->input('shipping_housenumber'),
-                        'shipping_house_number_addition' => $request->input('shipping_housenumber-add'),
-                        'shipping_postal_code'           => $request->input('shipping_postal-zip-code'),
-                        'shipping_city'                  => $request->input('shipping_city'),
-                        'shipping_country'               => $request->input('shipping_country'),
-                        'shipping_phone'                 => $request->input('shipping_phone'),
-                        'discount_type'         => $discountType,
-                        'discount_value'        => $discountValue,
-                        'discount_price_total'  => $discountAmount,
-                        'total_after_discount'  => $totalAfterDiscount,
-                        'discount_code_checkout' => $discountCode,
-                        'discount_amount_checkout' => $discountAmount,
-                        'discount_type_checkout' => $discountType,
-                    ]);
-                } else {
-                    $order = $customer->orders()->create([
-                        'total'  => $totalBeforeDiscount,
-                        'status' => 'pending',
-                        'shipping_first_name'            => $request->input('billing_first_name'),
-                        'shipping_last_name'             => $request->input('billing_last_name'),
-                        'shipping_company'               => $request->input('billing_company'),
-                        'shipping_street'                => $request->input('billing_street'),
-                        'shipping_house_number'          => $request->input('billing_housenumber'),
-                        'shipping_house_number_addition' => $request->input('shipping_housenumber-add'),
-                        'shipping_postal_code'           => $request->input('billing_postal-zip-code'),
-                        'shipping_city'                  => $request->input('billing_city'),
-                        'shipping_country'               => $request->input('billing_country'),
-                        'shipping_phone'                 => $request->input('billing_phone'),
-                        'discount_type'         => $discountType,
-                        'discount_value'        => $discountValue,
-                        'discount_price_total'  => $discountAmount,
-                        'total_after_discount'  => $totalAfterDiscount,
-                        'discount_code_checkout' => $discountCode,
-                        'discount_amount_checkout' => $discountAmount,
-                        'discount_type_checkout' => $discountType,
-                    ]);
-                }
-
-                // Voorraad verlagen en orderregels vastleggen (binnen dezelfde transactie)
-                foreach ($locked as [$product, $item]) {
-                    // Atomic decrement van de voorraad binnen de transactie
-                    $product->decrement('stock', (int) $item['quantity']);
-                    $order->items()->create([
-                        'product_id'   => $item['product_id'],
-                        'product_name' => $item['name'],
-                        'quantity'     => $item['quantity'],
-                        'unit_price'   => $item['price'],
-                        'subtotal'     => $item['price'] * $item['quantity'],
-                    ]);
-                }
-            });
-        } catch (ValidationException $e) {
-            return back()->withInput()->withErrors($e->errors());
-        }
-
-        // --- MyParcel widget-output opslaan + server-side validatie voor pickup
-        $deliveryJson = $request->input('myparcel_delivery_options');
-        $delivery     = json_decode($deliveryJson ?? '[]', true) ?: [];
-
-        // Bepaal of het om een pickup gaat
-        $isPickup = (bool)($delivery['isPickup'] ?? false)
-            || (strtolower((string)($delivery['deliveryType'] ?? '')) === 'pickup');
-
-        if ($isPickup) {
-            // Ondersteun zowel `pickup` als `pickupLocation` (afhankelijk van widgetversie)
-            $p = $delivery['pickup'] ?? $delivery['pickupLocation'] ?? null;
-
-            $missing = [];
-            if (!is_array($p)) {
-                $missing[] = 'afhaalpunt';
-            } else {
-                foreach (['street','number','postalCode','city'] as $key) {
-                    if (empty($p[$key])) $missing[] = $key;
-                }
-            }
-
-            if ($missing) {
-                return back()
-                    ->withInput()
-                    ->withErrors([
-                        'myparcel_delivery_options' =>
-                            'Kies eerst een volledig afhaalpunt (straat, huisnummer, postcode en plaats).'
-                    ]);
-            }
-        }
-
-        $order->update([
-            'myparcel_delivery_json'    => $deliveryJson,
-            'myparcel_is_pickup'        => $isPickup,
-            'myparcel_carrier'          => data_get($delivery, 'carrier'),
-            'myparcel_delivery_type'    => data_get($delivery, 'deliveryType'),
-            'myparcel_package_type_id'  => $this->mapPackageTypeId(data_get($delivery, 'packageType')),
-            'myparcel_only_recipient'   => (bool) data_get($delivery, 'shipmentOptions.onlyRecipient'),
-            'myparcel_signature'        => (bool) data_get($delivery, 'shipmentOptions.signature'),
-            'myparcel_insurance_amount' => data_get($delivery, 'shipmentOptions.insurance'),
-        ]);
-
-    // --- Maak zending direct aan bij MyParcel (voor betaling), net als admin orders
-    // Let op: buiten de DB-transactie houden; externe API-calls kunnen traag/foutgevoelig zijn
-        try {
-            $useShipping = $request->boolean('alt-shipping')
-                && filled($request->input('shipping_street'))
-                && filled($request->input('shipping_housenumber'));
-
-            $fullStreet = static function ($street, $nr, $add) {
-                $street = trim((string) $street);
-                $nr     = trim((string) $nr);
-                $add    = trim((string) $add);
-                if ($street === '' || $nr === '') return '';
-                return trim($street.' '.$nr.($add ? ' '.$add : ''));
-            };
-
-            $address = [
-                'cc'         => $useShipping ? $request->input('shipping_country') : $request->input('billing_country'),
-                'name'       => $useShipping
-                    ? trim($request->input('shipping_first_name').' '.$request->input('shipping_last_name'))
-                    : trim($request->input('billing_first_name').' '.$request->input('billing_last_name')),
-                'company'    => $useShipping ? $request->input('shipping_company') : $request->input('billing_company'),
-                'email'      => $request->input('billing_email'),
-                'phone'      => $useShipping ? $request->input('shipping_phone') : $request->input('billing_phone'),
-                'fullStreet' => $useShipping
-                    ? $fullStreet($request->input('shipping_street'), $request->input('shipping_housenumber'), $request->input('shipping_housenumber-add'))
-                    : $fullStreet($request->input('billing_street'),  $request->input('billing_housenumber'),  $request->input('billing_housenumber-add')),
-                'postalCode' => preg_replace('/\s+/', '', $useShipping ? $request->input('shipping_postal-zip-code') : $request->input('billing_postal-zip-code')),
-                'city'       => $useShipping ? $request->input('shipping_city') : $request->input('billing_city'),
-            ];
-
-            $shippingCfg = [
-                'order_id'  => $order->id,
-                'reference' => 'order-'.$order->id,
-                'carrier'   => $order->myparcel_carrier ?: 'postnl',
-                'address'   => $address,
-                'delivery'  => [
-                    'packageTypeId' => $order->myparcel_package_type_id ?: 1,
-                    'onlyRecipient' => (bool) $order->myparcel_only_recipient,
-                    'signature'     => (bool) $order->myparcel_signature,
-                    'insurance'     => $order->myparcel_insurance_amount,
-                    'deliveryType'  => $delivery['deliveryType'] ?? 'standard',
-                    'is_pickup'     => (bool) ($delivery['isPickup'] ?? $delivery['is_pickup'] ?? false),
-                    // accept both keys
-                    'pickup'        => $delivery['pickup'] ?? $delivery['pickupLocation'] ?? null,
-                ],
-            ];
-
-            \Log::info('Checkout MyParcel shipment: creating concept', [
-                'order' => $order->id,
-                'useShipping' => $useShipping,
-                'addr_cc' => $address['cc'],
-                'addr_name' => $address['name'] ?? null,
-                'addr_fullStreet' => $address['fullStreet'],
-                'addr_postal' => $address['postalCode'],
-                'addr_city' => $address['city'],
-                'deliveryType' => $shippingCfg['delivery']['deliveryType'],
-                'is_pickup' => $shippingCfg['delivery']['is_pickup'],
-                'pickup_cc' => data_get($shippingCfg, 'delivery.pickup.cc'),
-                'retail_network_id' => data_get($shippingCfg, 'delivery.pickup.retail_network_id'),
-                'location_code' => data_get($shippingCfg, 'delivery.pickup.location_code'),
-            ]);
-
-            $result = app(\App\Services\MyParcelService::class)->createShipment($shippingCfg);
-
-            $order->update([
-                'myparcel_consignment_id'  => $result['consignment_id'] ?? null,
-                'myparcel_track_trace_url' => $result['track_trace_url'] ?? null,
-                'myparcel_label_link'      => $result['label_link'] ?? null,
-            ]);
-        } catch (\Throwable $e) {
-            \Log::error('Checkout MyParcel shipment create failed', [
-                'order' => $order->id,
-                'error' => $e->getMessage(),
-            ]);
-        }
-
-        // --- Mollie
-        $webhookUrl = match (config('app.env')) {
-            'production' => env('WEBHOOK_URL_PRODUCTION'),
-            'staging'    => env('WEBHOOK_URL_STAGING'),
-            default      => env('WEBHOOK_URL_LOCAL')
-        };
-
-        // Gebruik het totaal NA korting voor betaling
-        $amountToPay = $totalAfterDiscount; // eerder berekend
-        // Fallback: als negatief door afronding -> zet op 0
-        if ($amountToPay < 0) { $amountToPay = 0; }
-
-        // Wanneer totaal 0 of lager is: sla Mollie over en markeer direct als betaald
-        if ($amountToPay <= 0) {
-            $order->update([
-                'status'         => 'completed',
-                'payment_status' => 'paid',
-                'paid_at'        => now(),
-            ]);
-            // Clear cart & discount
-            session()->forget('cart');
-            session()->forget('discount_code');
-            return redirect()->route('payment.success', ['order' => $order->id]);
-        }
-
-        $payment = $this->mollie->payments->create([
-            'amount' => [
-                'currency' => 'EUR',
-                'value'    => number_format($amountToPay, 2, '.', ''), // Mollie verwacht string met 2 decimals
-            ],
-            'description' => 'Bestelling #'.$order->id,
-            'redirectUrl' => route('payment.success', ['order' => $order->id]),
-            'webhookUrl'  => $webhookUrl,
-            'metadata'    => ['order_id' => $order->id],
-        ]);
-
-        $order->update(['mollie_payment_id' => $payment->id]);
-
-        // Clear cart & discount na initialisatie van betaling
-        session()->forget('cart');
-        session()->forget('discount_code');
-
-        return redirect($payment->getCheckoutUrl(), 303);
-    }
-
-    public function paymentSuccess(Request $request)
-    {
-        $orderId = $request->query('order');
-        if (!$orderId || !($order = Order::find($orderId))) {
-            return view('checkout.success', ['error' => 'Order niet gevonden.', 'success' => null, 'info' => null]);
-        }
-
-        if (!$order->mollie_payment_id) {
-            return view('checkout.success', ['error' => 'Geen betaling gevonden bij deze order.', 'success' => null, 'info' => null]);
-        }
-
-        $payment = $this->mollie->payments->get($order->mollie_payment_id);
-
-        if ($payment->isPaid()) {
-            $order->update([
-                'status'         => 'completed',
-                'payment_status' => 'paid',
-                'paid_at'        => now(),
-            ]);
-
-            // Adres kiezen (shipping > billing)
-            $customer    = $order->customer;
-            $useShipping = filled($customer->shipping_street) && filled($customer->shipping_house_number);
-
-            $fullStreet = static function ($street, $nr, $add) {
-                $street = trim((string) $street);
-                $nr     = trim((string) $nr);
-                $add    = trim((string) $add);
-                if ($street === '' || $nr === '') return '';
-                return trim($street.' '.$nr.($add ? ' '.$add : ''));
-            };
-
-            $address = [
-                'cc'         => $useShipping ? $customer->shipping_country : $customer->billing_country,
-                'name'       => $useShipping
-                    ? trim($customer->shipping_first_name.' '.$customer->shipping_last_name)
-                    : trim($customer->billing_first_name.' '.$customer->billing_last_name),
-                'company'    => $useShipping ? $customer->shipping_company : $customer->billing_company,
-                'email'      => $customer->billing_email,
-                'phone'      => $useShipping ? $customer->shipping_phone : $customer->billing_phone,
-                'fullStreet' => $useShipping
-                    ? $fullStreet($customer->shipping_street, $customer->shipping_house_number, $customer->shipping_house_number_addition)
-                    : $fullStreet($customer->billing_street,  $customer->billing_house_number,  $customer->billing_house_number_addition),
-                'postalCode' => preg_replace('/\s+/', '', $useShipping ? $customer->shipping_postal_code : $customer->billing_postal_code),
-                'city'       => $useShipping ? $customer->shipping_city : $customer->billing_city,
-            ];
-
-            // Extra server-side safety: pickup moet een volledig afhaalpunt hebben
-            $selection = json_decode($order->myparcel_delivery_json ?? '[]', true) ?: [];
-            $isPickup  = (bool)($selection['isPickup'] ?? false)
-                    || (strtolower((string)($selection['deliveryType'] ?? '')) === 'pickup');
-
-            if ($isPickup) {
-                $p = $selection['pickup'] ?? $selection['pickupLocation'] ?? null;
-                $invalid = !is_array($p)
-                    || empty($p['street'])
-                    || empty($p['number'])
-                    || empty($p['postalCode'])
-                    || empty($p['city']);
-
-                if ($invalid) {
-                    // Laat de order op 'paid' staan, maar laat de zending (nog) niet aanmaken
-                    // en toon een duidelijke melding zodat je of de klant het kan herstellen.
-                    return view('checkout.success', [
-                        'success' => null,
-                        'info'    => null,
-                        'error'   => 'Je koos voor ophalen, maar het afhaalpunt is niet compleet. Neem contact met ons op of kies opnieuw een afhaalpunt.',
-                    ]);
-                }
-            }
-
-            $shipping = [
-            'order_id'  => $order->id,
-            'reference' => 'order-'.$order->id,
-            'carrier'   => $order->myparcel_carrier ?: 'postnl', // <— doorgeven
-            'address'   => $address,
-            'delivery'  => [
-                'packageTypeId' => $order->myparcel_package_type_id ?: 1,
-                'onlyRecipient' => (bool) $order->myparcel_only_recipient,
-                'signature'     => (bool) $order->myparcel_signature,
-                'insurance'     => $order->myparcel_insurance_amount,
-                'deliveryType'  => $selection['deliveryType'] ?? 'standard',
-                'is_pickup'     => (bool) ($selection['isPickup'] ?? $selection['is_pickup'] ?? false),
-                // accept both keys
-                'pickup'        => $selection['pickup'] ?? $selection['pickupLocation'] ?? null,
-            ],
-            ];
-
-            // >>> MyParcel zending aanmaken alleen als er nog geen concept is
-            if (!$order->myparcel_consignment_id) {
-                $result = app(MyParcelService::class)->createShipment($shipping);
-                $order->update([
-                    'myparcel_consignment_id'  => $result['consignment_id'] ?? null,
-                    'myparcel_track_trace_url' => $result['track_trace_url'] ?? null,
-                    'myparcel_label_link'      => $result['label_link'] ?? null,
-                ]);
-            }
-
-            // Generate invoice
-            $pdf = Pdf::loadView('invoices.order', ['order' => $order])->output();
-
-            $filename = 'factuur_' . $order->id . '.pdf';
-            $relativePath = 'invoices/' . $filename;
-
-            Storage::disk('public')->put($relativePath, $pdf);
-
-            $order->forceFill(['invoice_pdf_path' => $relativePath])->save();
-
-            // Send mail with fresh model
-            Mail::to($order->customer->billing_email)->send(new OrderPaidMail($order->fresh()));
-
-            session()->forget('cart');
-            // Store order info in session and redirect to a clean success page
-            session()->flash('checkout_success_order_id', $order->id);
-            return redirect()->route('checkoutSuccessPage');
-        }
-
-        if ($payment->isOpen() || $payment->isPending()) {
-            return view('checkout.success', ['info' => 'Je betaling is nog niet afgerond.', 'success' => null, 'error' => null]);
-        }
-
-        $order->update(['status' => 'cancelled', 'payment_status' => 'failed']);
-        return view('checkout.success', ['error' => 'Je betaling is mislukt of geannuleerd.', 'success' => null, 'info' => null]);
-    }
-
-    public function checkoutSuccess()
-    {
-        $orderId = session('checkout_success_order_id');
-        if (!$orderId) {
-            return redirect()->route('home');
-        }
-        $order = Order::with('items')->find($orderId);
-        return view('checkout.success', [
-            'success' => true,
-            'order' => $order,
-            'error' => null,
-            'info' => null,
-        ]);
-    }
-
-    public function paymentWebhook(Request $request)
-    {
-        $paymentId = $request->input('id');
-        if (!$paymentId) return response()->json(['error' => 'No payment id'], 400);
-
-        $payment = $this->mollie->payments->get($paymentId);
-        $orderId = $payment->metadata->order_id ?? null;
-        if ($orderId && ($order = Order::find($orderId))) {
-            if     ($payment->isPaid())                           $order->update(['status' => 'completed',     'payment_status' => 'paid',     'paid_at' => now()]);
-            elseif ($payment->isOpen() || $payment->isPending())  $order->update(['status' => 'pending',  'payment_status' => 'pending']);
-            elseif ($payment->isFailed() || $payment->isExpired() || $payment->isCanceled())
-                                                                  $order->update(['status' => 'cancelled','payment_status' => 'failed']);
-            elseif ($payment->status === 'refunded') $order->update(['status' => 'cancelled','payment_status' => 'refunded']);
-        }
-        return response()->json(['status' => 'ok']);
-    }
-
-    private function mapPackageTypeId(?string $name): int
-    {
-        return [
-            'package'       => 1,
-            'mailbox'       => 2,
-            'letter'        => 3,
-            'digital_stamp' => 4,
-            'package_small' => 1,
-        ][$name] ?? 1;
-    }
-
-    // When applying a code (AJAX)
-    public function applyDiscountCode(Request $request)
-    {
-      $validated = $request->validate(['code' => 'required|string|max:255']);
-      $discount = DiscountCode::where('code', $validated['code'])->first();
-      if (!$discount) {
-        return response()->json(['success' => false, 'message' => 'Code bestaat niet.']);
       }
-      session(['discount_code' => $discount->code]);
-      // Bereken korting en nieuw totaal
-      $cart = session('cart', []);
-      $total = collect($cart)->sum(fn($item) => ($item['subtotal'] ?? $item['price'] * $item['quantity']));
-      if ($discount->discount_type === 'percent') {
-        $discountAmount = $total * ($discount->discount / 100);
-      } else {
-        $discountAmount = $discount->discount;
-      }
-      $newTotal = max(0, $total - $discountAmount);
-      return response()->json([
-        'success' => true,
-        'discount' => $discount,
-        'discount_amount' => round($discountAmount, 2),
-        'total' => round($total, 2),
-        'new_total' => round($newTotal, 2),
+
+      return $order;
+    });
+  }
+
+  private function validateAndSaveMyParcel(Order $order, Request $request): void
+  {
+    $deliveryJson = $request->input('myparcel_delivery_options');
+    if (!$deliveryJson) {
+      throw ValidationException::withMessages([
+        'myparcel_delivery_options' => 'Kies een bezorgoptie voordat je de bestelling plaatst.'
       ]);
     }
 
-    // When removing a code
-    public function removeDiscountCode()
-    {
-      session()->forget('discount_code');
-      $cart = session('cart', []);
-      $total = collect($cart)->sum(fn($item) => ($item['subtotal'] ?? $item['price'] * $item['quantity']));
-      return response()->json([
-        'success' => true,
-        'discount_amount' => 0,
-        'total' => round($total, 2),
-        'new_total' => round($total, 2),
+    $delivery = json_decode($deliveryJson, true) ?? [];
+    $isPickup = strtolower($delivery['deliveryType'] ?? '') === 'pickup';
+
+    if ($isPickup && empty($delivery['pickup'] ?? $delivery['pickupLocation'])) {
+      throw ValidationException::withMessages([
+        'myparcel_delivery_options' => 'Kies eerst een volledig afhaalpunt.'
       ]);
     }
+
+    // ✅ Build full address (billing or shipping fallback)
+    $address = [
+      'cc'        => $order->shipping_country ?? $order->billing_country,
+      'city'      => $order->shipping_city ?? $order->billing_city,
+      // ✅ normalize: strip spaces + uppercase
+      'postalCode'=> strtoupper(preg_replace('/\s+/', '', $order->shipping_postal_code ?? $order->billing_postal_code)),
+      'street'    => $order->shipping_street ?? $order->billing_street,
+      'number'    => $order->shipping_house_number ?? $order->billing_house_number,
+      'addition'  => $order->shipping_house_number_addition ?? $order->billing_house_number_addition ?? '',
+      'name'      => trim(($order->shipping_first_name ?? $order->billing_first_name) . ' ' .
+        ($order->shipping_last_name ?? $order->billing_last_name)),
+      'company'   => $order->shipping_company ?? $order->billing_company,
+      'email'     => $order->customer->billing_email,
+      'phone'     => $order->shipping_phone ?? $order->billing_phone,
+    ];
+
+    // Save delivery options on order
+    $order->update([
+      'myparcel_delivery_json'   => $deliveryJson,
+      'myparcel_is_pickup'       => $isPickup,
+      'myparcel_carrier'         => $delivery['carrier'] ?? 'postnl',
+      'myparcel_delivery_type'   => $delivery['deliveryType'] ?? null,
+      'myparcel_package_type_id' => $this->mapPackageTypeId($delivery['packageType'] ?? null),
+    ]);
+
+    Log::debug('MyParcel address debug', [
+      'postal' => $address['postalCode'],
+      'cc'     => $address['cc'],
+      'street' => $address['street'],
+      'number' => $address['number'],
+    ]);
+
+    try {
+      $result = app(MyParcelService::class)->createShipment([
+        'order_id' => $order->id,
+        'reference' => 'order-' . $order->id,
+        'carrier'  => $order->myparcel_carrier ?? 'postnl',
+        // ✅ correct key
+        'address'  => $address,
+        'delivery' => [
+          'packageTypeId' => $order->myparcel_package_type_id ?: 1,
+          'deliveryType'  => $delivery['deliveryType'] ?? 'standard',
+          'is_pickup'     => $isPickup,
+          'pickup'        => $delivery['pickup'] ?? $delivery['pickupLocation'] ?? null,
+          'onlyRecipient' => (bool) data_get($delivery, 'shipmentOptions.onlyRecipient'),
+          'signature'     => (bool) data_get($delivery, 'shipmentOptions.signature'),
+          'insurance'     => data_get($delivery, 'shipmentOptions.insurance'),
+        ],
+      ]);
+
+      if (empty($result['consignment_id'])) {
+        Log::error('MyParcel consignment_id missing', ['order' => $order->id, 'result' => $result]);
+        throw ValidationException::withMessages([
+          'myparcel_delivery_options' => 'Verzending aanmaken bij MyParcel is mislukt. Probeer het opnieuw.'
+        ]);
+      }
+
+      $order->update([
+        'myparcel_consignment_id'  => $result['consignment_id'],
+        'myparcel_track_trace_url' => $result['track_trace_url'] ?? null,
+        'myparcel_label_link'      => $result['label_link'] ?? null,
+      ]);
+    } catch (\Throwable $e) {
+      Log::error('Checkout MyParcel shipment create failed', [
+        'order' => $order->id,
+        'error' => $e->getMessage(),
+      ]);
+    }
+  }
+
+
+  private function createMolliePayment(Order $order, float $amount)
+  {
+    $amount = max(0, $amount);
+
+    if ($amount <= 0) {
+      $order->update(['status' => 'completed', 'payment_status' => 'paid', 'paid_at' => now()]);
+      session()->forget(['cart', 'discount_code']);
+      return redirect()->route('payment.success', ['order' => $order->id]);
+    }
+
+    $payment = $this->mollie->payments->create([
+      'amount' => ['currency' => 'EUR', 'value' => number_format($amount, 2, '.', '')],
+      'description' => 'Bestelling #' . $order->id,
+      'redirectUrl' => route('payment.success', ['order' => $order->id]),
+      'webhookUrl' => config('app.webhook_url'),
+      'metadata' => ['order_id' => $order->id],
+    ]);
+
+    $order->update(['mollie_payment_id' => $payment->id]);
+    session()->forget(['cart', 'discount_code']);
+
+    return redirect($payment->getCheckoutUrl(), 303);
+  }
+
+  private function handlePaidOrder(Order $order)
+  {
+    $order->update(['status' => 'completed', 'payment_status' => 'paid', 'paid_at' => now()]);
+
+    // Invoice
+    $pdf = Pdf::loadView('invoices.order', ['order' => $order])->output();
+    $path = 'invoices/factuur_' . $order->id . '.pdf';
+    Storage::disk('public')->put($path, $pdf);
+    $order->forceFill(['invoice_pdf_path' => $path])->save();
+
+    Mail::to($order->customer->billing_email)->send(new OrderPaidMail($order->fresh()));
+
+    session()->forget('cart');
+    session()->flash('checkout_success_order_id', $order->id);
+
+    return redirect()->route('checkoutSuccessPage');
+  }
+
+  private function updateOrderPaymentStatus(Order $order, $payment): void
+  {
+    if ($payment->isPaid()) {
+      $order->update(['status' => 'completed', 'payment_status' => 'paid', 'paid_at' => now()]);
+    } elseif ($payment->isOpen() || $payment->isPending()) {
+      $order->update(['status' => 'pending', 'payment_status' => 'pending']);
+    } elseif ($payment->isFailed() || $payment->isExpired() || $payment->isCanceled()) {
+      $order->update(['status' => 'cancelled', 'payment_status' => 'failed']);
+    } elseif ($payment->status === 'refunded') {
+      $order->update(['status' => 'cancelled', 'payment_status' => 'refunded']);
+    }
+  }
+
+  private function checkoutError(string $msg)
+  {
+    return view('checkout.success', ['error' => $msg, 'success' => null, 'info' => null]);
+  }
+
+  private function checkoutInfo(string $msg)
+  {
+    return view('checkout.success', ['info' => $msg, 'success' => null, 'error' => null]);
+  }
+
+  private function mapPackageTypeId(?string $name): int
+  {
+    return [
+      'package' => 1,
+      'mailbox' => 2,
+      'letter' => 3,
+      'digital_stamp' => 4,
+    ][$name] ?? 1;
+  }
 }
