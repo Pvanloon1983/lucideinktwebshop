@@ -1137,6 +1137,7 @@ i {
 
   .container.page.dashboard {
     padding-left: 15px;
+    padding-top: 100px;
   }
 
   .container.page.dashboard.open {
@@ -2072,6 +2073,18 @@ i {
 }
 
 /* Order page product list */
+.order-button-box {
+  display: flex;
+  gap: 15px;
+}
+
+@media screen and (max-width: 600px) {
+  .order-button-box {
+    flex-direction: column;
+  }
+}
+
+
 .product-list {
   background: var(--surface-4);
   padding: 20px 30px;

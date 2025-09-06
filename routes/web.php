@@ -60,6 +60,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	// Orders
 	Route::get('/dashboard/orders/create', [OrderController::class, 'create'])->name('orderCreatePage');
 	Route::get('/dashboard/orders', [OrderController::class, 'index'])->name('orderIndex');
+  // Export orders
+  Route::get('/dashboard/orders/export', [OrderController::class, 'exportOrders'])->name('exportOrders');
 	Route::get('/dashboard/orders/{id}', [OrderController::class, 'show'])->name('orderShow');	
 	Route::post('/dashboard/orders/create', [OrderController::class, 'store'])->name('orderStore');
 	Route::put('/dashboard/orders/{id}', [OrderController::class, 'update'])->name('orderUpdate');	

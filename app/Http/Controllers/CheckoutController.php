@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\WelcomeMail;
 use App\Models\DiscountCode;
 use App\Models\User;
 use App\Models\Order;
@@ -139,13 +140,18 @@ class CheckoutController extends Controller
         // --- Create user (optional)
         $user = User::where('email', $request->input('billing_email'))->first();
         if (!$user && $request->filled('password')) {
-        $user = \App\Models\User::create([
+        $user = User::create([
             'first_name' => $request->input('billing_first_name'),
             'last_name'  => $request->input('billing_last_name'),
             'email'      => $request->input('billing_email'),
             'password'   => Hash::make($request->input('password')),
         ]);
-        event(new Registered($user));
+
+          event(new Registered($user));
+
+          // Send welcome email
+          Mail::to($user->email)->send(new WelcomeMail($user));
+
         }
 
         $customer = Customer::where('billing_email', $request->input('billing_email'))->first();
@@ -562,8 +568,6 @@ class CheckoutController extends Controller
                 ]);
             }
 
-            // Remove discount code application, already applied during order creation
-
             // Generate invoice
             $pdf = Pdf::loadView('invoices.order', ['order' => $order])->output();
 
@@ -597,7 +601,7 @@ class CheckoutController extends Controller
         if (!$orderId) {
             return redirect()->route('home');
         }
-        $order = \App\Models\Order::with('items')->find($orderId);
+        $order = Order::with('items')->find($orderId);
         return view('checkout.success', [
             'success' => true,
             'order' => $order,

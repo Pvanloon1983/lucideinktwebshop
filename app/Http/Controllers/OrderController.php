@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\OrdersExport;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\Customer;
 use App\Mail\OrderPaidMail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Maatwebsite\Excel\Facades\Excel;
 use Mollie\Api\MollieApiClient;
 use App\Services\MyParcelService;
 use Illuminate\Support\Facades\Log;
@@ -484,4 +487,13 @@ $customerData = [
 
 			return back()->with('success', 'E-mail met factuur is verstuurd');
 		}
+
+    public function exportOrders()
+    {
+      $now = Carbon::now();
+      $date = $now->format('d-m-Y');
+      $time = $now->format('H:i');
+
+      return Excel::download(new OrdersExport, 'orders-'.$date.'_'.$time.'.xlsx');
+    }
 }

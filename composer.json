@@ -10,8 +10,10 @@
         "barryvdh/laravel-dompdf": "^3.1",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
+        "maatwebsite/excel": "^3.1",
         "mollie/laravel-mollie": "^3.1",
-        "myparcelnl/sdk": "^10.1"
+        "myparcelnl/sdk": "^10.1",
+        "nesbot/carbon": "^3.10"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",

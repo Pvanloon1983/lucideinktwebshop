@@ -114,10 +114,10 @@
         </td>
       </tr>
     </table>
-    <h3>{{ __('Bedankt voor uw bestelling!') }}</h3>
+    <h3>{{ __('Bedankt voor je bestelling!') }}</h3>
     <div class="meta">
-      <span><strong>{{ __('Ordernummer') }}:</strong> {{ $order->id }}</span><br>
-      <span><strong>{{ __('Besteldatum') }}:</strong> {{ $order->created_at->format('d-m-Y H:i') }}</span>
+      <span><strong>{{ __('Ordernummer:') }}</strong> {{ $order->id }}</span><br>
+      <span><strong>{{ __('Besteldatum:') }}</strong> {{ $order->created_at->format('d-m-Y H:i') }}</span>
     </div>
     <div class="address-blocks">
       <div class="address">
@@ -130,9 +130,9 @@
         {{ $order->customer->billing_postal_code }} {{ $order->customer->billing_city }}<br>
         {{ config('countries.' . $order->customer->billing_country) ?? $order->customer->billing_country }}<br>
         @if($order->customer->billing_phone)
-          Tel: {{ $order->customer->billing_phone }}<br>
+          {{ __('Tel:') }} {{ $order->customer->billing_phone }}<br>
         @endif
-        Email: {{ $order->customer->billing_email }}
+        {{ __('Email:') }} {{ $order->customer->billing_email }}
       </div>
       <div class="address">
         <strong>{{ __('Verzendadres') }}</strong><br>
@@ -145,7 +145,7 @@
           {{ $order->shipping_postal_code }} {{ $order->shipping_city }}<br>
           {{ config('countries.' . $order->shipping_country) ?? $order->shipping_country }}<br>
           @if($order->shipping_phone)
-            Tel: {{ $order->shipping_phone }}<br>
+            {{ __('Tel:') }} {{ $order->shipping_phone }}<br>
           @endif
         @else
           {{ $order->customer->billing_first_name }} {{ $order->customer->billing_last_name }}<br>
@@ -156,7 +156,7 @@
           {{ $order->customer->billing_postal_code }} {{ $order->customer->billing_city }}<br>
           {{ config('countries.' . $order->customer->billing_country) ?? $order->customer->billing_country }}<br>
           @if($order->customer->billing_phone)
-            Tel: {{ $order->customer->billing_phone }}<br>
+            {{ __('Tel:') }} {{ $order->customer->billing_phone }}<br>
           @endif
         @endif
       </div>
@@ -200,10 +200,10 @@
       </table>
     </div>
     <div class="summary">
-      <strong>{{ __('Uw bestelling wordt zo snel mogelijk verzonden. U ontvangt een e-mail zodra uw pakket onderweg is.') }}</strong>
+      <strong>{{ __('Je bestelling wordt zo snel mogelijk verzonden. Je ontvangt een e-mail zodra je pakket onderweg is.') }}</strong>
     </div>
     <div class="footer">
-      {{ __('Heeft u vragen? Neem gerust contact met ons op.') }}<br>
+      {{ __('Heb je vragen? Neem gerust contact met ons op.') }}<br>
       {{ __('Met vriendelijke groet,') }}<br>
       {{ config('app.name') }}
     </div>

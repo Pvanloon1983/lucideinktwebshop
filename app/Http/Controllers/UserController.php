@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewUserMail;
 use App\Models\User;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -75,6 +77,9 @@ class UserController extends Controller
 
       // Fire the Registered event
       event(new Registered($user));
+
+      // Send registration email
+      Mail::to($user->email)->send(new NewUserMail($user));
 
       // Optionally log the user in
       // auth()->login($user);
