@@ -170,7 +170,8 @@ class CheckoutController extends Controller
       'billing_first_name' => 'required|string',
       'billing_last_name' => 'required|string',
       'billing_street' => 'required|string',
-      'billing_housenumber' => 'required|numeric',
+      'billing_house_number' => 'required|numeric',
+      'billing_house_number-add' => 'nullable|string',
       'billing_postal_code' => 'required|string',
       'billing_city' => 'required|string',
       'billing_country' => 'required|string',
@@ -178,10 +179,32 @@ class CheckoutController extends Controller
       'shipping_first_name' => 'required_if:alt-shipping,1|string|nullable',
       'shipping_last_name' => 'required_if:alt-shipping,1|string|nullable',
       'shipping_street' => 'required_if:alt-shipping,1|string|nullable',
-      'shipping_housenumber' => 'required_if:alt-shipping,1|numeric|nullable',
+      'shipping_house_number' => 'required_if:alt-shipping,1|numeric|nullable',
+      'shipping_house_number-add' => 'nullable|string',
       'shipping_postal_code' => 'required_if:alt-shipping,1|string|nullable',
       'shipping_city' => 'required_if:alt-shipping,1|string|nullable',
       'shipping_country' => 'required_if:alt-shipping,1|string|nullable',
+    ], [
+      'billing_email.required' => 'Het e-mailadres is verplicht.',
+      'billing_email.email' => 'Voer een geldig e-mailadres in.',
+      'billing_first_name.required' => 'De voornaam is verplicht.',
+      'billing_last_name.required' => 'De achternaam is verplicht.',
+      'billing_street.required' => 'De straat is verplicht.',
+      'billing_house_number.required' => 'Het huisnummer is verplicht.',
+      'billing_house_number.numeric' => 'Het huisnummer moet een getal zijn.',
+      'billing_postal_code.required' => 'De postcode is verplicht.',
+      'billing_city.required' => 'De plaats is verplicht.',
+      'billing_country.required' => 'Het land is verplicht.',
+      'password.min' => 'Het wachtwoord moet minimaal 8 tekens bevatten.',
+      'password.confirmed' => 'De wachtwoorden komen niet overeen.',
+      'shipping_first_name.required_if' => 'De voornaam is verplicht.',
+      'shipping_last_name.required_if' => 'De achternaam is verplicht.',
+      'shipping_street.required_if' => 'De straat is verplicht.',
+      'shipping_house_number.required_if' => 'Het huisnummer is verplicht.',
+      'shipping_house_number.numeric' => 'Het huisnummer moet een getal zijn.',
+      'shipping_postal_code.required_if' => 'De postcode is verplicht.',
+      'shipping_city.required_if' => 'De plaats is verplicht.',
+      'shipping_country.required_if' => 'Het land is verplicht.',
     ]);
   }
 
@@ -210,7 +233,7 @@ class CheckoutController extends Controller
       ['billing_email' => $request->billing_email],
       $request->only([
         'billing_first_name', 'billing_last_name', 'billing_email', 'billing_company',
-        'billing_street', 'billing_housenumber', 'billing_housenumber-add',
+        'billing_street', 'billing_house_number', 'billing_house_number-add',
         'billing_postal_code', 'billing_city', 'billing_country', 'billing_phone'
       ])
     );
@@ -260,7 +283,7 @@ class CheckoutController extends Controller
         'shipping_last_name'  => $request->input('alt-shipping') ? $request->shipping_last_name  : $request->billing_last_name,
         'shipping_company'    => $request->input('alt-shipping') ? $request->shipping_company    : $request->billing_company,
         'shipping_street'     => $request->input('alt-shipping') ? $request->shipping_street     : $request->billing_street,
-        'shipping_house_number' => $request->input('alt-shipping') ? $request->shipping_housenumber : $request->billing_housenumber,
+        'shipping_house_number' => $request->input('alt-shipping') ? $request->shipping_house_number : $request->billing_house_number,
         'shipping_postal_code'  => $request->input('alt-shipping') ? $request->shipping_postal_code : $request->billing_postal_code,
         'shipping_city'       => $request->input('alt-shipping') ? $request->shipping_city : $request->billing_city,
         'shipping_country'    => $request->input('alt-shipping') ? $request->shipping_country : $request->billing_country,

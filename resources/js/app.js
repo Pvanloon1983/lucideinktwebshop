@@ -417,7 +417,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const useAlt = document.getElementById('alt-shipping')?.checked;
     const p = useAlt ? 'shipping_' : 'billing_';
     const street = document.querySelector(`[name="${p}street"]`)?.value || '';
-    const nr = document.querySelector(`[name="${p}housenumber"]`)?.value || '';
+    const nr = document.querySelector(`[name="${p}house_number"]`)?.value || '';
     return {
       cc: document.querySelector(`[name="${p}country"]`)?.value || 'NL',
       postalCode: (document.querySelector(`[name="${p}postal_code"]`)?.value || '').replace(/\s+/g,'').toUpperCase(),
@@ -510,7 +510,8 @@ document.addEventListener('DOMContentLoaded', () => {
        map: 'Kaart',
        showMoreHours: 'Toon meer tijdvakken',
        showMoreLocations: 'Toon meer locaties',
-       deliveryStandardTitle: 'Standaard bezorging'
+       deliveryStandardTitle: 'Standaard bezorging',
+       openingHours: 'Openingstijden'
      }
    };
 
@@ -528,8 +529,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Attach listeners to address fields
   [
-    'billing_country','billing_postal-zip-code','billing_street','billing_housenumber','billing_city',
-    'shipping_country','shipping_postal-zip-code','shipping_street','shipping_housenumber','shipping_city',
+    'billing_country','billing_postal-zip-code','billing_street','billing_house_number','billing_city',
+    'shipping_country','shipping_postal-zip-code','shipping_street','shipping_house_number','shipping_city',
     'alt-shipping'
   ].forEach(name => {
     const el = document.querySelector(`[name="${name}"]`);

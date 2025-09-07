@@ -112,14 +112,14 @@
             </div>
             <div class="housnumber-box">
               <div class="form-input">
-                <label for="billing_housenumber">Huisnummer</label>
-                <input type="number" name="billing_housenumber" autocomplete="address-line2" value="{{ old('billing_housenumber') }}">
-                @error('billing_housenumber') <div class="error">{{ $message }}</div> @enderror
+                <label for="billing_house_number">Huisnummer</label>
+                <input type="number" name="billing_house_number" autocomplete="address-line2" value="{{ old('billing_house_number') }}">
+                @error('billing_house_number') <div class="error">{{ $message }}</div> @enderror
               </div>
               <div class="form-input">
-                <label for="billing_housenumber-add">Toevoeging</label>
-                <input type="number" name="billing_housenumber-add" autocomplete="address-line2" value="{{ old('billing_housenumber-add') }}">
-                @error('billing_housenumber-add') <div class="error">{{ $message }}</div> @enderror
+                <label for="billing_house_number-add">Toevoeging</label>
+                <input type=text" name="billing_house_number-add" autocomplete="address-line2" value="{{ old('billing_house_number-add') }}">
+                @error('billing_house_number-add') <div class="error">{{ $message }}</div> @enderror
               </div>
             </div>
           </div>
@@ -195,14 +195,14 @@
             </div>
             <div class="housnumber-box">
               <div class="form-input">
-                <label for="shipping_housenumber">Huisnummer</label>
-                <input type="number" name="shipping_housenumber" autocomplete="shipping address-line2" value="{{ old('shipping_housenumber') }}">
-                @error('shipping_housenumber') <div class="error">{{ $message }}</div> @enderror
+                <label for="shipping_house_number">Huisnummer</label>
+                <input type="number" name="shipping_house_number" autocomplete="shipping address-line2" value="{{ old('shipping_house_number') }}">
+                @error('shipping_house_number') <div class="error">{{ $message }}</div> @enderror
               </div>
               <div class="form-input">
-                <label for="shipping_housenumber-add">Toevoeging</label>
-                <input type="number" name="shipping_housenumber-add" value="{{ old('shipping_housenumber-add') }}">
-                @error('shipping_housenumber-add') <div class="error">{{ $message }}</div> @enderror
+                <label for="shipping_house_number-add">Toevoeging</label>
+                <input type="text" name="shipping_house_number-add" value="{{ old('shipping_house_number-add') }}">
+                @error('shipping_house_number-add') <div class="error">{{ $message }}</div> @enderror
               </div>
             </div>
           </div>
