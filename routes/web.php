@@ -57,17 +57,25 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	Route::delete('/dashboard/productcategories/delete/{id}', [ProductCategoryController::class, 'destroy'])->name('productCategoryDelete');
 	Route::get('/dashboard/productcategories/delete/{id}', [ProductCategoryController::class, 'get'])->name('productCategoryDeleteGet');
 
+	// MyParcel: update package type
+	Route::post('/dashboard/myparcel/shipments/update-package-type/{id}', [OrderController::class, 'orderUpdatePackageType'])->name('orderUpdatePackageType');
+	// MyParcel: generate label
+	Route::post('/dashboard/myparcel/shipments/generate-label/{id}', [OrderController::class, 'generateLabel'])->name('orderGenerateLabel');
+	// Get and update MyParcel Shipments
+	Route::get('/dashboard/myparcel/shipments/{shipmentID}', [OrderController::class, 'getSipmentDetails'])->name('getSipmentDetails');
+
 	// Orders
 	Route::get('/dashboard/orders/create', [OrderController::class, 'create'])->name('orderCreatePage');
 	Route::get('/dashboard/orders', [OrderController::class, 'index'])->name('orderIndex');
-  // Export orders
-  Route::get('/dashboard/orders/export', [OrderController::class, 'exportOrders'])->name('exportOrders');
-	Route::get('/dashboard/orders/{id}', [OrderController::class, 'show'])->name('orderShow');	
+	// Export orders
+	Route::get('/dashboard/orders/export', [OrderController::class, 'exportOrders'])->name('exportOrders');
 	Route::post('/dashboard/orders/create', [OrderController::class, 'store'])->name('orderStore');
-	Route::put('/dashboard/orders/{id}', [OrderController::class, 'update'])->name('orderUpdate');	
+	Route::put('/dashboard/orders/{id}', [OrderController::class, 'update'])->name('orderUpdate');    
 	Route::post('/dashboard/orders/generate-invoice/{id}', [OrderController::class, 'generateInvoice'])->name('generateInvoice');
 	Route::post('/dashboard/orders/send-email/{id}', [OrderController::class, 'sendOrderEmailWithInvoice'])->name('sendOrderEmailWithInvoice');
-	Route::get('/dashboard/orders//invoice/{id}', [OrderController::class, 'download_invoice'])->name('orders.invoice');
+	Route::get('/dashboard/orders/invoice/{id}', [OrderController::class, 'download_invoice'])->name('orders.invoice');
+	Route::get('/dashboard/orders/{id}', [OrderController::class, 'show'])->name('orderShow');    
+
 
 	// Customers
 	Route::get('/dashboard/customers', [CustomerController::class, 'index'])->name('customerIndex');
@@ -80,14 +88,14 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	Route::get('/dashboard/users/{id}', [UserController::class, 'show'])->name('userShow');
 	Route::put('/dashboard/users/{id}', [UserController::class, 'update'])->name('userEdit');
 
-  //Discount codes
-  Route::get('/dashboard/discount-codes', [DiscountCodeController::class, 'index'])->name('discountIndex');
-  Route::get('/dashboard/discount-codes/create', [DiscountCodeController::class, 'create'])->name('discountCreate');
-  Route::post('/dashboard/discount-codes/create', [DiscountCodeController::class, 'store'])->name('discountStore');
-  Route::get('/dashboard/discount-codes/edit/{id}', [DiscountCodeController::class, 'edit'])->name('discountEdit');
-  Route::put('/dashboard/discount-codes/edit/{id}', [DiscountCodeController::class, 'update'])->name('discountUpdate');
-  Route::delete('/dashboard/discount-codes/delete/{id}', [DiscountCodeController::class, 'destroy'])->name('discountDelete');
-  Route::get('/dashboard/discount-codes/delete/{id}', [DiscountCodeController::class, 'get'])->name('discountDelete_get');
+	//Discount codes
+	Route::get('/dashboard/discount-codes', [DiscountCodeController::class, 'index'])->name('discountIndex');
+	Route::get('/dashboard/discount-codes/create', [DiscountCodeController::class, 'create'])->name('discountCreate');
+	Route::post('/dashboard/discount-codes/create', [DiscountCodeController::class, 'store'])->name('discountStore');
+	Route::get('/dashboard/discount-codes/edit/{id}', [DiscountCodeController::class, 'edit'])->name('discountEdit');
+	Route::put('/dashboard/discount-codes/edit/{id}', [DiscountCodeController::class, 'update'])->name('discountUpdate');
+	Route::delete('/dashboard/discount-codes/delete/{id}', [DiscountCodeController::class, 'destroy'])->name('discountDelete');
+	Route::get('/dashboard/discount-codes/delete/{id}', [DiscountCodeController::class, 'get'])->name('discountDelete_get');
 
 });
 

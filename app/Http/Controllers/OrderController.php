@@ -15,6 +15,7 @@ use Mollie\Api\MollieApiClient;
 use App\Http\Controllers\Concerns\streamPdf;
 
 class OrderController extends Controller
+
 {
   use streamPdf;
 
@@ -25,6 +26,31 @@ class OrderController extends Controller
     $this->middleware(['auth', 'role:admin']);
     $this->mollie = $mollie;
     $this->mollie->setApiKey(config('mollie.key'));
+  }
+
+  /**
+   * Zet een string pakket type om naar het juiste MyParcel type ID
+   */
+  /**
+   * Zet een string pakket type om naar het juiste MyParcel type ID
+   */
+  private function mapPackageTypeId($type): int
+  {
+    $types = [
+      'package' => 1,
+      'mailbox' => 2,
+      'letter' => 3,
+      'digital_stamp' => 4,
+      'pakket' => 1,
+      'brievenbuspakje' => 2,
+      'brief' => 3,
+      'digitale postzegel' => 4,
+      1 => 1,
+      2 => 2,
+      3 => 3,
+      4 => 4,
+    ];
+    return $types[$type] ?? 1;
   }
 
   /* ------------------ Public Actions ------------------ */
@@ -490,14 +516,121 @@ class OrderController extends Controller
     }
   }
 
-  private function mapPackageTypeId(?string $name): int
-  {
-    return [
-      'package'       => 1,
-      'mailbox'       => 2,
-      'letter'        => 3,
-      'digital_stamp' => 4,
-      'package_small' => 1,
-    ][$name] ?? 1;
-  }
+
+// MyParcel Package update
+public function orderUpdatePackageType(Request $request, string $id)
+{
+    $order = Order::findOrFail($id);
+    $this->authorize('update', $order);
+
+    $request->validate([
+        'package_type' => 'required|in:1,2,3,4'
+    ]);
+
+    $oldType = $order->myparcel_package_type_id;
+    $newType = (int) $request->input('package_type');
+
+    if ($oldType === $newType) {
+        return back()->with('success', 'Pakket type is ongewijzigd.');
+    }
+
+    // 🔹 Stap 1: Oude consignment verwijderen
+    if ($order->myparcel_consignment_id) {
+        $deleted = app(MyParcelService::class)
+            ->deleteConsignmentById((int) $order->myparcel_consignment_id);
+
+        if ($deleted) {
+            Log::info("MyParcel: oude consignment {$order->myparcel_consignment_id} verwijderd", [
+                'order_id' => $order->id,
+            ]);
+        }
+    }
+
+    // 🔹 Stap 2: Nieuwe consignment aanmaken
+    $address = [
+        'cc'         => $order->shipping_country ?? $order->billing_country,
+        'city'       => $order->shipping_city ?? $order->billing_city,
+        'postalCode' => strtoupper(preg_replace('/\s+/', '', $order->shipping_postal_code ?? $order->billing_postal_code)),
+        'street'     => $order->shipping_street ?? $order->billing_street,
+        'number'     => $order->shipping_house_number ?? $order->billing_house_number,
+        'addition'   => $order->shipping_house_number_addition ?? $order->billing_house_number_addition ?? '',
+        'name'       => trim(($order->shipping_first_name ?? $order->billing_first_name) . ' ' . ($order->shipping_last_name ?? $order->billing_last_name)),
+        'company'    => $order->shipping_company ?? $order->billing_company,
+        'email'      => $order->customer->billing_email,
+        'phone'      => $order->shipping_phone ?? $order->billing_phone,
+    ];
+
+    $delivery = [
+        'packageTypeId' => $newType,
+        'carrier'       => $order->myparcel_carrier ?? 'postnl',
+        'deliveryType'  => $order->myparcel_delivery_type ?? null,
+        'onlyRecipient' => $order->myparcel_only_recipient ?? false,
+        'signature'     => $order->myparcel_signature ?? false,
+        'insurance'     => $order->myparcel_insurance_amount ?? null,
+    ];
+
+    try {
+        $result = app(MyParcelService::class)->createShipment([
+            'address'   => $address,
+            'delivery'  => $delivery,
+            'reference' => 'order-' . $order->id,
+            'order_id'  => $order->id,
+            'carrier'   => $delivery['carrier'],
+        ]);
+
+        $order->update([
+            'myparcel_package_type_id' => $newType,
+            'myparcel_consignment_id'  => $result['consignment_id'] ?? null,
+            'myparcel_track_trace_url' => $result['track_trace_url'] ?? null,
+            'myparcel_label_link'      => $result['label_link'] ?? null,
+        ]);
+
+        Log::info('MyParcel: nieuwe consignment aangemaakt', [
+            'order_id'       => $order->id,
+            'consignment_id' => $result['consignment_id'] ?? null,
+            'track_trace'    => $result['track_trace_url'] ?? null,
+        ]);
+    } catch (\Throwable $e) {
+        Log::error('MyParcel: aanmaken consignment mislukt', [
+            'order_id' => $order->id,
+            'error'    => $e->getMessage(),
+        ]);
+
+        return back()->withErrors([
+            'package_type' => 'Aanmaken bij MyParcel mislukt: ' . $e->getMessage()
+        ]);
+    }
+
+    return back()->with('success', 'Pakket type is bijgewerkt: oude consignment verwijderd en nieuwe aangemaakt bij MyParcel.');
+}
+
+
+public function generateLabel(string $id)
+{
+    $order = Order::findOrFail($id);
+    $this->authorize('update', $order);
+
+    if (!$order->myparcel_consignment_id) {
+        return back()->withErrors([
+            'myparcel' => 'Geen MyParcel consignment gekoppeld aan deze bestelling.'
+        ]);
+    }
+
+    try {
+        $result = app(MyParcelService::class)->generateLabel((int)$order->myparcel_consignment_id);
+
+        $order->update([
+            'myparcel_label_link'      => $result['label_link'] ?? null,
+            'myparcel_track_trace_url' => $result['track_trace_url'] ?? null,
+            'myparcel_barcode'         => $result['barcode'] ?? null, // nieuwe kolom
+        ]);
+
+        return back()->with('success', 'Label succesvol aangemaakt en Track & Trace bijgewerkt.');
+    } catch (\Throwable $e) {
+        return back()->withErrors([
+            'myparcel' => 'Label genereren mislukt: ' . $e->getMessage(),
+        ]);
+    }
+}
+
 }

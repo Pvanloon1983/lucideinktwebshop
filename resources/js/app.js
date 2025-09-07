@@ -490,7 +490,7 @@ document.addEventListener('DOMContentLoaded', () => {
      strings: {
        deliveryTitle: 'Bezorgopties',
        pickupTitle: 'Ophalen bij een afleverpunt',
-       deliveryStandard: 'Standaard bezorging',
+       deliveryStandard: 'Thuisbezorging',
        deliverySameDay: 'Vandaag bezorgd',
        deliveryExpress: 'Snelle levering',
        deliverySaturday: 'Bezorging op zaterdag',
