@@ -22,7 +22,8 @@ return new class extends Migration
             $table->text('long_description')->nullable();
             $table->decimal('price', 8, 2)->nullable();
             $table->integer('stock')->default(0)->nullable();
-            $table->foreignId('parent_id')->nullable()->constrained('products')->onDelete('cascade');
+            $table->foreignId('product_copy_id')->nullable()->constrained('product_copies')->nullOnDelete();;
+            $table->foreignId('parent_id')->nullable()->constrained('products')->nullOnDelete();
             $table->decimal('weight', 8, 0)->nullable();
             $table->decimal('height', 8, 0)->nullable();
             $table->decimal('width', 8, 0)->nullable();
@@ -32,9 +33,9 @@ return new class extends Migration
             $table->string('image_3')->nullable();
             $table->string('image_4')->nullable();
             $table->boolean('is_published')->default('0');
-            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
-            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('cascade');
-            $table->foreignId('deleted_by')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('deleted_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
             $table->softDeletes();
         });

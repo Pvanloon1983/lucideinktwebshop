@@ -454,15 +454,75 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   container.style.display = '';
 
-   const configuration = {
+   // Dynamisch locale bepalen
+  // Haal de locale uit een meta tag die door Laravel wordt gezet
+  let locale = document.documentElement.lang || document.querySelector('meta[name="app-locale"]')?.content;
+  if (!locale || typeof locale !== 'string' || locale.length < 2) locale = 'en';
+
+  const strings = {
+    nl: {
+      deliveryTitle: 'Levering thuis of op het werk',
+      pickupTitle: 'Ophalen bij een afleverpunt',
+      deliveryStandard: 'Thuisbezorging',
+      deliverySameDay: 'Vandaag bezorgd',
+      deliveryExpress: 'Snelle levering',
+      deliverySaturday: 'Bezorging op zaterdag',
+      onlyRecipient: 'Alleen geadresseerde',
+      signature: 'Handtekening voor ontvangst',
+      free: 'Gratis',
+      from: 'Vanaf',
+      close: 'Sluiten',
+      loading: 'Opties laden...',
+      noOptions: 'Geen bezorgopties beschikbaar',
+      choosePickup: 'Kies een afhaalpunt',
+      postcode: 'Postcode',
+      houseNumber: 'Huisnummer',
+      street: 'Straat',
+      city: 'Plaats',
+      list: 'Lijst',
+      map: 'Kaart',
+      showMoreHours: 'Toon meer tijdvakken',
+      showMoreLocations: 'Toon meer locaties',
+      deliveryStandardTitle: 'Standaard bezorging',
+      openingHours: 'Openingstijden'
+    },
+    en: {
+      deliveryTitle: 'Home or work delivery',
+      pickupTitle: 'Pick up at a service point',
+      deliveryStandard: 'Home delivery',
+      deliverySameDay: 'Delivered today',
+      deliveryExpress: 'Express delivery',
+      deliverySaturday: 'Saturday delivery',
+      onlyRecipient: 'Only recipient',
+      signature: 'Signature required',
+      free: 'Free',
+      from: 'From',
+      close: 'Close',
+      loading: 'Loading options...',
+      noOptions: 'No delivery options available',
+      choosePickup: 'Choose a pickup point',
+      postcode: 'Postal code',
+      houseNumber: 'House number',
+      street: 'Street',
+      city: 'City',
+      list: 'List',
+      map: 'Map',
+      showMoreHours: 'Show more time slots',
+      showMoreLocations: 'Show more locations',
+      deliveryStandardTitle: 'Standard delivery',
+      openingHours: 'Opening hours'
+    }
+  };
+
+  const configuration = {
      selector: WIDGET_SELECTOR,
      address: addr, // verwacht object: { cc, postalCode, street, number, city }
      config: {
        platform: 'myparcel',
-       locale: 'nl',
+       locale: locale,
        packageType: 'package',
        dropOffDelay: 1,
-       deliveryDaysWindow: 0, // 🔑 0 dagen = geen datum selectie
+       deliveryDaysWindow: 0, // 0 dagen = geen datum selectie
        allowPickupLocationsViewSelection: false, // geen lijst/kaart switch
        pickupLocationsDefaultView: 'list',
        showPriceZeroAsFree: true,
@@ -471,7 +531,6 @@ document.addEventListener('DOMContentLoaded', () => {
          postnl: {
            allowDeliveryOptions: true,
            allowStandardDelivery: true,
-
            // alle andere opties uit
            allowExpressDelivery: false,
            allowSameDayDelivery: false,
@@ -479,40 +538,13 @@ document.addEventListener('DOMContentLoaded', () => {
            allowMorningDelivery: false,
            allowEveningDelivery: false,
            allowMondayDelivery: false,
-
            allowOnlyRecipient: false,
            allowSignature: false,
-
-           allowPickupLocations: true // zet dit op true als je pickup wilt toestaan
+           allowPickupLocations: true
          }
        }
      },
-     strings: {
-       deliveryTitle: 'Bezorgopties',
-       pickupTitle: 'Ophalen bij een afleverpunt',
-       deliveryStandard: 'Thuisbezorging',
-       deliverySameDay: 'Vandaag bezorgd',
-       deliveryExpress: 'Snelle levering',
-       deliverySaturday: 'Bezorging op zaterdag',
-       onlyRecipient: 'Alleen geadresseerde',
-       signature: 'Handtekening voor ontvangst',
-       free: 'Gratis',
-       from: 'Vanaf',
-       close: 'Sluiten',
-       loading: 'Opties laden...',
-       noOptions: 'Geen bezorgopties beschikbaar',
-       choosePickup: 'Kies een afhaalpunt',
-       postcode: 'Postcode',
-       houseNumber: 'Huisnummer',
-       street: 'Straat',
-       city: 'Plaats',
-       list: 'Lijst',
-       map: 'Kaart',
-       showMoreHours: 'Toon meer tijdvakken',
-       showMoreLocations: 'Toon meer locaties',
-       deliveryStandardTitle: 'Standaard bezorging',
-       openingHours: 'Openingstijden'
-     }
+     strings: strings[locale] || strings['en']
    };
 
   // Dispatch naar de widget

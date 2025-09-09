@@ -15,6 +15,7 @@ class Product extends Model
         'slug',
         'price',
         'stock',
+        'product_copy_id',
         'is_published',
         'short_description',
         'long_description',
@@ -55,6 +56,11 @@ class Product extends Model
     public function category()
     {
         return $this->belongsTo(ProductCategory::class, 'category_id');
+    }
+
+    public function productCopy()
+    {
+        return $this->belongsTo(ProductCopy::class, 'product_copy_id');
     }
 
 }

@@ -10,6 +10,8 @@ class ShopController extends Controller
     public function index()
     {
         $products = Product::with('category')
+            ->where('is_published', 1)
+            ->whereNull('parent_id')
             ->orderBy('created_at', 'desc')
             ->paginate(10); // 10 products per page
 
