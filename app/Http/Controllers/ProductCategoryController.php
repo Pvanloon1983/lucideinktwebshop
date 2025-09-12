@@ -94,11 +94,15 @@ class ProductCategoryController extends Controller
         $category = ProductCategory::findOrFail($id);
         $this->authorize('update', $category);
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:product_categories,name,' . $category->id,
+          'name' => [
+            'required',
+            'string',
+            'max:255',
+            Rule::unique('product_categories', 'name')->whereNull('deleted_at')->ignore($category->id),
+          ],
             'is_published' => 'required|boolean',
         ], [
             'name.required' => 'Naam is verplicht.',
-            'name.unique' => 'Deze naam is al in gebruik.',
             'name.max' => 'De lengte mag niet meer dan 255 karakters zijn',
             'is_published.required' => 'Publicatie status is verplicht.',
             'is_published.boolean' => 'Publicatie status moet een geldige waarde zijn.',

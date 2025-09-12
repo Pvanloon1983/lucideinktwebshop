@@ -18,15 +18,15 @@
                 <th>Slug</th>
                 <th>Prijs</th>
                 <th>Voorraad</th>
-                <th>Categorieën</th>
-                <th>Hoofdproduct</th>
+                <th>Exemplaar</th>
                 <th>Gepubliceerd</th>
-                <th>Datum</th>
+                <th>Aangemaakt</th>
                 <th>Actie</th>
             </tr>
         </thead>
         <tbody>
             @forelse ($products as $product)
+
                 <tr>
                     <td style="min-width:40px;">{{ $product->id }}</td>
                     <td class="td-img">
@@ -42,19 +42,14 @@
                                 )
                         ) }}" alt="">
                     </td>
-                    <td style="min-width:180px;">{{ $product->title }}</td>
+                    <td style="min-width:180px;">
+                        {{ $product->title }}
+                    </td>
                     <td style="min-width:160px;">{{ $product->slug }}</td>
                     <td style="min-width:70px;">{{ $product->price }}</td>
                     <td style="min-width:70px;">{{ $product->stock }}</td>
                     <td style="min-width:180px;">
-                        {{ $product->category?->name ?? '-' }}
-                    </td>
-                    <td style="min-width:120px;">
-                        @if($product->parent)
-                            {{ $product->parent->title }}
-                        @else
-                            -
-                        @endif
+                        {{ $product->copy?->name ?? '-' }}
                     </td>
                     <td style="min-width:90px;">
                         @if ($product->is_published == 1)

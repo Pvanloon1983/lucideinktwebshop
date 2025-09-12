@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->string('copy')->nullable()->after('stock');
+        Schema::table('product_copies', function (Blueprint $table) {
+          $table->boolean('is_published')->default(false)->after('name');
         });
     }
 
@@ -21,9 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('products', function (Blueprint $table) {
+        Schema::table('product_copies', function (Blueprint $table) {
             $table->dropColumn([
-                'copy'
+              'is_published'
             ]);
         });
     }

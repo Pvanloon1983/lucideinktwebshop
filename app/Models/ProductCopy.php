@@ -12,6 +12,7 @@ class ProductCopy extends Model
 
     protected $fillable = [
         'name',
+        'is_published',
         'created_by',
         'updated_by',
         'deleted_by'

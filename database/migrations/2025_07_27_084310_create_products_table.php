@@ -22,8 +22,7 @@ return new class extends Migration
             $table->text('long_description')->nullable();
             $table->decimal('price', 8, 2)->nullable();
             $table->integer('stock')->default(0)->nullable();
-            $table->foreignId('product_copy_id')->nullable()->constrained('product_copies')->nullOnDelete();;
-            $table->foreignId('parent_id')->nullable()->constrained('products')->nullOnDelete();
+            $table->foreignId('product_copy_id')->nullable()->constrained('product_copies')->nullOnDelete();
             $table->decimal('weight', 8, 0)->nullable();
             $table->decimal('height', 8, 0)->nullable();
             $table->decimal('width', 8, 0)->nullable();

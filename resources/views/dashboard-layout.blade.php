@@ -100,8 +100,16 @@
 
       @role('admin')
       <a href="{{ route('discountIndex') }}">
-        <li class="nav-item {{ request()->routeIs('discountIndex') || request()->routeIs('discountEdit') ? 'active-admin-link' : '' }}">
-          <span class="{{ request()->routeIs('discountIndex') || request()->routeIs('discountEdit') ? 'active-admin-link' : '' }}">Kortingscodes</span>
+        <li class="nav-item {{ request()->routeIs('discountIndex') || request()->routeIs('discountEdit') || request()->routeIs('discountCreate') ? 'active-admin-link' : '' }}">
+          <span class="{{ request()->routeIs('discountIndex') || request()->routeIs('discountEdit') || request()->routeIs('discountCreate') ? 'active-admin-link' : '' }}">Kortingscodes</span>
+        </li>
+      </a>
+      @endrole
+
+      @role('admin')
+      <a href="{{ route('productCopyIndex') }}">
+        <li class="nav-item {{ request()->routeIs('productCopyIndex') || request()->routeIs('productCopyEditPage') || request()->routeIs('productCopyCreatePage') ? 'active-admin-link' : '' }}">
+          <span class="{{ request()->routeIs('productCopyIndex') || request()->routeIs('productCopyEditPage') || request()->routeIs('productCopyCreatePage') ? 'active-admin-link' : '' }}">Productexemplaren</span>
         </li>
       </a>
       @endrole

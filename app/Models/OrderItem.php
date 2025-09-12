@@ -16,6 +16,7 @@ class OrderItem extends Model
         'order_id',
         'product_name',
         'product_id',
+        'product_copy_id',
         'quantity',
         'unit_price',
         'subtotal',
@@ -35,5 +36,13 @@ class OrderItem extends Model
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
+    }
+
+    /**
+     * Get the product copy (exemplaar) for this order item.
+     */
+    public function copy()
+    {
+        return $this->belongsTo(ProductCopy::class, 'product_copy_id');
     }
 }

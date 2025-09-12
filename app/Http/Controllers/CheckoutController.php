@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Mail\OrderPaidMail;
 use App\Mail\WelcomeMail;
+use Carbon\Carbon;
 use App\Models\{Customer, DiscountCode, Order, Product, User};
 use App\Services\MyParcelService;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -118,11 +119,40 @@ class CheckoutController extends Controller
 
   public function applyDiscountCode(Request $request)
   {
-    $validated = $request->validate(['code' => 'required|string|max:255']);
+    $validated = $request->validate([
+      'code' => 'required|string|max:255',
+      'billing_email' => 'required|email|max:255',
+    ]);
     $discount = DiscountCode::where('code', $validated['code'])->first();
 
     if (!$discount) {
       return response()->json(['success' => false, 'message' => 'Code bestaat niet.']);
+    }
+
+    // Check if code is published
+    if ($discount->is_published === 0) {
+      return response()->json(['success' => false, 'message' => 'Deze kortingscode is niet actief.']);
+    }
+
+    // Check expiration date
+    if ($discount->expiration_date && Carbon::parse($discount->expiration_date)->lt(now()->startOfDay())) {
+      return response()->json(['success' => false, 'message' => 'Deze kortingscode is verlopen.']);
+    }
+
+    // Check usage_limit (total times code can be used)
+    $totalUsed = Order::where('discount_code_checkout', $discount->code)->count();
+    if ($discount->usage_limit && $totalUsed >= $discount->usage_limit) {
+      return response()->json(['success' => false, 'message' => 'Deze kortingscode is niet meer geldig.']);
+    }
+
+    // Check usage_limit_per_customer (per email)
+    $customerUsed = Order::where('discount_code_checkout', $discount->code)
+      ->whereHas('customer', function($q) use ($validated) {
+        $q->where('billing_email', $validated['billing_email']);
+      })
+      ->count();
+    if ($discount->usage_limit_per_customer && $customerUsed >= $discount->usage_limit_per_customer) {
+      return response()->json(['success' => false, 'message' => 'Je hebt deze kortingscode al te vaak gebruikt.']);
     }
 
     session(['discount_code' => $discount->code]);
@@ -306,6 +336,7 @@ class CheckoutController extends Controller
         $order->items()->create([
           'product_id' => $product->id,
           'product_name' => $item['name'],
+          'product_copy_id' => $item['product_copy_id'] ?? null,
           'quantity' => $item['quantity'],
           'unit_price' => $item['price'],
           'subtotal' => $item['price'] * $item['quantity'],

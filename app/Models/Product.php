@@ -19,8 +19,9 @@ class Product extends Model
         'is_published',
         'short_description',
         'long_description',
-        'parent_id',
         'category_id',
+        'base_title',
+        'base_slug',
         'weight',
         'height',
         'width',
@@ -43,22 +44,12 @@ class Product extends Model
         return $this->belongsTo(User::class, 'updated_by');
     }
     
-    public function parent()
-    {
-        return $this->belongsTo(Product::class, 'parent_id');
-    }
-
-    public function children()
-    {
-        return $this->hasMany(Product::class, 'parent_id');
-    }
-
     public function category()
     {
         return $this->belongsTo(ProductCategory::class, 'category_id');
     }
 
-    public function productCopy()
+    public function copy()
     {
         return $this->belongsTo(ProductCopy::class, 'product_copy_id');
     }

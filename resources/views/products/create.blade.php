@@ -78,21 +78,23 @@
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
+
+
                     <div class="form-input">
-                        <label for="parent_id">Hoofdproduct (optioneel)</label>
-                        <select name="parent_id" id="parent_id">
-                            <option value="">-- Kies hoofdproduct --</option>
-                            @if (count($products) > 0)
-                            @foreach ($products as $product)
-                            <option value="{{ $product->id }}" {{ old('parent_id')==$product->id ? 'selected' : '' }}>{{
-                                $product->title }}</option>
-                            @endforeach
+                        <label for="product_copy_id">Exemplaar</label>
+                        <select name="product_copy_id" id="product_copy_id">
+                            <option value="">-- Kies Exemplaar --</option>
+                            @if (count($productCopies) > 0)
+                                @foreach ($productCopies as $productCopy)
+                                    <option value="{{ $productCopy->id }}" {{ old('product_copy_id')==$productCopy->id ? 'selected' : '' }}>{{ $productCopy->name }}</option>
+                                @endforeach
                             @endif
                         </select>
-                        @error('parent_id')
+                        @error('product_copy_id')
                         <div class="error">{{ $message }}</div>
                         @enderror
                     </div>
+
                 </div>
 
                 {{-- Dimensions and weight --}}

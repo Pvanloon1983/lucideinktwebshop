@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
+use App\Models\ProductCopy;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\ProductCategory;
-use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
@@ -15,6 +15,7 @@ class ProductController extends Controller
     {
         $this->middleware(['auth', 'role:admin']);
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -22,9 +23,9 @@ class ProductController extends Controller
     {
         $this->authorize('viewAny', Product::class);
 
-        $products = Product::with('category')
-            ->orderBy('created_at', 'desc')
-            ->paginate(10); // 10 products per page
+        $products = Product::with(['category', 'copy'])
+            ->orderBy('title', 'desc')
+            ->paginate(30);
 
         return view('products.index', ['products' => $products]);
     }
@@ -37,7 +38,13 @@ class ProductController extends Controller
         $this->authorize('create', Product::class);
         $products = Product::orderBy('title', 'asc')->get();
         $categories = ProductCategory::orderBy('name', 'asc')->get();
-        return view('products.create', ['products' => $products, 'categories' => $categories]);  
+        $productCopies = ProductCopy::orderBy('name', 'asc')->get();
+
+        return view('products.create', [
+            'products' => $products,
+            'categories' => $categories,
+            'productCopies' => $productCopies
+        ]);
     }
 
     /**
@@ -46,21 +53,52 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $this->authorize('create', Product::class);
+
+        $messages = [
+            'title.required' => 'De productnaam is verplicht.',
+            'title.string' => 'De productnaam moet tekst zijn.',
+            'title.max' => 'De productnaam mag maximaal 255 tekens zijn.',
+            'is_published.required' => 'Geef aan of het product gepubliceerd is.',
+            'is_published.boolean' => 'Ongeldige waarde voor gepubliceerd.',
+            'short_description.string' => 'Korte omschrijving moet tekst zijn.',
+            'long_description.string' => 'Lange omschrijving moet tekst zijn.',
+            'price.numeric' => 'Prijs moet een getal zijn.',
+            'price.min' => 'Prijs mag niet negatief zijn.',
+            'stock.numeric' => 'Voorraad moet een getal zijn.',
+            'stock.min' => 'Voorraad mag niet negatief zijn.',
+            'category_id.exists' => 'Ongeldige categorie.',
+            'product_copy_id.exists' => 'Ongeldige kopie.',
+            'weight.numeric' => 'Gewicht moet een getal zijn.',
+            'weight.min' => 'Gewicht mag niet negatief zijn.',
+            'height.numeric' => 'Hoogte moet een getal zijn.',
+            'height.min' => 'Hoogte mag niet negatief zijn.',
+            'width.numeric' => 'Breedte moet een getal zijn.',
+            'width.min' => 'Breedte mag niet negatief zijn.',
+            'depth.numeric' => 'Diepte moet een getal zijn.',
+            'depth.min' => 'Diepte mag niet negatief zijn.',
+            'image_1.image' => 'Afbeelding 1 moet een afbeelding zijn.',
+            'image_1.mimes' => 'Afbeelding 1 moet jpeg, png, jpg, gif of svg zijn.',
+            'image_1.max' => 'Afbeelding 1 mag maximaal 2MB zijn.',
+            'image_2.image' => 'Afbeelding 2 moet een afbeelding zijn.',
+            'image_2.mimes' => 'Afbeelding 2 moet jpeg, png, jpg, gif of svg zijn.',
+            'image_2.max' => 'Afbeelding 2 mag maximaal 2MB zijn.',
+            'image_3.image' => 'Afbeelding 3 moet een afbeelding zijn.',
+            'image_3.mimes' => 'Afbeelding 3 moet jpeg, png, jpg, gif of svg zijn.',
+            'image_3.max' => 'Afbeelding 3 mag maximaal 2MB zijn.',
+            'image_4.image' => 'Afbeelding 4 moet een afbeelding zijn.',
+            'image_4.mimes' => 'Afbeelding 4 moet jpeg, png, jpg, gif of svg zijn.',
+            'image_4.max' => 'Afbeelding 4 mag maximaal 2MB zijn.',
+        ];
+
         $validated = $request->validate([
-            'title' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('products', 'title')->whereNull('deleted_at'),
-            ],
+            'title' => ['required','string','max:255'],
             'is_published' => 'required|boolean',
             'short_description' => 'nullable|string',
             'long_description' => 'nullable|string',
             'price' => 'nullable|numeric|min:0',
             'stock' => 'nullable|numeric|min:0',
             'category_id' => 'nullable|exists:product_categories,id',
-            'parent_id' => 'nullable|exists:products,id',
-            'product_copy_id' => 'nullable|string',
+            'product_copy_id' => 'nullable|integer|exists:product_copies,id',
             'weight' => 'nullable|numeric|min:0',
             'height' => 'nullable|numeric|min:0',
             'width' => 'nullable|numeric|min:0',
@@ -69,65 +107,59 @@ class ProductController extends Controller
             'image_2' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'image_3' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'image_4' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ], [
-            'title.required' => 'De producttitel is verplicht.',
-            'title.unique' => 'Deze producttitel bestaat al.',
-            'is_published.required' => 'Geef aan of het product gepubliceerd is.',
-            'is_published.boolean' => 'Het veld gepubliceerd moet waar of onwaar zijn.',
-            'price.numeric' => 'De prijs moet een getal zijn.',
-            'price.min' => 'De prijs moet minimaal 0 zijn.',
-            'stock.numeric' => 'De voorraad moet een getal zijn.',
-            'stock.min' => 'De voorraad moet minimaal 0 zijn.',
-            'category_id.exists' => 'De geselecteerde categorie bestaat niet.',
-            'parent_id.exists' => 'Het geselecteerde hoofdproduct bestaat niet.',
-            'product_copy_id.exists' => 'Het geselecteerde exemplaarsoort bestaat niet.',
-            'weight.numeric' => 'Het gewicht moet een getal zijn.',
-            'height.numeric' => 'De hoogte moet een getal zijn.',
-            'width.numeric' => 'De breedte moet een getal zijn.',
-            'depth.numeric' => 'De diepte moet een getal zijn.',
-            'image_1.image' => 'Afbeelding 1 moet een afbeelding zijn.',
-            'image_1.mimes' => 'Afbeelding 1 moet een bestand zijn van het type: jpeg, png, jpg, gif, svg.',
-            'image_1.max' => 'Afbeelding 1 mag niet groter zijn dan 2MB.',
-            'image_2.image' => 'Afbeelding 2 moet een afbeelding zijn.',
-            'image_2.mimes' => 'Afbeelding 2 moet een bestand zijn van het type: jpeg, png, jpg, gif, svg.',
-            'image_2.max' => 'Afbeelding 2 mag niet groter zijn dan 2MB.',
-            'image_3.image' => 'Afbeelding 3 moet een afbeelding zijn.',
-            'image_3.mimes' => 'Afbeelding 3 moet een bestand zijn van het type: jpeg, png, jpg, gif, svg.',
-            'image_3.max' => 'Afbeelding 3 mag niet groter zijn dan 2MB.',
-            'image_4.image' => 'Afbeelding 4 moet een afbeelding zijn.',
-            'image_4.mimes' => 'Afbeelding 4 moet een bestand zijn van het type: jpeg, png, jpg, gif, svg.',
-            'image_4.max' => 'Afbeelding 4 mag niet groter zijn dan 2MB.',
-        ]);
+        ], $messages);
 
-        $title= $validated['title'];
+        $copy = !empty($validated['product_copy_id'])
+            ? ProductCopy::find($validated['product_copy_id'])
+            : null;
+
+        $title = trim($validated['title']);
+
+        // base_title altijd zonder exemplaar
+        if ($copy && $copy->name) {
+            $baseTitle = preg_replace('/\s*-\s*'.preg_quote($copy->name,'/').'$/iu', '', $title);
+        } else {
+            $baseTitle = $title;
+        }
+        $baseSlug = Str::slug($baseTitle);
+
+        // title = base_title + exemplaar (indien aanwezig)
+        if ($copy && $copy->name) {
+            $title = $baseTitle . ' - ' . $copy->name;
+        }
+
+        // Uniekheid check
+        if (Product::where('title', $title)->whereNull('deleted_at')->exists()) {
+            return back()->withInput()->withErrors(['title' => 'Deze producttitel bestaat al.']);
+        }
+
+        // Slug genereren
         $slug = Str::slug($title);
-
-        // Ensure slug is unique
-        $originalSlug = $slug;
+        $originalSlug = $slug; 
         $counter = 1;
-        while (Product::where('slug', $slug)->exists()) {
+        while (Product::where('slug', $slug)->whereNull('deleted_at')->exists()) {
             $slug = $originalSlug . '-' . $counter++;
         }
 
-        // Handle image uploads
+        // Afbeeldingen verwerken
         for ($i = 1; $i <= 4; $i++) {
             $imageField = 'image_' . $i;
             if ($request->hasFile($imageField)) {
-            $validated[$imageField] = $request->file($imageField)->store('product_images', 'public');
+                $validated[$imageField] = $request->file($imageField)->store('product_images', 'public');
             }
         }
 
-        // Create product
         $product = Product::create([
-            'title' => $validated['title'],
+            'title' => $title,
+            'base_title' => $baseTitle,
             'slug' => $slug,
+            'base_slug' => $baseSlug,
             'category_id' => $validated['category_id'],
             'is_published' => $validated['is_published'],
             'short_description' => $validated['short_description'] ?? null,
             'long_description' => $validated['long_description'] ?? null,
             'price' => $validated['price'] ?? null,
             'stock' => $validated['stock'] ?? 0,
-            'parent_id' => $validated['parent_id'] ?? null,
             'product_copy_id' => $validated['product_copy_id'] ?? null,
             'weight' => $validated['weight'] ?? null,
             'height' => $validated['height'] ?? null,
@@ -140,9 +172,7 @@ class ProductController extends Controller
             'created_by' => auth()->id(),
         ]);
 
-
         return redirect()->route('productIndex')->with('success', 'Product met ID: '.$product->id.' succesvol aangemaakt.');
-
     }
 
     /**
@@ -152,9 +182,17 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $this->authorize('update', $product);
+
         $products = Product::orderBy('title', 'asc')->get();
         $categories = ProductCategory::orderBy('name', 'asc')->get();
-        return view('products.edit', ['product' => $product, 'products' => $products, 'categories' => $categories]);
+        $productCopies = ProductCopy::orderBy('name', 'asc')->get();
+
+        return view('products.edit', [
+            'product' => $product,
+            'products' => $products,
+            'categories' => $categories,
+            'productCopies' => $productCopies
+        ]);
     }
 
     /**
@@ -164,19 +202,51 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $this->authorize('update', $product);
+
+        $messages = [
+            'title.required' => 'De productnaam is verplicht.',
+            'title.string' => 'De productnaam moet tekst zijn.',
+            'title.max' => 'De productnaam mag maximaal 255 tekens zijn.',
+            'is_published.required' => 'Geef aan of het product gepubliceerd is.',
+            'is_published.boolean' => 'Ongeldige waarde voor gepubliceerd.',
+            'short_description.string' => 'Korte omschrijving moet tekst zijn.',
+            'long_description.string' => 'Lange omschrijving moet tekst zijn.',
+            'price.numeric' => 'Prijs moet een getal zijn.',
+            'price.min' => 'Prijs mag niet negatief zijn.',
+            'stock.numeric' => 'Voorraad moet een getal zijn.',
+            'stock.min' => 'Voorraad mag niet negatief zijn.',
+            'category_id.exists' => 'Ongeldige categorie.',
+            'product_copy_id.exists' => 'Ongeldige kopie.',
+            'weight.numeric' => 'Gewicht moet een getal zijn.',
+            'weight.min' => 'Gewicht mag niet negatief zijn.',
+            'height.numeric' => 'Hoogte moet een getal zijn.',
+            'height.min' => 'Hoogte mag niet negatief zijn.',
+            'width.numeric' => 'Breedte moet een getal zijn.',
+            'width.min' => 'Breedte mag niet negatief zijn.',
+            'depth.numeric' => 'Diepte moet een getal zijn.',
+            'depth.min' => 'Diepte mag niet negatief zijn.',
+            'image_1.image' => 'Afbeelding 1 moet een afbeelding zijn.',
+            'image_1.mimes' => 'Afbeelding 1 moet jpeg, png, jpg, gif of svg zijn.',
+            'image_1.max' => 'Afbeelding 1 mag maximaal 2MB zijn.',
+            'image_2.image' => 'Afbeelding 2 moet een afbeelding zijn.',
+            'image_2.mimes' => 'Afbeelding 2 moet jpeg, png, jpg, gif of svg zijn.',
+            'image_2.max' => 'Afbeelding 2 mag maximaal 2MB zijn.',
+            'image_3.image' => 'Afbeelding 3 moet een afbeelding zijn.',
+            'image_3.mimes' => 'Afbeelding 3 moet jpeg, png, jpg, gif of svg zijn.',
+            'image_3.max' => 'Afbeelding 3 mag maximaal 2MB zijn.',
+            'image_4.image' => 'Afbeelding 4 moet een afbeelding zijn.',
+            'image_4.mimes' => 'Afbeelding 4 moet jpeg, png, jpg, gif of svg zijn.',
+            'image_4.max' => 'Afbeelding 4 mag maximaal 2MB zijn.',
+        ];
+
         $validated = $request->validate([
-            'title' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique('products', 'title')->whereNull('deleted_at')->ignore($product->id),
-            ],
+            'title' => ['required','string','max:255'],
             'is_published' => 'required|boolean',
             'short_description' => 'nullable|string',
             'long_description' => 'nullable|string',
             'price' => 'nullable|numeric|min:0',
             'stock' => 'nullable|numeric|min:0',
-            'product_copy_id' => 'nullable|string',
+            'product_copy_id' => 'nullable|integer|exists:product_copies,id',
             'category_id' => 'nullable|exists:product_categories,id',
             'parent_id' => 'nullable|exists:products,id',
             'weight' => 'nullable|numeric|min:0',
@@ -187,67 +257,53 @@ class ProductController extends Controller
             'image_2' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'image_3' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'image_4' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'hidden_image' => 'nullable|string',
-        ], [
-            'title.required' => 'De producttitel is verplicht.',
-            'title.unique' => 'Deze producttitel bestaat al.',
-            'is_published.required' => 'Geef aan of het product gepubliceerd is.',
-            'is_published.boolean' => 'Het veld gepubliceerd moet waar of onwaar zijn.',
-            'price.numeric' => 'De prijs moet een getal zijn.',
-            'price.min' => 'De prijs moet minimaal 0 zijn.',
-            'stock.numeric' => 'De voorraad moet een getal zijn.',
-            'stock.min' => 'De voorraad moet minimaal 0 zijn.',
-            'category_id.exists' => 'De geselecteerde categorie bestaat niet.',
-            'parent_id.exists' => 'Het geselecteerde hoofdproduct bestaat niet.',
-            'product_copy_id.exists' => 'Het geselecteerde exemplaarsoort bestaat niet.',
-            'weight.numeric' => 'Het gewicht moet een getal zijn.',
-            'height.numeric' => 'De hoogte moet een getal zijn.',
-            'width.numeric' => 'De breedte moet een getal zijn.',
-            'depth.numeric' => 'De diepte moet een getal zijn.',
-            'image_1.image' => 'Afbeelding 1 moet een afbeelding zijn.',
-            'image_1.mimes' => 'Afbeelding 1 moet een bestand zijn van het type: jpeg, png, jpg, gif, svg.',
-            'image_1.max' => 'Afbeelding 1 mag niet groter zijn dan 2MB.',
-            'image_2.image' => 'Afbeelding 2 moet een afbeelding zijn.',
-            'image_2.mimes' => 'Afbeelding 2 moet een bestand zijn van het type: jpeg, png, jpg, gif, svg.',
-            'image_2.max' => 'Afbeelding 2 mag niet groter zijn dan 2MB.',
-            'image_3.image' => 'Afbeelding 3 moet een afbeelding zijn.',
-            'image_3.mimes' => 'Afbeelding 3 moet een bestand zijn van het type: jpeg, png, jpg, gif, svg.',
-            'image_3.max' => 'Afbeelding 3 mag niet groter zijn dan 2MB.',
-            'image_4.image' => 'Afbeelding 4 moet een afbeelding zijn.',
-            'image_4.mimes' => 'Afbeelding 4 moet een bestand zijn van het type: jpeg, png, jpg, gif, svg.',
-            'image_4.max' => 'Afbeelding 4 mag niet groter zijn dan 2MB.',
-        ]);
+        ], $messages);
 
-        $title = $validated['title'];
+        $copy = !empty($validated['product_copy_id'])
+            ? ProductCopy::find($validated['product_copy_id'])
+            : null;
+
+        $title = trim($validated['title']);
+
+        // base_title altijd zonder exemplaar
+        if ($copy && $copy->name) {
+            $baseTitle = preg_replace('/\s*-\s*'.preg_quote($copy->name,'/').'$/iu', '', $title);
+        } else {
+            $baseTitle = $title;
+        }
+        $baseSlug = Str::slug($baseTitle);
+
+        // title = base_title + exemplaar (indien aanwezig)
+        if ($copy && $copy->name) {
+            $title = $baseTitle . ' - ' . $copy->name;
+        }
+
+        // Uniekheid check
+        if (Product::where('title', $title)->whereNull('deleted_at')->where('id', '!=', $product->id)->exists()) {
+            return back()->withInput()->withErrors(['title' => 'Deze producttitel bestaat al.']);
+        }
+
+        // Slug genereren
         $slug = Str::slug($title);
-
-        // Ensure slug is unique, except for current category
-        $originalSlug = $slug;
+        $originalSlug = $slug; 
         $counter = 1;
-        while (
-            ProductCategory::where('slug', $slug)
-                ->where('id', '!=', $product->id)
-                ->exists()
-        ) {
+        while (Product::where('slug', $slug)->whereNull('deleted_at')->where('id', '!=', $product->id)->exists()) {
             $slug = $originalSlug . '-' . $counter++;
         }
 
-        // Handle image uploads
+        // Afbeeldingen verwerken
         for ($i = 1; $i <= 4; $i++) {
             $imageField = 'image_' . $i;
             $deleteField = 'delete_image_' . $i;
 
-            // Verwijder afbeelding als checkbox is aangevinkt
             if ($request->has($deleteField) && $product->$imageField) {
-                if (\Storage::disk('public')->exists($product->$imageField)) {
-                    \Storage::disk('public')->delete($product->$imageField);
+                if (Storage::disk('public')->exists($product->$imageField)) {
+                    Storage::disk('public')->delete($product->$imageField);
                 }
                 $validated[$imageField] = null;
-            }
-            // Anders: upload nieuwe afbeelding of behoud oude
-            elseif ($request->hasFile($imageField)) {
-                if (!empty($product->$imageField) && \Storage::disk('public')->exists($product->$imageField)) {
-                    \Storage::disk('public')->delete($product->$imageField);
+            } elseif ($request->hasFile($imageField)) {
+                if (!empty($product->$imageField) && Storage::disk('public')->exists($product->$imageField)) {
+                    Storage::disk('public')->delete($product->$imageField);
                 }
                 $validated[$imageField] = $request->file($imageField)->store('product_images', 'public');
             } else {
@@ -256,15 +312,16 @@ class ProductController extends Controller
         }
 
         $product->update([
-            'title' => $validated['title'],
+            'title' => $title,
+            'base_title' => $baseTitle,
             'slug' => $slug,
+            'base_slug' => $baseSlug,
             'category_id' => $validated['category_id'],
             'is_published' => $validated['is_published'],
             'short_description' => $validated['short_description'] ?? null,
             'long_description' => $validated['long_description'] ?? null,
             'price' => $validated['price'] ?? null,
             'stock' => $validated['stock'] ?? null,
-            'parent_id' => $validated['parent_id'] ?? null,
             'product_copy_id' => $validated['product_copy_id'] ?? null,
             'weight' => $validated['weight'] ?? null,
             'height' => $validated['height'] ?? null,
@@ -287,26 +344,31 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         $this->authorize('delete', $product);
+
         // Verwijder afbeeldingen uit storage
         for ($i = 1; $i <= 4; $i++) {
             $imageField = 'image_' . $i;
-            if (!empty($product->$imageField) && \Storage::disk('public')->exists($product->$imageField)) {
-                \Storage::disk('public')->delete($product->$imageField);
+            if (!empty($product->$imageField) && Storage::disk('public')->exists($product->$imageField)) {
+                Storage::disk('public')->delete($product->$imageField);
             }
         }
+
         $product->update([
-        'updated_by' => auth()->id(),
-        'deleted_by' => auth()->id(),
-        'image_1' => '',
-        'image_2' => '',
-        'image_3' => '',
-        'image_4' => '',
+            'updated_by' => auth()->id(),
+            'deleted_by' => auth()->id(),
+            'image_1' => '',
+            'image_2' => '',
+            'image_3' => '',
+            'image_4' => '',
         ]);
+
         $product->delete();
+
         return redirect()->route('productIndex')->with('success', 'Het product is succesvol verwijderd.');
     }
 
-    public function get () {
-		return redirect()->route('dashboard');
-	  }
+    public function get()
+    {
+        return redirect()->route('dashboard');
+    }
 }
