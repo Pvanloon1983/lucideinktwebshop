@@ -22,7 +22,7 @@
     @endguest
 
     <li class="nav-item cart">
-        <a class="{{ request()->routeIs('cartPage') ? 'active' : '' }}" href="{{ route('cartPage') }}"><i
+        <a href="{{ route('cartPage') }}"><i
             class="fa-solid fa-cart-shopping"></i>
         @if(session('cart') && count(session('cart')))
         <span class="cart-quantity">
