@@ -20,6 +20,89 @@
   font-style: normal;
 }
 
+/* === Global Reset & Normalize (safe baseline) === */
+
+/* Box sizing */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margin/padding */
+html, body, h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd {
+  margin: 0;
+  padding: 0;
+}
+
+/* Set base font */
+html {
+  -webkit-text-size-adjust: 100%; /* iOS font zoom fix */
+  -ms-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* Links */
+a {
+  background-color: transparent;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Images */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Forms */
+button, input, select, textarea {
+  font: inherit;         /* inherit font from body */
+  color: inherit;
+  margin: 0;
+  border-radius: 0;      /* consistent across iOS/Android */
+  -webkit-appearance: none; /* remove iOS default styles */
+  appearance: none;
+}
+
+textarea {
+  resize: vertical;      /* only vertical resize */
+}
+
+/* Remove button inner padding in Firefox/Edge */
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+
+/* Remove outline only when replaced by :focus-visible */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid blue; /* you kunt dit aanpassen */
+  outline-offset: 2px;
+}
+
+/* Lists */
+ul[role='list'], ol[role='list'] {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+
 /* === Root Variables === */
 :root {
   /* Brand & typography */
