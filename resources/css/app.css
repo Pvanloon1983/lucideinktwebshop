@@ -172,6 +172,7 @@ button {
   align-items: center;
   gap: 5px;
   height: 40px;
+  padding-top: 3px;
 }
 
 .btn.small {
@@ -197,6 +198,7 @@ textarea
   -webkit-appearance: none;
   box-sizing: border-box;
   padding: 0px 8px;
+  padding-top: 3px;
   width: 100%;
   height: auto;
   line-height: 1.3rem;
@@ -214,6 +216,7 @@ select {
   -webkit-appearance: none;
   box-sizing: border-box;
   padding: 0px 8px;
+  padding-top: 3px;
   width: 100%;
   border-radius: 4px;
   font-family: var(--font-regular);
