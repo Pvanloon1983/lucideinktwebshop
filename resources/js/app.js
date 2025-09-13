@@ -452,9 +452,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 
-  // --- MyParcel Delivery Options Widget Integration (event-based, robust) ---
+  // --- MyParcel Delivery Options Widget Integration (v6 compliant) ---
   const WIDGET_SELECTOR = '#myparcel-delivery-options';
 
+  /* ---------------- Address Handling ---------------- */
   function currentAddress() {
     const useAlt = document.getElementById('alt-shipping')?.checked;
     const p = useAlt ? 'shipping_' : 'billing_';
@@ -462,7 +463,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const nr = document.querySelector(`[name="${p}house_number"]`)?.value || '';
     return {
       cc: document.querySelector(`[name="${p}country"]`)?.value || 'NL',
-      postalCode: (document.querySelector(`[name="${p}postal_code"]`)?.value || '').replace(/\s+/g,'').toUpperCase(),
+      postalCode: (document.querySelector(`[name="${p}postal_code"]`)?.value || '')
+        .replace(/\s+/g, '')
+        .toUpperCase(),
       number: nr,
       street: street && nr ? `${street} ${nr}` : street,
       city: document.querySelector(`[name="${p}city"]`)?.value || '',
@@ -473,6 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return a.cc && a.postalCode && a.number && a.street && a.city;
   }
 
+  /* ---------------- Hidden Input ---------------- */
   function ensureMyParcelInput() {
     let input = document.getElementById('myparcel_delivery_options');
     if (!input) {
@@ -485,22 +489,8 @@ document.addEventListener('DOMContentLoaded', () => {
     return input;
   }
 
-  function dispatchMyParcel() {
-    const addr = currentAddress();
-    const container = document.querySelector(WIDGET_SELECTOR);
-    if (!container) return;
-    if (!addressComplete(addr)) {
-      container.style.display = 'none';
-      ensureMyParcelInput().value = '';
-      return;
-    }
-    container.style.display = '';
-
-    // Dynamisch locale bepalen
-    // Haal de locale uit een meta tag die door Laravel wordt gezet
-    let locale = document.documentElement.lang || document.querySelector('meta[name="app-locale"]')?.content;
-    if (!locale || typeof locale !== 'string' || locale.length < 2) locale = 'en';
-
+  /* ---------------- Locale Strings ---------------- */
+  function getLocaleStrings(locale) {
     const strings = {
       nl: {
         deliveryTitle: 'Levering thuis of op het werk',
@@ -526,7 +516,8 @@ document.addEventListener('DOMContentLoaded', () => {
         showMoreHours: 'Toon meer tijdvakken',
         showMoreLocations: 'Toon meer locaties',
         deliveryStandardTitle: 'Standaard bezorging',
-        openingHours: 'Openingstijden'
+        openingHours: 'Openingstijden',
+        closed: 'gesloten',
       },
       en: {
         deliveryTitle: 'Home or work delivery',
@@ -552,28 +543,47 @@ document.addEventListener('DOMContentLoaded', () => {
         showMoreHours: 'Show more time slots',
         showMoreLocations: 'Show more locations',
         deliveryStandardTitle: 'Standard delivery',
-        openingHours: 'Opening hours'
-      }
+        openingHours: 'Opening hours',
+      },
     };
+    return strings[locale] || strings['en'];
+  }
+
+  /* ---------------- Widget Dispatcher ---------------- */
+  function dispatchMyParcel() {
+    const addr = currentAddress();
+    const container = document.querySelector(WIDGET_SELECTOR);
+    if (!container) return;
+
+    if (!addressComplete(addr)) {
+      container.style.display = 'none';
+      ensureMyParcelInput().value = '';
+      return;
+    }
+    container.style.display = '';
+
+    // Determine locale (ISO 639-1)
+    let locale =
+      document.documentElement.lang ||
+      document.querySelector('meta[name="app-locale"]')?.content;
+    if (!locale || typeof locale !== 'string' || locale.length < 2) locale = 'en';
 
     const configuration = {
       selector: WIDGET_SELECTOR,
-      address: addr, // verwacht object: { cc, postalCode, street, number, city }
+      address: addr, // expects { cc, postalCode, street, number, city }
       config: {
         platform: 'myparcel',
         locale: locale,
         packageType: 'package',
         dropOffDelay: 1,
-        deliveryDaysWindow: 0, // 0 dagen = geen datum selectie
-        allowPickupLocationsViewSelection: false, // geen lijst/kaart switch
+        deliveryDaysWindow: 0,
+        allowPickupLocationsViewSelection: true,
         pickupLocationsDefaultView: 'list',
-        showPriceZeroAsFree: true,
-
+        showPriceZeroAsFree: false,
         carrierSettings: {
           postnl: {
             allowDeliveryOptions: true,
             allowStandardDelivery: true,
-            // alle andere opties uit
             allowExpressDelivery: false,
             allowSameDayDelivery: false,
             allowSaturdayDelivery: false,
@@ -582,31 +592,48 @@ document.addEventListener('DOMContentLoaded', () => {
             allowMondayDelivery: false,
             allowOnlyRecipient: false,
             allowSignature: false,
-            allowPickupLocations: true
-          }
-        }
+            allowPickupLocations: true,
+          },
+        },
       },
-      strings: strings[locale] || strings['en']
+      strings: getLocaleStrings(locale),
     };
 
-    // Dispatch naar de widget
-    document.dispatchEvent(new CustomEvent('myparcel_update_delivery_options', { detail: configuration }));
-
-    // Luister naar de update van de widget en vul hidden input om data te verzenden voor order
-    document.addEventListener('myparcel_updated_delivery_options', (e) => {
-      console.log('[MyParcel] updated_delivery_options event:', e.detail);
-      const input = ensureMyParcelInput();
-      input.value = e.detail ? JSON.stringify(e.detail) : '';
-    });
-
+    // Dispatch configuration to widget
+    document.dispatchEvent(
+      new CustomEvent('myparcel_update_delivery_options', {
+        detail: configuration,
+      }),
+    );
   }
 
-  // Attach listeners to address fields
+  /* ---------------- Event Listeners ---------------- */
+// Listen ONCE for widget updates
+  document.addEventListener('myparcel_updated_delivery_options', (e) => {
+    console.log('[MyParcel] updated_delivery_options event:', e.detail);
+    const input = ensureMyParcelInput();
+    input.value = e.detail ? JSON.stringify(e.detail) : '';
+  });
+
+// Listen for errors
+  document.addEventListener('myparcel_error_delivery_options', (e) => {
+    console.error('[MyParcel] error_delivery_options event:', e.detail);
+  });
+
+// Attach listeners to relevant fields
   [
-    'billing_country','billing_postal-zip-code','billing_street','billing_house_number','billing_city',
-    'shipping_country','shipping_postal-zip-code','shipping_street','shipping_house_number','shipping_city',
-    'alt-shipping'
-  ].forEach(name => {
+    'billing_country',
+    'billing_postal_code',
+    'billing_street',
+    'billing_house_number',
+    'billing_city',
+    'shipping_country',
+    'shipping_postal_code',
+    'shipping_street',
+    'shipping_house_number',
+    'shipping_city',
+    'alt-shipping',
+  ].forEach((name) => {
     const el = document.querySelector(`[name="${name}"]`);
     if (el) {
       el.addEventListener('input', dispatchMyParcel);
@@ -614,7 +641,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+// Initial dispatch
   dispatchMyParcel();
+
+
 
   // On form submit, ensure input is present and not empty
   const formCheck = document.querySelector('.form.checkout');

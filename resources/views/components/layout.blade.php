@@ -11,8 +11,9 @@
         crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@myparcel/delivery-options@6.3.1/dist/style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/@myparcel/delivery-options@6.3.1/dist/myparcel.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@myparcel/delivery-options@6/dist/myparcel.lib.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@myparcel/delivery-options@6/dist/style.css" />
   @vite(['resources/js/app.js', 'resources/css/app.css'])
 </head>
 
@@ -37,7 +38,7 @@
 
             <div class="navbar-cart-sidebar-toggle">
                 <li class="nav-item">
-                    <a class="{{ request()->routeIs('cartPage') ? 'active' : '' }}" href="{{ route('cartPage') }}"><i
+                    <a href="{{ route('cartPage') }}"><i
                             class="fa-solid fa-cart-shopping"></i>
                         @if (session('cart') && count(session('cart')))
                             <span class="cart-quantity">

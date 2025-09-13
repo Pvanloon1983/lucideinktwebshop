@@ -325,6 +325,9 @@
                     </div>
 
                     <div id="myparcel-delivery-options"></div>
+
+                    <div id="opening-hours" class="pickup-opening-hours"></div>
+
                     <input type="hidden" name="myparcel_delivery_options" id="myparcel_delivery_options" />
 
                     <div class="place-order">

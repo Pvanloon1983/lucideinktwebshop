@@ -86,37 +86,36 @@ class MyParcelService
         }
     }
 
-    public function generateLabel(int $consignmentId): array
-    {
-        if (empty($this->apiKey)) {
-            throw new \RuntimeException('MyParcel API key ontbreekt');
-        }
-
-        try {
-            $collection = (new MyParcelCollection())
-                ->addConsignmentByConsignmentIds([$consignmentId], $this->apiKey)
-                ->setLinkOfLabels()
-                ->fetchTrackTraceData(); // ⬅️ barcode + tracktrace ophalen
-
-            $consignment = $collection->getOneConsignment();
-
-            $labelLink = $collection->getLinkOfLabels();
-            $trackTraceUrl = $consignment->getTrackTraceUrl();
-            $barcode = $consignment->getBarcode();
-
-            return [
-                'label_link'      => $labelLink,
-                'track_trace_url' => $trackTraceUrl,
-                'barcode'         => $barcode,
-            ];
-        } catch (\Throwable $e) {
-            \Log::error("MyParcel: label genereren mislukt", [
-                'consignment_id' => $consignmentId,
-                'error'          => $e->getMessage(),
-            ]);
-            throw $e;
-        }
+  public function generateLabel(int $consignmentId): array
+  {
+    if (empty($this->apiKey)) {
+      throw new \RuntimeException('MyParcel API key ontbreekt');
     }
+
+    try {
+      $collection = (new MyParcelCollection())
+        ->addConsignmentByConsignmentIds([$consignmentId], $this->apiKey)
+        ->setLinkOfLabels('A6')              // <-- specify A6 here
+        ->fetchTrackTraceData();             // fetch barcode + tracktrace
+
+      $consignment   = $collection->getOneConsignment();
+      $labelLink     = $collection->getLinkOfLabels('A6'); // <-- also specify A6 here
+      $trackTraceUrl = $consignment->getTrackTraceUrl();
+      $barcode       = $consignment->getBarcode();
+
+      return [
+        'label_link'      => $labelLink,
+        'track_trace_url' => $trackTraceUrl,
+        'barcode'         => $barcode,
+      ];
+    } catch (\Throwable $e) {
+      \Log::error("MyParcel: label genereren mislukt", [
+        'consignment_id' => $consignmentId,
+        'error'          => $e->getMessage(),
+      ]);
+      throw $e;
+    }
+  }
 
     /**
      * Maak een nieuwe shipment (concept) aan

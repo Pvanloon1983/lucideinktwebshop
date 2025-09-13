@@ -59,7 +59,7 @@
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <input type="hidden" name="quantity" value="1">
                         <div class="form-input">
-                            <label for="product_copy_id">Exemplaar <span style="color:red">*</span></label>
+                            <label for="product_copy_id">Exemplaar</label>
                             <select style="width: auto;display: block;" name="product_copy_id" id="product_copy_id" required>
                                 @foreach ($productCopies as $i => $productCopy)
                                     <option value="{{ $productCopy->id }}" {{ $i === 0 ? 'selected' : '' }}>{{ $productCopy->name }}</option>

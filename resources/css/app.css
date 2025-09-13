@@ -151,7 +151,6 @@ a {
 
 /* === Buttons / Inputs === */
 button {
-  -webkit-appearance: none;
   padding: 0 16px;
   box-sizing: border-box;
   cursor: pointer;
@@ -159,7 +158,6 @@ button {
 }
 
 .btn {
-  -webkit-appearance: none;
   padding: 0 16px;
   box-sizing: border-box;
   border: none;
@@ -172,7 +170,7 @@ button {
   justify-content: center;
   align-items: center;
   gap: 5px;
-  height: 45px;
+  height: 40px;
 }
 
 .btn.small {
@@ -195,7 +193,6 @@ button {
 input,
 textarea
 {
-  -webkit-appearance: none;
   box-sizing: border-box;
   padding: 0px 8px;
   width: 100%;
@@ -206,13 +203,15 @@ textarea
   font-size: 15px;
   border: 1px solid var(--border-1);
   background: var(--surface-2);
-  line-height: 2.1rem;
   display: flex;
   align-items: center;
 }
 
+input {
+  height: 32px;
+}
+
 select {
-  -webkit-appearance: none;
   box-sizing: border-box;
   padding: 0px 8px;
   width: 100%;
@@ -222,10 +221,10 @@ select {
   border: 1px solid var(--border-1);
   background: var(--surface-2);
   color: var(--main-font-color);
-  line-height: 2.1rem;
-  height: auto;
+  height: 32px;
   display: flex;
   align-items: center;
+  text-align: left;
 }
 
 input:focus,
@@ -2390,7 +2389,7 @@ i {
 }
 
 
-@media (max-width: 1200px) { 
+@media (max-width: 1200px) {
   .hero-text {
     margin-top: 0px;
   }
@@ -2413,14 +2412,14 @@ i {
   .hero-text {
     margin-top: 20px;
   }
-  
+
 
   .hero-text-image {
     width: 300px;
     display: block;
     margin: 0 auto;
   }
- 
+
   .hero-text .main-heading {
     margin-top: 25px;
     font-size: 25px;
@@ -2625,4 +2624,3 @@ input[type="radio"]:checked {
 .myparcel-delivery-options .mp-items-center .mp-text-green-700 {
   display: none;
 }
-
