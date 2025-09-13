@@ -170,10 +170,10 @@ button {
   transition: filter .1s ease-in-out;
   font-size: 16px;
   height: 40px;
+  gap: 5px;
   -webkit-appearance: none !important;
   -moz-appearance: none !important;
   appearance: none !important;
-
   /* Fix for iOS text alignment */
   display: flex;
   justify-content: center;
