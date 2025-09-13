@@ -15,7 +15,7 @@
                     <h1 class="main-heading">Het doel van de Risale-i Nur is het redden van het geloof.</h1>
                     <p class="sub-text">Lucide Inkt is een non-profit organisatie die zich ter bevordering van het persoonlijke evenals het maatschappelijke welzijn richt op de verspreiding van geloofswaarheden die omschreven zijn in de boekenreeks van de Risale-i Nur.</p>
                     <div class="btn-box">
-                        <button class="btn">Lees de vertalingen!!</button>
+                        <button class="btn">Lees de vertalingen!</button>
                         <a href="{{ route('shop') }}"><button class="btn outlined">Naar de winkel</button></a>
                     </div>
                 </div>
