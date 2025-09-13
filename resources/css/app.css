@@ -171,13 +171,14 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  height: auto;
-  line-height: 2.1rem;
+  height: 40px;
 }
 
 .btn.small {
   font-size: 14px;
-  line-height: 1.6rem;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .btn:hover {
@@ -186,7 +187,6 @@ button {
 
 @media (max-width: 992px) {
   .btn {
-    padding: 8px 13px;
     font-size: 15px;
   }
 }
@@ -2450,7 +2450,6 @@ i {
   }
 
   .btn-box .btn {
-    padding: 10px 13px;
     text-align: center;
   }
 
