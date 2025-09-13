@@ -1,4 +1,4 @@
-<x-layout>    
+<x-layout>
     <main class="page home container">
         <div class="hero-section">
             <div class="hero-image">
