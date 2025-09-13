@@ -3,7 +3,7 @@
 # Exit if anything fails
 set -e
 
-echo ">>> Post deploy script is running at $(date)" >> storage/logs/deploy.log
+echo "🚀 Starting Cloudways post-deploy script..."
 
 # Navigate to your app folder
 cd ~/applications/uazvwffryv/public_html
