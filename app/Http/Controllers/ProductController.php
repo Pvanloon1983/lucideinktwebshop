@@ -129,6 +129,11 @@ class ProductController extends Controller
         }
 
         // Uniekheid check
+        /*
+         * This regex removes a suffix from $title that matches " - <copy name>" (with optional spaces around the dash), where \<copy name\> is the value of $copy->name.
+          It matches any whitespace, a dash, more whitespace, then the copy name at the end of the string (case-insensitive, Unicode).
+          For example, if $title is Book - Special Edition and $copy->name is Special Edition, it will return Book.
+         * */
         if (Product::where('title', $title)->whereNull('deleted_at')->exists()) {
             return back()->withInput()->withErrors(['title' => 'Deze producttitel bestaat al.']);
         }

@@ -592,7 +592,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Dispatch naar de widget
     document.dispatchEvent(new CustomEvent('myparcel_update_delivery_options', { detail: configuration }));
 
-    // Luister naar de update van de widget en vul hidden input
+    // Luister naar de update van de widget en vul hidden input om data te verzenden voor order
     document.addEventListener('myparcel_updated_delivery_options', (e) => {
       console.log('[MyParcel] updated_delivery_options event:', e.detail);
       const input = ensureMyParcelInput();
@@ -643,7 +643,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Universal confirmation modal logic for forms with .needs-confirm
+  // Universal confirmation modal logic for forms with .needs-confirm class
   function setupUniversalConfirmModals() {
     document.querySelectorAll('form.needs-confirm').forEach(function(form) {
       const formId = form.id;

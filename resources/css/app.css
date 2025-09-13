@@ -166,6 +166,7 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 5px;
+  height: auto;
 }
 
 .btn.small {
