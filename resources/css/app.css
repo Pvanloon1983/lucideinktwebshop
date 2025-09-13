@@ -116,7 +116,6 @@ body {
   background: var(--bg-parchment);
   line-height: 1.8;
   font-size: var(--text-font-size-page);
-  letter-spacing: normal;
 }
 
 h1,
@@ -169,20 +168,15 @@ button {
   color: var(--ink-inverse);
   transition: filter .1s ease-in-out;
   font-size: 16px;
-  height: 40px;
   gap: 5px;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-  /* Fix for iOS text alignment */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: 45px;
 }
 
 .btn.small {
   font-size: 14px;
   height: 35px;
+  display: inline-flex;
+  align-items: center;
 }
 
 .btn:hover {
@@ -206,6 +200,7 @@ button {
 input,
 textarea
 {
+  -webkit-appearance: none;
   box-sizing: border-box;
   padding: 0px 8px;
   width: 100%;
@@ -216,33 +211,23 @@ textarea
   font-size: 15px;
   border: 1px solid var(--border-1);
   background: var(--surface-2);
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-
-  line-height: 2rem;
-
-  /* Fix for iOS text alignment */
+  line-height: 2.1rem;
   display: flex;
-  justify-content: center;
   align-items: center;
 }
 
-.table input {
-  line-height: 1.5rem;
-}
-
 select {
+  -webkit-appearance: none;
   box-sizing: border-box;
   padding: 0px 8px;
   width: 100%;
   border-radius: 4px;
   font-family: var(--font-regular);
-  color: var(--main-font-color);
   font-size: 15px;
   border: 1px solid var(--border-1);
   background: var(--surface-2);
-  height: 40px;
+  line-height: 2.1rem;
+  height: auto;
   display: flex;
   align-items: center;
 }
