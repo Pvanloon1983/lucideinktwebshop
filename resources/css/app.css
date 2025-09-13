@@ -9,7 +9,7 @@
 @font-face {
   font-family: 'DelimaMTProRegular';
   src: url('../fonts/DelimaMTPro-Regular.otf') format('opentype');
-  font-weight: 400;
+  font-weight: 500;
   font-style: normal;
 }
 
@@ -151,19 +151,20 @@ a {
 
 /* === Buttons / Inputs === */
 button {
-  padding: 0;
+  -webkit-appearance: none;
+  padding: 0 16px;
   box-sizing: border-box;
   cursor: pointer;
   font-family: var(--font-regular);
 }
 
 .btn {
-  padding: 0;
+  -webkit-appearance: none;
+  padding: 0 16px;
   box-sizing: border-box;
   border: none;
   background: var(--main-color);
   border-radius: 4px;
-  padding: 10px 20px;
   color: var(--ink-inverse);
   transition: filter .1s ease-in-out;
   font-size: 16px;
@@ -171,11 +172,12 @@ button {
   align-items: center;
   gap: 5px;
   height: auto;
+  line-height: 2.1rem;
 }
 
 .btn.small {
   font-size: 14px;
-  padding: 8px 15px;
+  line-height: 1.6rem;
 }
 
 .btn:hover {
@@ -190,18 +192,38 @@ button {
 }
 
 input,
-textarea,
-select {
-  padding: 0;
+textarea
+{
+  -webkit-appearance: none;
   box-sizing: border-box;
-  padding: 5px 10px;
+  padding: 0px 8px;
   width: 100%;
-  height: 32px;
+  height: auto;
+  line-height: 1.3rem;
   border-radius: 4px;
   font-family: var(--font-regular);
   font-size: 15px;
   border: 1px solid var(--border-1);
   background: var(--surface-2);
+  line-height: 2.1rem;
+  display: flex;
+  align-items: center;
+}
+
+select {
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  padding: 0px 8px;
+  width: 100%;
+  border-radius: 4px;
+  font-family: var(--font-regular);
+  font-size: 15px;
+  border: 1px solid var(--border-1);
+  background: var(--surface-2);
+  line-height: 2.1rem;
+  height: auto;
+  display: flex;
+  align-items: center;
 }
 
 input:focus,
@@ -515,7 +537,6 @@ thead {
   border: none;
   background: var(--main-color);
   border-radius: 4px;
-  padding: 10px 20px;
   color: var(--ink-inverse);
 }
 
@@ -765,7 +786,6 @@ i {
   background: var(--main-color);
   color: var(--ink-inverse);
   border-radius: 4px;
-  padding: 10px;
   font-size: 16px;
 }
 
@@ -1195,7 +1215,6 @@ i {
   background: var(--main-color);
   color: var(--ink-inverse);
   border-radius: 4px;
-  padding: 10px;
   font-size: 16px;
 }
 
@@ -1649,7 +1668,6 @@ i {
   border: none;
   background: var(--main-color);
   border-radius: 4px;
-  padding: 12px 28px;
   color: var(--ink-inverse);
   margin: 18px 0 30px;
   transition: background-color .15s;
@@ -2244,9 +2262,7 @@ i {
 .custom-confirm-modal .btn.confirm-btn {
   background: var(--red-2);
   color: var(--ink-inverse);
-  font-weight: 600;
   border-radius: 4px;
-  padding: 10px 22px;
   border: none;
   box-shadow: 0 2px 8px rgba(171, 15, 20, 0.08);
 }
@@ -2255,13 +2271,8 @@ i {
   background: var(--main-color);
   color: var(--ink-inverse);
   border-radius: 4px;
-  padding: 10px 22px;
   border: none;
   box-shadow: 0 2px 8px rgba(171, 15, 20, 0.08);
-}
-
-.custom-confirm-modal .btn:focus {
-  outline: 2px solid var(--gold-1);
 }
 
 /* Reusable confirmation modal */
