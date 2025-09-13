@@ -171,12 +171,12 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  height: 40px;
+  height: auto
 }
 
 .btn.small {
   font-size: 14px;
-  height: 30px;
+  height: auto;
   display: inline-flex;
   align-items: center;
 }
