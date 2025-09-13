@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Exit if anything fails
+set -e
+
+echo ">>> Post deploy script is running at $(date)" >> storage/logs/deploy.log
+
+# Navigate to your app folder
+cd ~/applications/uazvwffryv/public_html
+
+# Ensure correct PHP, Composer, and NPM
+PHP=$(which php)
+COMPOSER=$(which composer)
+NPM=$(which npm)
+
+# Run Composer install/update (without dev dependencies)
+echo "📦 Running Composer..."
+$COMPOSER install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+# Run database migrations
+echo "🗄️ Running migrations..."
+$PHP artisan migrate --force
+
+# Install Node.js dependencies & build assets
+if [ -f "package.json" ]; then
+  echo "📦 Running npm install..."
+  $NPM install --omit=dev --no-audit --no-fund
+
+  echo "⚡ Running npm run build..."
+  $NPM run build
+else
+  echo "ℹ️ No package.json found, skipping npm install & build..."
+fi
+
+# Clear and rebuild Laravel caches
+echo "🧹 Clearing caches..."
+$PHP artisan cache:clear
+$PHP artisan config:clear
+$PHP artisan route:clear
+$PHP artisan view:clear
+
+echo "⚡ Optimizing Laravel..."
+$PHP artisan config:cache
+$PHP artisan route:cache
+$PHP artisan view:cache
+
+echo "✅ Deployment tasks completed successfully!"
