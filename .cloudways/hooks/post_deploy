@@ -3,7 +3,7 @@
 # Exit if anything fails
 set -e
 
-echo "🚀 Starting Cloudways post-deploy script..."
+echo ">>> Starting Cloudways post-deploy script at $(date)" >> storage/logs/deploy.log
 
 # Navigate to your app folder
 cd ~/applications/uazvwffryv/public_html
@@ -14,34 +14,38 @@ COMPOSER=$(which composer)
 NPM=$(which npm)
 
 # Run Composer install/update (without dev dependencies)
-echo "📦 Running Composer..."
-$COMPOSER install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+echo ">>> Running Composer install..." >> storage/logs/deploy.log
+$COMPOSER install --no-dev --optimize-autoloader --no-interaction --prefer-dist >> storage/logs/deploy.log 2>&1
+
+# Always install Laravel Sanctum
+echo ">>> Ensuring Sanctum is installed..." >> storage/logs/deploy.log
+$COMPOSER require laravel/sanctum --no-interaction >> storage/logs/deploy.log 2>&1
 
 # Run database migrations
-echo "🗄️ Running migrations..."
-$PHP artisan migrate --force
+echo ">>> Running migrations..." >> storage/logs/deploy.log
+$PHP artisan migrate --force >> storage/logs/deploy.log 2>&1
 
 # Install Node.js dependencies & build assets
 if [ -f "package.json" ]; then
-  echo "📦 Running npm install..."
-  $NPM install --omit=dev --no-audit --no-fund
+  echo ">>> Running npm install..." >> storage/logs/deploy.log
+  $NPM install --production >> storage/logs/deploy.log 2>&1
 
-  echo "⚡ Running npm run build..."
-  $NPM run build
+  echo ">>> Running npm run build..." >> storage/logs/deploy.log
+  $NPM run build >> storage/logs/deploy.log 2>&1
 else
-  echo "ℹ️ No package.json found, skipping npm install & build..."
+  echo ">>> No package.json found, skipping npm install & build..." >> storage/logs/deploy.log
 fi
 
 # Clear and rebuild Laravel caches
-echo "🧹 Clearing caches..."
-$PHP artisan cache:clear
-$PHP artisan config:clear
-$PHP artisan route:clear
-$PHP artisan view:clear
+echo ">>> Clearing caches..." >> storage/logs/deploy.log
+$PHP artisan cache:clear >> storage/logs/deploy.log 2>&1
+$PHP artisan config:clear >> storage/logs/deploy.log 2>&1
+$PHP artisan route:clear >> storage/logs/deploy.log 2>&1
+$PHP artisan view:clear >> storage/logs/deploy.log 2>&1
 
-echo "⚡ Optimizing Laravel..."
-$PHP artisan config:cache
-$PHP artisan route:cache
-$PHP artisan view:cache
+echo ">>> Optimizing Laravel..." >> storage/logs/deploy.log
+$PHP artisan config:cache >> storage/logs/deploy.log 2>&1
+$PHP artisan route:cache >> storage/logs/deploy.log 2>&1
+$PHP artisan view:cache >> storage/logs/deploy.log 2>&1
 
-echo "✅ Deployment tasks completed successfully!"
+echo ">>> Deployment finished successfully at $(date)" >> storage/logs/deploy.log
