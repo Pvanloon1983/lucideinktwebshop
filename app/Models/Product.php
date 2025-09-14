@@ -49,7 +49,7 @@ class Product extends Model
         return $this->belongsTo(ProductCategory::class, 'category_id');
     }
 
-    public function copy()
+    public function productCopy()
     {
         return $this->belongsTo(ProductCopy::class, 'product_copy_id');
     }

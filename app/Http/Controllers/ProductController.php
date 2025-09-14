@@ -23,7 +23,7 @@ class ProductController extends Controller
     {
         $this->authorize('viewAny', Product::class);
 
-        $products = Product::with(['category', 'copy'])
+        $products = Product::with(['category', 'productCopy'])
             ->orderBy('title', 'desc')
             ->paginate(30);
 
