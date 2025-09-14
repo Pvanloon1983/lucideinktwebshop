@@ -133,13 +133,20 @@
                                         'standard' => 'Thuisbezorging',
                                         'standard' => 'Thuisbezorging',
                                         'pickup' => 'Afhaalpunt',
-                                        'pickup' => 'Afhaalpunt (express)',
+                                        'pickup' => 'Afhaalpunt',
                                     ];
                                 @endphp
                                 <p>
                                     <strong>Gekozen bezorgtype:</strong>
                                     {{ $deliveryTypesShort[$order->myparcel_delivery_type] ?? ucfirst($order->myparcel_delivery_type ?? '-') }}
                                 </p>
+                                @if ($order->myparcel_delivery_type == 'pickup')
+                                    <p><strong>Adres afhaalpunt:</strong></p>
+                                    <span>{{ $pickupLocation['locationName'] ?? '-' }}</span>,
+                                    <span>{{ $pickupLocation['street'] ?? '' }} {{ $pickupLocation['number'] ?? '' }}</span>,
+                                    <span>{{ $pickupLocation['postalCode'] ?? '' }}</span>,
+                                    <span>{{ $pickupLocation['city'] ?? '' }}</span>
+                                @endif
                             @endif
 
                             {{-- Label link of knop om label aan te maken --}}
@@ -164,11 +171,11 @@
                                 @error('package_type')
                                     <div class="error">{{ $message }}</div>
                                 @enderror
-                                <button class="btn small" type="submit" style="margin-left: 10px;"><span class="loader"></span>Update pakket type</button>
+                                <button class="btn small" type="submit" style="margin-top: 10px"><span class="loader"></span>Update pakket type</button>
                             </form>
 
                                 <form action="{{ route('orderGenerateLabel', $order->id) }}" method="POST"
-                                    style="display:inline-block; margin-bottom: 10px;margin-top: 20px;">
+                                    style="display:inline-block; margin-bottom: 10px;margin-top: 15px;">
                                     @csrf
                                     <button class="btn small btn-primary" type="submit"><span class="loader"></span>Label aanmaken bij MyParcel</button>
                                 </form>
@@ -182,35 +189,39 @@
 
 
                 <div class="order-info-item">
-                    <h3>Factuuradres</h3>
-                    <p><strong>Straatnaam:</strong> {{ $order->customer->billing_street }}</p>
-                    <p><strong>Huisnummer:</strong> {{ $order->customer->billing_house_number }}</p>
-                    <p><strong>Huisnummer toevoeging:</strong>
-                        {{ $order->customer->billing_house_number_addition ?? '-' }}</p>
-                    <p><strong>Postcode:</strong> {{ $order->customer->billing_postal_code }}</p>
-                    <p><strong>Plaats:</strong> {{ $order->customer->billing_city }}</p>
-                    <p><strong>Land:</strong> {{ $order->customer->billing_country }}</p>
+                    <div style="display: flex; gap: 35px;">
+                        <div style="border: 1px solid var(--border-1);border-radius: 4px;padding: 15px;">
+                            <h3>Factuuradres</h3>
+                            <p><strong>Straatnaam:</strong> {{ $order->customer->billing_street }}</p>
+                            <p><strong>Huisnummer:</strong> {{ $order->customer->billing_house_number }}</p>
+                            <p><strong>Huisnummer toevoeging:</strong>
+                                {{ $order->customer->billing_house_number_addition ?? '-' }}</p>
+                            <p><strong>Postcode:</strong> {{ $order->customer->billing_postal_code }}</p>
+                            <p><strong>Plaats:</strong> {{ $order->customer->billing_city }}</p>
+                            <p><strong>Land:</strong> {{ $order->customer->billing_country }}</p>
+                        </div>
+                        <div style="border: 1px solid var(--border-1);border-radius: 4px;padding: 15px;">
+                        <h3>Verzendadres</h3>
+                            @if (!empty($order->shipping_street))
+                                <p><strong>Straatnaam:</strong> {{ $order->shipping_street }}</p>
+                                <p><strong>Huisnummer:</strong> {{ $order->shipping_house_number }}</p>
+                                <p><strong>Huisnummer toevoeging:</strong> {{ $order->shipping_house_number_addition ?? '-' }}
+                                </p>
+                                <p><strong>Postcode:</strong> {{ $order->shipping_postal_code }}</p>
+                                <p><strong>Plaats:</strong> {{ $order->shipping_city }}</p>
+                                <p><strong>Land:</strong> {{ $order->shipping_country }}</p>
+                            @else
+                                <p><strong>Straatnaam:</strong> {{ $order->customer->billing_street }}</p>
+                                <p><strong>Huisnummer:</strong> {{ $order->customer->billing_house_number }}</p>
+                                <p><strong>Huisnummer toevoeging:</strong>
+                                    {{ $order->customer->billing_house_number_addition ?? '-' }}</p>
+                                <p><strong>Postcode:</strong> {{ $order->customer->billing_postal_code }}</p>
+                                <p><strong>Plaats:</strong> {{ $order->customer->billing_city }}</p>
+                                <p><strong>Land:</strong> {{ $order->customer->billing_country }}</p>
+                            @endif
+                        </div>
+                    </div>
 
-                </div>
-                <div class="order-info-item">
-                    <h3>Verzendadres</h3>
-                    @if (!empty($order->shipping_street))
-                        <p><strong>Straatnaam:</strong> {{ $order->shipping_street }}</p>
-                        <p><strong>Huisnummer:</strong> {{ $order->shipping_house_number }}</p>
-                        <p><strong>Huisnummer toevoeging:</strong> {{ $order->shipping_house_number_addition ?? '-' }}
-                        </p>
-                        <p><strong>Postcode:</strong> {{ $order->shipping_postal_code }}</p>
-                        <p><strong>Plaats:</strong> {{ $order->shipping_city }}</p>
-                        <p><strong>Land:</strong> {{ $order->shipping_country }}</p>
-                    @else
-                        <p><strong>Straatnaam:</strong> {{ $order->customer->billing_street }}</p>
-                        <p><strong>Huisnummer:</strong> {{ $order->customer->billing_house_number }}</p>
-                        <p><strong>Huisnummer toevoeging:</strong>
-                            {{ $order->customer->billing_house_number_addition ?? '-' }}</p>
-                        <p><strong>Postcode:</strong> {{ $order->customer->billing_postal_code }}</p>
-                        <p><strong>Plaats:</strong> {{ $order->customer->billing_city }}</p>
-                        <p><strong>Land:</strong> {{ $order->customer->billing_country }}</p>
-                    @endif
                 </div>
             </div>
         </div>

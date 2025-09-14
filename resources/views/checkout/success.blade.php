@@ -66,6 +66,27 @@
 
 
 				<div class="order-addresses">
+					{{-- Bezorgtype en afleveradres --}}
+					@if(isset($delivery) && !empty($delivery['deliveryType']) && strtolower($delivery['deliveryType']) === 'pickup')
+						<div class="order-address-block">
+							<h3>Bezorging</h3>							
+							<div class="address-details">
+							<p><strong>Afhalen bij afhaalpunt</strong></p>
+                            <p style="margin-bottom: 0px"><strong>Adres afhaalpunt:</strong></p>
+								<span>{{ $pickupLocation['locationName'] ?? '-' }}</span>,
+								<span>{{ $pickupLocation['street'] ?? '' }} {{ $pickupLocation['number'] ?? '' }}</span>,
+								<span>{{ $pickupLocation['postalCode'] ?? '' }}</span>,
+								<span>{{ $pickupLocation['city'] ?? '' }}</span>
+							</div>
+						</div>
+					@else
+						<div class="order-address-block">
+							<h3>Bezorging</h3>
+							<div class="address-details">
+							<p><strong>Thuisbezorging</strong></p>
+							</div>
+						</div>
+					@endif
 					<div class="order-address-block">
 						<h3>Factuuradres</h3>
 						<div class="address-details">

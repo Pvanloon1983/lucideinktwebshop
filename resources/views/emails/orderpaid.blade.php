@@ -120,6 +120,21 @@
       <span><strong>{{ __('Besteldatum:') }}</strong> {{ $order->created_at->format('d-m-Y H:i') }}</span>
     </div>
     <div class="address-blocks">
+        {{-- Bezorgtype en afleveradres --}}
+        @if(isset($delivery) && !empty($delivery['deliveryType']) && strtolower($delivery['deliveryType']) === 'pickup')
+          <div class="address" style="background:#f7f7f7;">
+            <strong>Bezorging</strong><br>
+            Afhalen bij afhaalpunt<br>
+            {{ $pickupLocation['locationName'] ?? '-' }}<br>
+            {{ $pickupLocation['street'] ?? '' }} {{ $pickupLocation['number'] ?? '' }}<br>
+            {{ $pickupLocation['postalCode'] ?? '' }} {{ $pickupLocation['city'] ?? '' }}<br>
+          </div>
+        @else
+          <div class="address" style="background:#f7f7f7;">
+            <strong>Bezorging</strong><br>
+            Thuisbezorging
+          </div>
+        @endif
       <div class="address">
         <strong>{{ __('Factuuradres') }}</strong><br>
         {{ $order->customer->billing_first_name }} {{ $order->customer->billing_last_name }}<br>

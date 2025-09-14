@@ -131,8 +131,6 @@ class DatabaseSeeder extends Seeder
           ]
         ];
 
-    // Create two ProductCopy variants for each book
-    foreach ($books as $book) {
       // TR Hardcover
       $trCopy = ProductCopy::create([
         'name' => 'TR Hardcover',
@@ -147,7 +145,11 @@ class DatabaseSeeder extends Seeder
         'is_published' => 1,
         'created_by' => 1,
         'updated_by' => 1,
-      ]);
+      ]);    
+
+
+    // Create two ProductCopy variants for each book
+    foreach ($books as $book) {
 
       // Set different prices for hardcover and softcover
       $hardcoverPrice = $book['price'] + 5; // Hardcover is 5 euro more

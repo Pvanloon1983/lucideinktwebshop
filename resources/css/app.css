@@ -1169,7 +1169,7 @@ i {
   }
 
   .container.page.dashboard.open {
-    padding-left: 270px;
+    padding-left: 15px;
   }
 
   .sidebar.admin-panel .close-toggle {
@@ -2623,4 +2623,20 @@ input[type="radio"]:checked {
 
 .myparcel-delivery-options .mp-items-center .mp-text-green-700 {
   display: none;
+}
+
+.mp-border.mp-p-5.mp-rounded-lg.mp-mb-2 {
+    display: none;
+}
+
+b.mp-block {
+  display: none;
+}
+
+.mp-content-between {
+  display: none !important;
+}
+
+.leaflet-container {
+  z-index: 1;
 }

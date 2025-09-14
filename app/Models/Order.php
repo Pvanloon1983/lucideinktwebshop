@@ -38,13 +38,13 @@ class Order extends Model
         'myparcel_consignment_id',
         'myparcel_track_trace_url',
         'myparcel_label_link',
+        'myparcel_barcode',
 
         'myparcel_package_type_id',
         'myparcel_only_recipient',
         'myparcel_signature',
         'myparcel_insurance_amount',
 
-        // nieuw:
         'myparcel_delivery_json',
         'myparcel_is_pickup',
         'myparcel_carrier',

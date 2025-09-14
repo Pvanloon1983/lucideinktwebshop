@@ -31,9 +31,6 @@ class OrderController extends Controller
   /**
    * Zet een string pakket type om naar het juiste MyParcel type ID
    */
-  /**
-   * Zet een string pakket type om naar het juiste MyParcel type ID
-   */
   private function mapPackageTypeId($type): int
   {
     $types = [
@@ -53,8 +50,6 @@ class OrderController extends Controller
     return $types[$type] ?? 1;
   }
 
-  /* ------------------ Public Actions ------------------ */
-
   public function index()
   {
     $this->authorize('viewAny', Order::class);
@@ -67,14 +62,27 @@ class OrderController extends Controller
   }
 
   public function show(string $id)
-  {
+  {    
+
     $order = Order::with(['items', 'customer'])->findOrFail($id);
     $this->authorize('view', $order);
+
+    $consignmentId = $order->myparcel_consignment_id;
+    $consignmentData = null;
+    if ($consignmentId) {
+        $consignmentData = app(MyParcelService::class)->findConsignmentById((int)$consignmentId);
+    }
+
+    $delivery = json_decode($order->myparcel_delivery_json, true);
+    $pickupLocation = '';
+    if (!empty($delivery['deliveryType']) && strtolower($delivery['deliveryType']) === 'pickup') {
+        $pickupLocation = $delivery['pickup'] ?? $delivery['pickupLocation'] ?? null;
+    }
 
     $items = $order->items()->paginate(10);
     $order->setRelation('items', $items);
 
-    return view('orders.show', compact('order'));
+    return view('orders.show', compact('order', 'pickupLocation'));
   }
 
   public function create()
@@ -622,7 +630,7 @@ public function generateLabel(string $id)
         $order->update([
             'myparcel_label_link'      => $result['label_link'] ?? null,
             'myparcel_track_trace_url' => $result['track_trace_url'] ?? null,
-            'myparcel_barcode'         => $result['barcode'] ?? null, // nieuwe kolom
+            'myparcel_barcode'         => $result['barcode'] ?? null,
         ]);
 
         return back()->with('success', 'Label succesvol aangemaakt en Track & Trace bijgewerkt.');

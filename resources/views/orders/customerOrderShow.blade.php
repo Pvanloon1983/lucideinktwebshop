@@ -17,6 +17,12 @@
                     <p><strong>Status:</strong> {{ $order->status_label }}</p>
                     <p><strong>Totaal:</strong> € {{ number_format($order->total, 2) }}</p>
                     <p><strong>Betaalstatus:</strong> {{ $order->payment_status_label ?? 'Onbekend' }}</p>
+                    @if (!empty($order->invoice_pdf_path))
+                        <p><strong>Factuur:</strong>
+                            <a style="text-decoration: underline" href="{{ route('orders.invoice', $order->id) }}"
+                                target="_blank">Download factuur</a>
+                        </p>
+                    @endif
                     <p><strong>Track & Trace:</strong>
                         @if ($order->myparcel_track_trace_url)
                             <a style="text-decoration: underline" href="{{ $order->myparcel_track_trace_url }}" target="_blank">
@@ -35,13 +41,20 @@
                                 'standard' => 'Thuisbezorging',
                                 'standard' => 'Thuisbezorging',
                                 'pickup' => 'Afhaalpunt',
-                                'pickup' => 'Afhaalpunt (express)',
+                                'pickup' => 'Afhaalpunt',
                             ];
                         @endphp
                         <p>
                             <strong>Gekozen bezorgtype:</strong>
                             {{ $deliveryTypesShort[$order->myparcel_delivery_type] ?? ucfirst($order->myparcel_delivery_type ?? '-') }}
                         </p>
+                        @if ($order->myparcel_delivery_type == 'pickup')
+                            <p><strong>Adres afhaalpunt:</strong></p>
+                            <span>{{ $pickupLocation['locationName'] ?? '-' }}</span>,
+                            <span>{{ $pickupLocation['street'] ?? '' }} {{ $pickupLocation['number'] ?? '' }}</span>,
+                            <span>{{ $pickupLocation['postalCode'] ?? '' }}</span>,
+                            <span>{{ $pickupLocation['city'] ?? '' }}</span>
+                        @endif
                     @endif
                 </div>
                 <div class="order-info-item">

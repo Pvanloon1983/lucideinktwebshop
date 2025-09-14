@@ -42,7 +42,15 @@ class MyOrderController extends Controller
             $order = Order::where('customer_id', $customer->id)->with(['items', 'customer'])->findOrFail($id);
             $items = $order->items()->paginate(10);
             $order->setRelation('items', $items);
-            return view('orders.customerOrderShow', ['order' => $order]);
+
+
+            $delivery = json_decode($order->myparcel_delivery_json, true);
+            $pickupLocation = '';
+            if (!empty($delivery['deliveryType']) && strtolower($delivery['deliveryType']) === 'pickup') {
+                $pickupLocation = $delivery['pickup'] ?? $delivery['pickupLocation'] ?? null;
+            }
+
+            return view('orders.customerOrderShow', ['order' => $order, 'pickupLocation' => $pickupLocation]);
     }
 
     public function download_invoice($id)

@@ -27,8 +27,18 @@ class OrderPaidMail extends Mailable
         // Only read/attach – no DB writes here
         $pathOnDisk = Storage::disk('public')->path($this->order->invoice_pdf_path);
 
+        $delivery = json_decode( $this->order->myparcel_delivery_json, true);
+        $pickupLocation = '';
+        if (!empty($delivery['deliveryType']) && strtolower($delivery['deliveryType']) === 'pickup') {
+            $pickupLocation = $delivery['pickup'] ?? $delivery['pickupLocation'] ?? null;
+        }
+
         return $this->subject('Uw bestelling bij Lucide Inkt')
-            ->view('emails.orderpaid', ['order' => $this->order])
+            ->view('emails.orderpaid', 
+            ['order' => $this->order, 
+            'delivery' =>  $delivery, 
+            'pickupLocation' => $pickupLocation
+            ])
             ->attach($pathOnDisk, [
                 'as' => 'factuur.pdf',
                 'mime' => 'application/pdf',

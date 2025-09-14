@@ -1,4 +1,11 @@
+
 import axios from 'axios';
+
+// Set CSRF token for all Axios requests
+const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+if (csrfToken) {
+  axios.defaults.headers.common['X-CSRF-TOKEN'] = csrfToken;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   // ------------------------------------------------------------
@@ -613,6 +620,9 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('[MyParcel] updated_delivery_options event:', e.detail);
     const input = ensureMyParcelInput();
     input.value = e.detail ? JSON.stringify(e.detail) : '';
+
+    
+
   });
 
 // Listen for errors
@@ -643,7 +653,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Initial dispatch
   dispatchMyParcel();
-
 
 
   // On form submit, ensure input is present and not empty

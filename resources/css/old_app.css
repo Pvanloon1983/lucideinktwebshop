@@ -2625,3 +2625,18 @@ input[type="radio"]:checked {
   display: none;
 }
 
+.mp-border.mp-p-5.mp-rounded-lg.mp-mb-2 {
+    display: none;
+}
+
+b.mp-block {
+  display: none;
+}
+
+.mp-content-between {
+  display: none !important;
+}
+
+.leaflet-container {
+  z-index: 1;
+}

@@ -97,7 +97,19 @@ class CheckoutController extends Controller
     if (!$orderId) return redirect()->route('home');
 
     $order = Order::with('items')->find($orderId);
-    return view('checkout.success', ['success' => true, 'order' => $order]);
+
+    $delivery = json_decode($order->myparcel_delivery_json, true);
+    $pickupLocation = '';
+    if (!empty($delivery['deliveryType']) && strtolower($delivery['deliveryType']) === 'pickup') {
+        $pickupLocation = $delivery['pickup'] ?? $delivery['pickupLocation'] ?? null;
+    }
+
+    return view('checkout.success', 
+    ['success' => true, 
+      'order' => $order, 
+      'pickupLocation' => $pickupLocation, 
+      'delivery' => $delivery
+    ]);
   }
 
   public function paymentWebhook(Request $request)
