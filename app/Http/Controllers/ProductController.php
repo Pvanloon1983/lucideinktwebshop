@@ -25,7 +25,7 @@ class ProductController extends Controller
 
         $products = Product::with(['category', 'productCopy'])
             ->orderBy('title', 'desc')
-            ->paginate(30);
+            ->paginate(10);
 
         return view('products.index', ['products' => $products]);
     }

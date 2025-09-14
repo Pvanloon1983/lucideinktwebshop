@@ -49,7 +49,7 @@
                     <td style="min-width:70px;">{{ $product->price }}</td>
                     <td style="min-width:70px;">{{ $product->stock }}</td>
                     <td style="min-width:180px;">
-                        {{ $product->copy?->name ?? '-' }}
+                        {{ $product->productCopy?->name ?? '-' }}
                     </td>
                     <td style="min-width:90px;">
                         @if ($product->is_published == 1)
