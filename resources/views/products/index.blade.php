@@ -48,11 +48,7 @@
                             <td style="min-width:70px;">{{ $product->price }}</td>
                             <td style="min-width:70px;">{{ $product->stock }}</td>
                             <td style="min-width:180px;">
-                                @if ($product->copy->name)
-                                    {{ $product->copy->name }}
-                                @else
-                                    -
-                                @endif
+                                {{ optional($product->copy)->name ?? '-' }}
                             </td>
                             <td style="min-width:90px;">
                                 @if ($product->is_published == 1)
