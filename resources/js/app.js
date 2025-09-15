@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 // Set CSRF token for all Axios requests
@@ -757,6 +756,57 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
     setupUniversalConfirmModals();
+  }).observe(document.body, { childList: true, subtree: true });
+
+  // ------------------------------------------------------------
+  // Password show/hide toggle (Font Awesome)
+  // ------------------------------------------------------------
+  function setupPasswordToggles() {
+    document.querySelectorAll('input[type="password"]').forEach(input => {
+      // Avoid double wrapping
+      if (input.parentElement?.classList.contains('password-toggle-container')) return;
+      // Create container
+      const container = document.createElement('div');
+      container.className = 'password-toggle-container';
+      container.style.position = 'relative';
+      input.parentNode.insertBefore(container, input);
+      container.appendChild(input);
+      // Create toggle button
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'password-toggle-btn';
+      btn.style.position = 'absolute';
+      btn.style.right = '8px';
+      btn.style.top = '50%';
+      btn.style.transform = 'translateY(-50%)';
+      btn.style.background = 'none';
+      btn.style.border = 'none';
+      btn.style.cursor = 'pointer';
+      btn.style.padding = '0';
+      btn.style.zIndex = '2';
+      btn.innerHTML = '<i class="fa fa-eye"></i>';
+      container.appendChild(btn);
+      btn.addEventListener('click', () => {
+        if (input.type === 'password') {
+          input.type = 'text';
+          btn.innerHTML = '<i class="fa fa-eye-slash"></i>';
+        } else {
+          input.type = 'password';
+          btn.innerHTML = '<i class="fa fa-eye"></i>';
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupPasswordToggles);
+  } else {
+    setupPasswordToggles();
+  }
+
+  // Also handle dynamically added password fields
+  new MutationObserver((mutations) => {
+    setupPasswordToggles();
   }).observe(document.body, { childList: true, subtree: true });
 
 });
