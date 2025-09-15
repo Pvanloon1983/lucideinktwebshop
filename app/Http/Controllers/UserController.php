@@ -70,7 +70,7 @@ class UserController extends Controller
       $user = User::create([
         'first_name' => $validated['first_name'],
         'last_name' => $validated['last_name'],
-        'user_role' => $validated['user_role'],
+        'role' => $validated['user_role'],
         'email' => $validated['email'],
         'password' => Hash::make($validated['password']),
       ]);
@@ -85,7 +85,7 @@ class UserController extends Controller
       // auth()->login($user);
 
       // Redirect to login page
-      return redirect()->route('userIndex')->with('success', 'Nieuw gebruiker is toegevoegd!');
+      return redirect()->route('userIndex')->with('success', 'Nieuwe gebruiker is toegevoegd!');
     }
 
   public function update(Request $request, string $id)
