@@ -661,8 +661,9 @@ document.addEventListener('DOMContentLoaded', () => {
     formCheck.addEventListener('submit', function(e) {
       const input = ensureMyParcelInput();
       if (!input.value || input.value === '{}' || input.value === 'null') {
-        e.preventDefault();
-        alert('Kies een bezorgoptie voordat je de bestelling plaatst.');
+        // e.preventDefault();
+        // alert('Kies een bezorgoptie voordat je de bestelling plaatst.');
+        console.log('Kies een bezorgoptie voordat je de bestelling plaatst.');
         const submitBtn = formCheck.querySelector('button[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
       }
@@ -674,8 +675,9 @@ document.addEventListener('DOMContentLoaded', () => {
     formOrder.addEventListener('submit', function(e) {
       const input = ensureMyParcelInput();
       if (!input.value || input.value === '{}' || input.value === 'null') {
-        e.preventDefault();
-        alert('Kies een bezorgoptie voordat je de bestelling plaatst.');
+        // e.preventDefault();
+        // alert('Kies een bezorgoptie voordat je de bestelling plaatst.');
+        console.log('Kies een bezorgoptie voordat je de bestelling plaatst.');
         const submitBtn = formOrder.querySelector('button[type="submit"]');
         if (submitBtn) submitBtn.disabled = true;
       }

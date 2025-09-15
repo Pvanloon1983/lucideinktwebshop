@@ -36,14 +36,23 @@ class CheckoutController extends Controller
 
   public function store(Request $request)
   {
+
     $cart = session('cart', []);
     if (empty($cart)) {
       return redirect('/winkel')->with('error', 'Je winkelwagen is leeg.');
     }
 
     $this->normalizeCheckboxes($request);
-    $this->validateCheckout($request);
 
+    try {
+        $this->validateCheckout($request);
+    } catch (ValidationException $e) {
+        // Redirect back with validation errors, do NOT create order or redirect to payment
+       return redirect()->route('storeCheckout')->withErrors($e->validator)->withInput();
+
+    }
+
+    // Only proceed if validation passes
     $user = $this->createUserIfNeeded($request);
     $customer = $this->createOrUpdateCustomer($request);
 
