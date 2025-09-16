@@ -89,8 +89,9 @@ class CheckoutController extends Controller
     $this->validateAndSaveMyParcel($order, $request);
 
     // In de store() methode, gebruik het totaal inclusief verzendkosten voor de betaling
-    $amountToPay = $order->total_with_shipping ?? $order->total_after_discount;
-    return $this->createMolliePayment($order, $amountToPay);
+  // Gebruik altijd het totaalbedrag inclusief verzendkosten en korting
+  $amountToPay = $order->total;
+  return $this->createMolliePayment($order, $amountToPay);
   }
 
   public function paymentSuccess(Request $request)
