@@ -51,8 +51,8 @@ class CheckoutController extends Controller
 
     // Extra validatie: check of er een geldige shipping_cost bestaat
     $country = $request->boolean('alt-shipping')
-      ? $request->input('shipping_country', 'NL')
-      : $request->input('billing_country', 'NL');
+      ? $request->input('shipping_country')
+      : $request->input('billing_country');
     $shippingCost = \App\Models\ShippingCost::where('country', $country)
       ->where('is_published', 1)
       ->orderByDesc('amount')
