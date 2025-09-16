@@ -1,3 +1,51 @@
+// ------------------------------------------------------------
+// Utilities (bovenaan zodat overal beschikbaar)
+// ------------------------------------------------------------
+const formatEuro = (val) => '€ ' + val.toFixed(2).replace('.', ',');
+
+// ------------------------------------------------------------
+// Dynamische verzendkosten/totaal op checkout
+// ------------------------------------------------------------
+const shippingCostEl = document.getElementById('shipping-cost');
+const orderTotalEl = document.getElementById('order-total');
+const altShippingInput = document.getElementById('alt-shipping');
+const billingCountry = document.querySelector('select[name="billing_country"]');
+const shippingCountry = document.querySelector('select[name="shipping_country"]');
+
+function getSelectedCountry() {
+  if (altShippingInput && altShippingInput.checked && shippingCountry) {
+    return shippingCountry.value;
+  }
+  return billingCountry ? billingCountry.value : 'NL';
+}
+
+function updateShippingCost() {
+  if (!shippingCostEl || !orderTotalEl) return;
+  const country = getSelectedCountry();
+  if (!country) return;
+  fetch(`/api/shipping-cost?country=${country}`)
+    .then(r => r.json())
+    .then(data => {
+      const cost = parseFloat(data.cost) || 0;
+      shippingCostEl.textContent = 'Verzendkosten: ' + formatEuro(cost);
+      // Zoek het originele totaalbedrag (zonder verzendkosten)
+      let subtotal = 0;
+      if (orderTotalEl.dataset.subtotal) {
+        subtotal = parseFloat(orderTotalEl.dataset.subtotal);
+      } else {
+        // Fallback: probeer uit de tekst te halen
+        const match = orderTotalEl.textContent.replace(',', '.').match(/([\d\.]+)/);
+        subtotal = match ? parseFloat(match[1]) : 0;
+      }
+      orderTotalEl.textContent = 'Totaal: ' + formatEuro(subtotal + cost);
+    });
+}
+
+if (billingCountry) billingCountry.addEventListener('change', updateShippingCost);
+if (shippingCountry) shippingCountry.addEventListener('change', updateShippingCost);
+if (altShippingInput) altShippingInput.addEventListener('change', updateShippingCost);
+updateShippingCost();
+
 import axios from 'axios';
 
 // Set CSRF token for all Axios requests
@@ -784,15 +832,15 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.style.cursor = 'pointer';
       btn.style.padding = '0';
       btn.style.zIndex = '2';
-      btn.innerHTML = '<i class="fa fa-eye"></i>';
+      btn.innerHTML = '<i style="font-size: 20px;color: var(--main-font-color);opacity: 0.5" class="fa fa-eye"></i>';
       container.appendChild(btn);
       btn.addEventListener('click', () => {
         if (input.type === 'password') {
           input.type = 'text';
-          btn.innerHTML = '<i class="fa fa-eye-slash"></i>';
+          btn.innerHTML = '<i style="font-size: 20px;color: var(--main-font-color);opacity: 0.5" class="fa fa-eye-slash"></i>';
         } else {
           input.type = 'password';
-          btn.innerHTML = '<i class="fa fa-eye"></i>';
+          btn.innerHTML = '<i style="font-size: 20px;color: var(--main-font-color);opacity: 0.5" class="fa fa-eye"></i>';
         }
       });
     });
@@ -808,5 +856,8 @@ document.addEventListener('DOMContentLoaded', () => {
   new MutationObserver((mutations) => {
     setupPasswordToggles();
   }).observe(document.body, { childList: true, subtree: true });
+
+  // Shipping costs
+  
 
 });

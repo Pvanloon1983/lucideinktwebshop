@@ -29,28 +29,43 @@ class CheckoutController extends Controller
   public function create()
   {
     $cart = session('cart', []);
-    return empty($cart)
-      ? redirect('/winkel')->with('error', 'Je winkelwagen is leeg.')
-      : view('checkout.index', compact('cart'));
+    if (empty($cart)) {
+      return redirect('/winkel')->with('error', 'Je winkelwagen is leeg.');
+    }
+    $totaalZonderVerzendkosten = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+    return view('checkout.index', compact('cart', 'totaalZonderVerzendkosten'));
   }
 
   public function store(Request $request)
   {
 
-    $cart = session('cart', []);
-    if (empty($cart)) {
-      return redirect('/winkel')->with('error', 'Je winkelwagen is leeg.');
+  $cart = session('cart', []);
+  if (empty($cart)) {
+    return redirect('/winkel')->with('error', 'Je winkelwagen is leeg.');
+  }
+
+  $this->normalizeCheckboxes($request);
+
+  try {
+    $this->validateCheckout($request);
+
+    // Extra validatie: check of er een geldige shipping_cost bestaat
+    $country = $request->boolean('alt-shipping')
+      ? $request->input('shipping_country', 'NL')
+      : $request->input('billing_country', 'NL');
+    $shippingCost = \App\Models\ShippingCost::where('country', $country)
+      ->where('is_published', 1)
+      ->orderByDesc('amount')
+      ->first();
+    if (!$shippingCost) {
+      throw ValidationException::withMessages([
+        $request->boolean('alt-shipping') ? 'shipping_country' : 'billing_country' => 'Geen verzendkosten beschikbaar voor het gekozen land.'
+      ]);
     }
-
-    $this->normalizeCheckboxes($request);
-
-    try {
-        $this->validateCheckout($request);
-    } catch (ValidationException $e) {
-        // Redirect back with validation errors, do NOT create order or redirect to payment
-       return redirect()->route('storeCheckout')->withErrors($e->validator)->withInput();
-
-    }
+  } catch (ValidationException $e) {
+    // Redirect back with validation errors, do NOT create order or redirect to payment
+     return redirect()->route('storeCheckout')->withErrors($e->validator)->withInput();
+  }
 
     // Only proceed if validation passes
     $user = $this->createUserIfNeeded($request);
@@ -73,7 +88,9 @@ class CheckoutController extends Controller
 
     $this->validateAndSaveMyParcel($order, $request);
 
-    return $this->createMolliePayment($order, $totalAfter);
+    // In de store() methode, gebruik het totaal inclusief verzendkosten voor de betaling
+    $amountToPay = $order->total_with_shipping ?? $order->total_after_discount;
+    return $this->createMolliePayment($order, $amountToPay);
   }
 
   public function paymentSuccess(Request $request)
@@ -327,8 +344,20 @@ class CheckoutController extends Controller
       $cart, $customer, $request, $discountCode, $discountType,
       $discountValue, $discountAmount, $totalBefore, $totalAfter
     ) {
+      // Zoek juiste shipping cost op basis van gekozen land
+      $country = $request->boolean('alt-shipping')
+        ? $request->input('shipping_country', 'NL')
+        : $request->input('billing_country', 'NL');
+      $shippingCost = \App\Models\ShippingCost::where('country', $country)
+        ->where('is_published', 1)
+        ->orderByDesc('amount')
+        ->first();
+
+      $shippingAmount = $shippingCost?->amount ?? 0;
+      $totalWithShipping = $totalAfter + $shippingAmount;
       $order = $customer->orders()->create([
-        'total' => $totalBefore,
+        'total_before' => $totalBefore, // vóór korting en verzendkosten
+        'total' => $totalWithShipping, // altijd na korting + verzendkosten
         'status' => 'pending',
         'shipping_first_name' => $request->input('alt-shipping') ? $request->shipping_first_name : $request->billing_first_name,
         'shipping_last_name'  => $request->input('alt-shipping') ? $request->shipping_last_name  : $request->billing_last_name,
@@ -343,6 +372,10 @@ class CheckoutController extends Controller
         'discount_price_total' => $discountAmount,
         'total_after_discount' => $totalAfter,
         'discount_code_checkout' => $discountCode,
+        'shipping_cost_id'    => $shippingCost?->id,
+        'shipping_cost'       => $shippingAmount,
+        'shipping_cost_amount'=> $shippingAmount,
+        'total_with_shipping' => $totalWithShipping,
       ]);
 
       foreach ($cart as $item) {

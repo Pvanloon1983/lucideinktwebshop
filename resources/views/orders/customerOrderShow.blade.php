@@ -125,9 +125,9 @@
                     @endforelse
                     <tr>
                         <td colspan="3" style="text-align: right; font-weight: bold;">Totaal</td>
-                        <td style="font-weight: bold;">€ {{ number_format($order->total, 2) }}</td>
+                        <td style="font-weight: bold;">€ {{ number_format($order->total_before, 2) }}</td>
                     </tr>
-                    @if ($order->discount_value > 0)
+                                        @if ($order->discount_value > 0)
                         <tr>
                             <td colspan="3" style="text-align: right; font-weight: bold;">Korting
                                 ({{ $order->discount_type == 'percent' ? (int) $order->discount_value . '%' : '€ ' . number_format($order->discount_value, 2) }})
@@ -137,6 +137,16 @@
                         <tr>
                             <td colspan="3" style="text-align: right; font-weight: bold;">Totaal na korting</td>
                             <td style="font-weight: bold;">€ {{ number_format($order->total_after_discount, 2) }}</td>
+                        </tr>
+                    @endif
+                    @if (!empty($order->shipping_cost_amount) && $order->shipping_cost_amount > 0)
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: bold;">Verzendkosten</td>
+                            <td style="font-weight: bold;">€ {{ is_numeric($order->shipping_cost_amount) ? number_format($order->shipping_cost_amount, 2) : number_format((float)($order->shipping_cost_amount->amount ?? 0), 2) }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: bold;">Totaal incl. verzendkosten</td>
+                            <td style="font-weight: bold;">€ {{ number_format($order->total, 2) }}</td>
                         </tr>
                     @endif
                 </tbody>

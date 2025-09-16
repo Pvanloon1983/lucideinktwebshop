@@ -20,13 +20,14 @@ class ProfileController extends Controller
             $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users,email,' . auth()->id(),
             'password' => 'required|string|min:8|confirmed',
             ], [
                 'first_name.required' => 'Voornaam is verplicht.',
                 'last_name.required' => 'Achternaam is verplicht.',
                 'email.required' => 'E-mailadres is verplicht.',
                 'email.email' => 'Voer een geldig e-mailadres in.',
+                'email.unique' => 'Dit e-mailadres is al in gebruik.',
                 'password.required' => 'Wachtwoord is verplicht.',
                 'password.min' => 'Wachtwoord moet minimaal 8 tekens bevatten.',
                 'password.confirmed' => 'Wachtwoorden komen niet overeen.',
@@ -43,7 +44,7 @@ class ProfileController extends Controller
             $validated = $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|email'
+            'email' => 'required|email|unique:users,email,' . auth()->id()
             ], [
                 'first_name.required' => 'Voornaam is verplicht.',
                 'last_name.required' => 'Achternaam is verplicht.',

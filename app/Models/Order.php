@@ -22,6 +22,9 @@ class Order extends Model
         'payment_status',
         'paid_at',
         'invoice_pdf_path',
+        'shipping_cost_id',
+        'shipping_cost_amount',
+        'total_before',
 
         // Shipping fields
         'shipping_first_name',
@@ -85,6 +88,11 @@ class Order extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    public function shipping_cost(): BelongsTo
+    {
+      return $this->belongsTo(ShippingCost::class);
     }
 
     public function items(): HasMany

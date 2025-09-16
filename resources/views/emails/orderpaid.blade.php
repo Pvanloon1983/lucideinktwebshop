@@ -199,7 +199,7 @@
         <tfoot>
           <tr>
             <td colspan="3" style="text-align:right;">{{ __('Totaal') }}</td>
-            <td colspan="2">€ {{ number_format($order->total, 2, ',', '.') }}</td>
+            <td colspan="2">€ {{ number_format($order->total_before, 2, ',', '.') }}</td>
           </tr>
           @if(isset($order->discount_type) && $order->discount_price_total > 0)
           <tr>
@@ -211,6 +211,18 @@
             <td colspan="2" style="font-weight:bold;">€ {{ number_format($order->total - $order->discount_price_total, 2, ',', '.') }}</td>
           </tr>
           @endif
+
+           @if(!empty($order->shipping_cost_amount) && $order->shipping_cost_amount > 0)
+            <tr>
+              <td colspan="3" style="text-align:right;">{{ __('Verzendkosten') }}</td>
+              <td colspan="2">€ {{ is_numeric($order->shipping_cost_amount) ? number_format($order->shipping_cost_amount, 2, ',', '.') : number_format((float)($order->shipping_cost_amount->amount ?? 0), 2, ',', '.') }}</td>
+            </tr>
+            <tr>
+              <td colspan="3" style="text-align:right; font-weight:bold;">{{ __('Totaal incl. verzendkosten') }}</td>
+              <td colspan="2" style="font-weight:bold;">€ {{ number_format($order->total, 2, ',', '.') }}</td>
+            </tr>
+            @endif
+
         </tfoot>
       </table>
     </div>

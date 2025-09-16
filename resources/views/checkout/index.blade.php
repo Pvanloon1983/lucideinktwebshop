@@ -14,7 +14,7 @@
             <div class="alert alert-error" style="position: relative;">
                 {{ session('error') }}
                 <button type="button" class="alert-close"
-                        onclick="this.parentElement.style.display='none';">&times;</button>
+                    onclick="this.parentElement.style.display='none';">&times;</button>
             </div>
         @endif
 
@@ -278,8 +278,11 @@
 
                     <div class="form-input">
                         <div style="display: flex;flex-direction: column">
-                            <input style="width: fit-content; margin-bottom: 10px" type="text" name="discount_code" id="discount_code" value="{{ old('discount_code') }}" placeholder="Vul kortingscode in">
-                            <button id="add_discount_code" style="height: 32px" class="btn small"><span class="loader" style="display:none"></span>Kortingscode toepassen</button>
+                            <input style="width: fit-content; margin-bottom: 10px" type="text"
+                                name="discount_code" id="discount_code" value="{{ old('discount_code') }}"
+                                placeholder="Vul kortingscode in">
+                            <button id="add_discount_code" style="height: 32px" class="btn small"><span
+                                    class="loader" style="display:none"></span>Kortingscode toepassen</button>
                         </div>
                         @error('discount_code')
                             <div class="error">{{ $message }}</div>
@@ -304,15 +307,24 @@
                             @endforeach
                         </tbody>
                         <tfoot>
+                            <tr>
+                                <td colspan="2" style="text-align:right; border:none;">
+                                    <span id="shipping-cost" style="font-weight:normal;"></span>
+                                </td>
+                            </tr>
                             <tr class="total-price" id="total-row">
                                 <td><strong>Totaal</strong></td>
-                                <td style="text-align:right"><strong id="order-total">&euro;
+                                <td style="text-align:right">
+                                    <strong id="order-total"
+                                        data-subtotal="{{ collect($cart)->sum(fn($i) => $i['price'] * $i['quantity']) }}">&euro;
                                         {{ number_format(collect($cart)->sum(fn($i) => $i['price'] * $i['quantity']), 2, ',', '.') }}</strong>
                                 </td>
                             </tr>
                             <tr id="discount-row" style="display:none">
-                                <td><span>Korting</span> <span id="discount-code-label" style="font-size:12px;color:#666;"></span></td>
-                                <td style="text-align:right;color:#b30000;">-<span id="discount-amount">0,00</span></td>
+                                <td><span>Korting</span> <span id="discount-code-label"
+                                        style="font-size:12px;color:#666;"></span></td>
+                                <td style="text-align:right;color:#b30000;">-<span id="discount-amount">0,00</span>
+                                </td>
                             </tr>
                             <tr id="new-total-row" style="display:none">
                                 <td><strong>Totaal na korting</strong></td>
@@ -321,7 +333,8 @@
                         </tfoot>
                     </table>
                     <div id="remove-discount-container" style="display:none;margin-bottom:10px;">
-                        <button type="button" id="remove_discount_code" class="btn small" style="background:#eee;color:#b30000;">Verwijder kortingscode</button>
+                        <button type="button" id="remove_discount_code" class="btn small"
+                            style="background:#eee;color:#b30000;">Verwijder kortingscode</button>
                     </div>
 
                     <div id="myparcel-delivery-options"></div>

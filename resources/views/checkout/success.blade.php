@@ -33,7 +33,7 @@
 
 					<div class="order-bestelling-total-row">
 						<span class="order-bestelling-total-label"><strong>Totaal</strong></span>
-						<span class="order-bestelling-total-value"><strong>€ {{ number_format($order->total, 2, ',', '.') }}</strong></span>
+						<span class="order-bestelling-total-value"><strong>€ {{ number_format($order->total_before, 2, ',', '.') }}</strong></span>
 					</div>
 
 					@if($order->discount_value > 0)
@@ -62,6 +62,18 @@
 						</div>
 					@endif
 
+					@php
+                        $shippingAmount = is_object($order->shipping_cost_amount) ? ($order->shipping_cost_amount->amount ?? 0) : ($order->shipping_cost_amount ?? (is_object($order->shipping_cost) ? ($order->shipping_cost->amount ?? 0) : ($order->shipping_cost ?? 0)));
+                        $totalInclShipping = ($order->total_with_shipping ?? ($order->total_after_discount + $shippingAmount));
+                    @endphp
+					<div class="order-bestelling-total-row">
+						<span class="order-bestelling-total-label"><strong>Verzendkosten</strong></span>
+						<span class="order-bestelling-total-value"><strong>€ {{ number_format($shippingAmount, 2, ',', '.') }}</strong></span>
+					</div>
+					<div class="order-bestelling-total-row">
+						<span class="order-bestelling-total-label"><strong>Totaal (incl. verzendkosten)</strong></span>
+						<span class="order-bestelling-total-value"><strong>€ {{ number_format($totalInclShipping, 2, ',', '.') }}</strong></span>
+					</div>
 				</div>
 
 

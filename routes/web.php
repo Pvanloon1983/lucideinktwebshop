@@ -17,6 +17,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductCategoryController;
 use App\Http\Controllers\PickupLocationController;
+use App\Http\Controllers\ShippingCostController;
 
 
 // Both admin and user can access
@@ -89,7 +90,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	Route::get('/dashboard/users/{id}', [UserController::class, 'show'])->name('userShow');
 	Route::put('/dashboard/users/{id}', [UserController::class, 'update'])->name('userEdit');
 
-	//Discount codes
+	// Discount codes
 	Route::get('/dashboard/discount-codes', [DiscountCodeController::class, 'index'])->name('discountIndex');
 	Route::get('/dashboard/discount-codes/create', [DiscountCodeController::class, 'create'])->name('discountCreate');
 	Route::post('/dashboard/discount-codes/create', [DiscountCodeController::class, 'store'])->name('discountStore');
@@ -98,6 +99,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 	Route::delete('/dashboard/discount-codes/delete/{id}', [DiscountCodeController::class, 'destroy'])->name('discountDelete');
 	Route::get('/dashboard/discount-codes/delete/{id}', [DiscountCodeController::class, 'get'])->name('discountDelete_get');
 
+  // Product copies
   Route::get('/dashboard/productcopies', [ProductCopyController::class, 'index'])->name('productCopyIndex');
   Route::get('/dashboard/productcopies/create', [ProductCopyController::class, 'create'])->name('productCopyCreatePage');
   Route::post('/dashboard/productcopies/create', [ProductCopyController::class, 'store'])->name('productCopyStore');
@@ -106,15 +108,21 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
   Route::delete('/dashboard/productcopies/delete/{id}', [ProductCopyController::class, 'destroy'])->name('productCopyDelete');
   Route::get('/dashboard/productcopies/delete/{id}', [ProductCopyController::class, 'get'])->name('productCopyDeleteGet');
 
+  // Shipping costs
+  Route::get('/dashboard/shippingcosts', [ShippingCostController::class, 'index'])->name('shippingCostIndex');
+  Route::get('/dashboard/shippingcosts/create', [ShippingCostController::class, 'create'])->name('shippingCostCreatePage');
+  Route::post('/dashboard/shippingcosts/create', [ShippingCostController::class, 'store'])->name('shippingCostStore');
+  Route::get('/dashboard/shippingcosts/edit/{id}', [ShippingCostController::class, 'edit'])->name('shippingCostEditPage');
+  Route::put('/dashboard/shippingcosts/edit/{id}', [ShippingCostController::class, 'update'])->name('shippingCostUpdate');
+  Route::delete('/dashboard/shippingcosts/delete/{id}', [ShippingCostController::class, 'destroy'])->name('shippingCostDelete');
+  Route::get('/dashboard/shippingcosts/delete/{id}', [ShippingCostController::class, 'get'])->name('shippingCostDeleteGet');
+
 });
 
 
 // Shop
 Route::get('/winkel', [ShopController::class, 'index'])->name('shop');
 Route::get('/winkel/product/{slug}', [ShopController::class, 'show'])->name('productShow');
-
-// API for product copy info (AJAX)
-Route::post('/api/product-copy-info', [\App\Http\Controllers\Api\ProductCopyInfoController::class, 'getInfo'])->name('api.productCopyInfo');
 
 // Cart
 Route::get('/winkel/cart', [CartController::class, 'index'])->name('cartPage');
@@ -130,6 +138,7 @@ Route::get('/winkel/checkout/success', [CheckoutController::class, 'checkoutSucc
 Route::post('/winkel/checkout/apply-discount-code', [CheckoutController::class, 'applyDiscountCode'])->name('applyDiscountCode');
 Route::delete('/winkel/checkout/remove-discount-code', [CheckoutController::class, 'removeDiscountCode'])->name('removeDiscountCode');
 
+Route::get('/api/shipping-cost', [ShippingCostController::class, 'getCost']);
 
 // Auth pages
 Route::get('/login', [AuthController::class, 'loginPage'])->name('login')->middleware('guest');

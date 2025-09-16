@@ -84,12 +84,20 @@
       @endrole
 
       @role('admin')
-      <a href="{{ route('productCategoryIndex') }}">
+      <a href="{{ route('shippingCostIndex') }}">
         <li class="nav-item {{ request()->routeIs('productCategoryIndex') || request()->routeIs('productCategoryCreatePage') || request()->routeIs('productCategoryEditPage') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('productCategoryIndex') ? 'active-admin-link' : '' }}">Productcategorieën</span>
         </li>  
       </a>
-      @endrole  
+      @endrole
+
+      @role('admin')
+      <a href="{{ route('shippingCostIndex') }}">
+        <li class="nav-item {{ request()->routeIs('shippingCostIndex') || request()->routeIs('shippingCostCreatePage') || request()->routeIs('shippingCostEditPage') ? 'active-admin-link' : '' }}">
+          <span class="{{ request()->routeIs('shippingCostIndex') ? 'active-admin-link' : '' }}">Verzendkosten</span>
+        </li>
+      </a>
+      @endrole
 
       @role('admin')
       <a href="{{ route('orderIndex') }}">

@@ -2640,3 +2640,14 @@ b.mp-block {
 .leaflet-container {
   z-index: 1;
 }
+
+.table-action .fa-eye {
+  color: var(--main-font-color);
+}
+
+.table-action .fa-eye:after {
+  content: "Bekijken";
+  font-family: var(--font-regular);
+  margin-left: 10px;
+}
+

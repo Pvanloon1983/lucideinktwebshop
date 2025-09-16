@@ -22,7 +22,8 @@
                         <div>
                             <form action="{{ route('generateInvoice', $order->id) }}" method="POST">
                                 @csrf
-                                <button class="btn small" type="submit"><span class="loader"></span>Genereer Factuur</button>
+                                <button class="btn small" type="submit"><span class="loader"></span>Genereer
+                                    Factuur</button>
                             </form>
                         </div>
                     @endif
@@ -31,7 +32,8 @@
                         <div>
                             <form action="{{ route('sendOrderEmailWithInvoice', $order->id) }}" method="POST">
                                 @csrf
-                                <button class="btn small" type="submit"><span class="loader"></span>Verstuur E-mail met factuur</button>
+                                <button class="btn small" type="submit"><span class="loader"></span>Verstuur E-mail met
+                                    factuur</button>
                             </form>
                         </div>
                     @endif
@@ -89,7 +91,8 @@
                                 </button>
                             </div>
                         @endif
-                        <button class="btn small" type="submit"><span class="loader"></span>Bestelling bijwerken</button>
+                        <button class="btn small" type="submit"><span class="loader"></span>Bestelling
+                            bijwerken</button>
                     </form>
                 </div>
 
@@ -103,7 +106,8 @@
                             {{-- Track & Trace met barcode --}}
                             <p><strong>Track & Trace:</strong>
                                 @if ($order->myparcel_track_trace_url)
-                                    <a style="text-decoration: underline" href="{{ $order->myparcel_track_trace_url }}" target="_blank">
+                                    <a style="text-decoration: underline" href="{{ $order->myparcel_track_trace_url }}"
+                                        target="_blank">
                                         {{ $order->myparcel_barcode ?? 'Bekijk zending' }}
                                     </a>
                                 @else
@@ -143,7 +147,8 @@
                                 @if ($order->myparcel_delivery_type == 'pickup')
                                     <p><strong>Adres afhaalpunt:</strong></p>
                                     <span>{{ $pickupLocation['locationName'] ?? '-' }}</span>,
-                                    <span>{{ $pickupLocation['street'] ?? '' }} {{ $pickupLocation['number'] ?? '' }}</span>,
+                                    <span>{{ $pickupLocation['street'] ?? '' }}
+                                        {{ $pickupLocation['number'] ?? '' }}</span>,
                                     <span>{{ $pickupLocation['postalCode'] ?? '' }}</span>,
                                     <span>{{ $pickupLocation['city'] ?? '' }}</span>
                                 @endif
@@ -156,28 +161,30 @@
                                         (PDF)</a>
                                 </p>
                             @else
-                            {{-- Form om pakket type aan te passen --}}
-                            <form action="{{ route('orderUpdatePackageType', $order->id) }}" method="POST"
-                                style="margin-top: 10px;">
-                                @csrf
-                                <select name="package_type" style="width: fit-content">
-                                    @foreach ($types as $key => $label)
-                                        <option value="{{ $key }}"
-                                            @if ($order->myparcel_package_type_id == $key) selected @endif>
-                                            {{ $label }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('package_type')
-                                    <div class="error">{{ $message }}</div>
-                                @enderror
-                                <button class="btn small" type="submit" style="margin-top: 10px"><span class="loader"></span>Update pakket type</button>
-                            </form>
+                                {{-- Form om pakket type aan te passen --}}
+                                <form action="{{ route('orderUpdatePackageType', $order->id) }}" method="POST"
+                                    style="margin-top: 10px;">
+                                    @csrf
+                                    <select name="package_type" style="width: fit-content">
+                                        @foreach ($types as $key => $label)
+                                            <option value="{{ $key }}"
+                                                @if ($order->myparcel_package_type_id == $key) selected @endif>
+                                                {{ $label }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('package_type')
+                                        <div class="error">{{ $message }}</div>
+                                    @enderror
+                                    <button class="btn small" type="submit" style="margin-top: 10px"><span
+                                            class="loader"></span>Update pakket type</button>
+                                </form>
 
                                 <form action="{{ route('orderGenerateLabel', $order->id) }}" method="POST"
                                     style="display:inline-block; margin-bottom: 10px;margin-top: 15px;">
                                     @csrf
-                                    <button class="btn small btn-primary" type="submit"><span class="loader"></span>Label aanmaken bij MyParcel</button>
+                                    <button class="btn small btn-primary" type="submit"><span
+                                            class="loader"></span>Label aanmaken bij MyParcel</button>
                                 </form>
                             @endif
                         </div>
@@ -201,11 +208,12 @@
                             <p><strong>Land:</strong> {{ $order->customer->billing_country }}</p>
                         </div>
                         <div style="border: 1px solid var(--border-1);border-radius: 4px;padding: 15px;">
-                        <h3>Verzendadres</h3>
+                            <h3>Verzendadres</h3>
                             @if (!empty($order->shipping_street))
                                 <p><strong>Straatnaam:</strong> {{ $order->shipping_street }}</p>
                                 <p><strong>Huisnummer:</strong> {{ $order->shipping_house_number }}</p>
-                                <p><strong>Huisnummer toevoeging:</strong> {{ $order->shipping_house_number_addition ?? '-' }}
+                                <p><strong>Huisnummer toevoeging:</strong>
+                                    {{ $order->shipping_house_number_addition ?? '-' }}
                                 </p>
                                 <p><strong>Postcode:</strong> {{ $order->shipping_postal_code }}</p>
                                 <p><strong>Plaats:</strong> {{ $order->shipping_city }}</p>
@@ -252,7 +260,7 @@
                     @endforelse
                     <tr>
                         <td colspan="3" style="text-align: right; font-weight: bold;">Totaal</td>
-                        <td style="font-weight: bold;">€ {{ number_format($order->total, 2) }}</td>
+                        <td style="font-weight: bold;">€ {{ number_format($order->total_before, 2) }}</td>
                     </tr>
                     @if ($order->discount_value > 0)
                         <tr>
@@ -264,6 +272,19 @@
                         <tr>
                             <td colspan="3" style="text-align: right; font-weight: bold;">Totaal na korting</td>
                             <td style="font-weight: bold;">€ {{ number_format($order->total_after_discount, 2) }}</td>
+                        </tr>
+                    @endif
+                    @if (!empty($order->shipping_cost_amount) && $order->shipping_cost_amount > 0)
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: bold;">Verzendkosten</td>
+                            <td style="font-weight: bold;">€
+                                {{ is_numeric($order->shipping_cost_amount) ? number_format($order->shipping_cost_amount, 2) : number_format((float) ($order->shipping_cost_amount->amount ?? 0), 2) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" style="text-align: right; font-weight: bold;">Totaal incl. verzendkosten
+                            </td>
+                            <td style="font-weight: bold;">€ {{ number_format($order->total, 2) }}</td>
                         </tr>
                     @endif
                 </tbody>
