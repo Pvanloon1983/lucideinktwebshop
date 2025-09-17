@@ -28,17 +28,9 @@
     </div>
     <header class="header">
         <div class="header-box">
-      <div class="logo-container mobile">
-          <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>
-      </div>
-              <div class="desktop-navbar-container">
-                <nav class="navbar">
-                    <x-navbar></x-navbar>
-                </nav>
-            </div>
 
-            <div class="navbar-cart-sidebar-toggle">
-                <li class="nav-item">
+         <div class="navbar-cart-sidebar-toggle">
+            <li class="nav-item">
                     <a href="{{ route('cartPage') }}"><i
                             class="fa-solid fa-cart-shopping"></i>
                         @if (session('cart') && count(session('cart')))
@@ -48,6 +40,18 @@
                         @endif
                     </a>
                 </li>
+                </div>
+
+   
+              <div class="desktop-navbar-container">
+                <nav class="navbar">
+                    <x-navbar></x-navbar>
+                </nav>
+            </div>
+
+            <div class="navbar-cart-sidebar-toggle">
+
+
 
                 <div class="sidebar-toggle">
                     <i class="fa-solid fa-bars"></i>
@@ -70,5 +74,7 @@
 
     {{ $slot }}
 </body>
+
+
 
 </html>

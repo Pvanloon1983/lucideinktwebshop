@@ -20,6 +20,30 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'AridaBold';
+  src: url('../fonts/Arida\ Bold.otf') format('opentype');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'CinzelRegular';
+  src: url('../fonts/CinzelDecorative-Regular.ttf') format('opentype');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'CinzelBold';
+  src: url('../fonts/CinzelDecorative-Bold.ttf') format('opentype');
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'CinzelBlack';
+  src: url('../fonts/CinzelDecorative-Black.ttf') format('opentype');
+  font-style: normal;
+}
+
 /* === Root Variables === */
 :root {
   /* Brand & typography */
@@ -436,7 +460,7 @@ thead {
 .header {
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 40;
   background: var(--surface-4);
   transition: background .3s, box-shadow .3s;
 }
@@ -496,7 +520,8 @@ thead {
 }
 
 .logo-container img {
-  width: 80px;
+  width: 100px;
+  margin-top: 30;
 }
 
 .logo-container a {
@@ -515,6 +540,15 @@ thead {
   border-bottom: 4px solid var(--gold-2);
 }
 
+.desktop-navbar-container a {
+  font-family: 'CinzelBold';
+}
+
+.sidebar a {
+  font-family: 'CinzelRegular';
+  font-size: 15px;
+}
+
 .desktop-navbar-container a,
 .desktop-navbar-container .fa-cart-shopping {
   color: var(--cream-1);
@@ -530,7 +564,7 @@ thead {
   }
 
   .logo-container img {
-    width: 60px;
+    width: 100px;
   }
 }
 
@@ -564,12 +598,18 @@ thead {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 5px;
 }
 
 @media (max-width: 992px) {
   .navbar-cart-sidebar-toggle {
     display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
+  }
+
+  .navbar-cart-sidebar-toggle li {
+    font-size: 20px;
   }
 
   .nav-item.cart {
@@ -580,8 +620,6 @@ thead {
 /* === Pages === */
 .page.home {
   padding: 60px 0 100px;
-  padding-left: 15px;
-  padding-right: 15px;
 }
 
 .container.page {
@@ -680,7 +718,7 @@ i {
   background: var(--surface-1);
   box-shadow: var(--shadow-1);
   transition: right .3s ease;
-  z-index: 20;
+  z-index: 50;
 }
 
 .sidebar.open {
@@ -916,14 +954,14 @@ i {
 
 @keyframes spin {
   to {
-    transform: rotate(360deg);
+    transform: rotate(-360deg);
   }
 }
 
 .ring-image {
   position: absolute;
   inset: 0% auto auto 0%;
-  width: 108%;
+  width: 120%;
   height: auto;
   left: 50%;
   top: 50%;
@@ -934,6 +972,7 @@ i {
   border-radius: 50%;
   aspect-ratio: 1/1;
   object-fit: cover;
+  display: none;  
 }
 
 @keyframes spinReverse {
@@ -946,20 +985,43 @@ i {
   }
 }
 
-.hero-image-background {
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 80vw;
-  max-width: 600px;
-  min-width: 180px;
-  aspect-ratio: 1/1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  position: relative;
-  background-color: transparent;
+/* OUDE CLOCK CODE HIER */
+
+@media screen and (max-width: 1200px) {
+  .ring-image {
+    max-width: 650px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .ring-image {
+    max-width: 540px;
+  }
+
+    .hero-image-background {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 95vw;
+    max-width: 200px;
+    min-width: 250px;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    position: relative;
+    background-color: transparent;
+    overflow: visible; /* Allow ring to overflow */
+  }
+
+  .rotating-image {
+    max-width: 500px;
+    min-width: 250px;
+    width: 95vw;
+    position: relative;
+    z-index: 1;
+  }
 }
 
 .hero-image-background .title,
@@ -967,7 +1029,7 @@ i {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 2;
+  z-index: 100;
   pointer-events: none;
   text-align: center;
   object-fit: contain;
@@ -1042,18 +1104,18 @@ i {
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 650px) {
   .page.home {
     padding-top: 100px;
   }
 
   .hero-image-background {
-    max-width: 500px;
+    max-width: 450px;
     min-width: 80px;
   }
 
   .rotating-image {
-    max-width: 400px;
+    max-width: 350px;
     min-width: 60px;
   }
 
@@ -1067,6 +1129,10 @@ i {
     width: 60%;
     max-width: 300px;
     bottom: 22%;
+  }
+
+  .ring-image {
+    width: 485px;
   }
 }
 
@@ -2337,49 +2403,77 @@ i {
 
 
 .hero-section {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 50px;
-  grid-template-columns: 1fr 1fr;
   padding: 0 15px;
   margin-top: 30px;
+  width: 100%;
+  text-align: center;
 }
 
 .hero-image,
 .hero-text {
-  height: 100%;         /* <-- fill parent height */
+  height: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
 .hero-text-image {
+  text-align: center;
+  margin: 0 auto;
+  margin-top: 0px;
+  margin-bottom: 30px;
+  display: block;
   width: 400px;
 }
 
 .hero-text {
-  margin-top: -40px;
+  margin-top: 50px;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(to bottom, #f7ecd7 0%, #fff 100%);
+  padding: 75px 0;
 }
 
 .hero-text .main-heading {
   margin-top: 5px;
   line-height: 1.4em;
   font-size: 40px;
-  font-weight: 700px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
+  font-family: 'AridaBold';
 }
 
 .hero-text .sub-text {
   margin-top: -10px;
   font-size: 19px;
+  text-align: center;
+  margin-bottom: 30px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-bottom: 30px;
 }
 
 .btn-box {
   display: flex;
   gap: 20px;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn-box .btn {
   font-size: 18px;
   border: 1px solid var(--main-color);
+  text-align: center;
 }
 
 .btn-box .btn.outlined {
@@ -2415,7 +2509,7 @@ i {
 
 
   .hero-text-image {
-    width: 300px;
+    width: 100px;
     display: block;
     margin: 0 auto;
   }
@@ -2651,3 +2745,29 @@ b.mp-block {
   margin-left: 10px;
 }
 
+.hero-section
+.upper-text  {
+  position: absolute;
+  top: 16%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  letter-spacing: 2px;
+  z-index: 2;
+  pointer-events: none;
+  font-family: 'AridaBold';
+  color: #ecd6af;
+  display: none;
+}
+
+@media (max-width: 992px) {
+  .hero-section
+  .upper-text {
+    top: 19%;
+    font-size: 1.8rem;
+    display: block;
+  }
+}
