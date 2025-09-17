@@ -18,9 +18,9 @@
                     </div>
 
                     <img class="ring-image" src="{{ asset('images/clockassets/ClockAsset5.webp') }}" alt="Decorative Ring">
-                    <img class="rotating-image" src="{{ asset('images/clockassets/sier.webp') }}" alt="">
+                    <img class="rotating-image" src="{{ asset('images/clockassets/Sier.webp') }}" alt="">
                     <img class="title" src="{{ asset('images/clockassets/clock-faded-5.webp') }}" alt="">
-                    <img class="sub-title" src="{{ asset('images/clockassets/text-2.webp') }}" alt="">
+                    <img class="sub-title" src="{{ asset('images/clockassets/Text-2.webp') }}" alt="">
 
 
 
