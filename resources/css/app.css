@@ -22,7 +22,7 @@
 
 @font-face {
   font-family: 'AridaBold';
-  src: url('../fonts/Arida\ Bold.otf') format('opentype');
+  src: url('../fonts/Arida_Bold.otf') format('opentype');
   font-style: normal;
 }
 
@@ -2771,3 +2771,4 @@ b.mp-block {
     display: block;
   }
 }
+
