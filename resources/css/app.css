@@ -2940,18 +2940,18 @@ b.mp-block {
 
 }
 
-@media (max-width: 650px) {
+@media screen and (max-width: 650px) {
   .page.home {
     padding-top: 100px;
   }
 
   .hero-image-background {
-    max-width: 360px;
+    max-width: 390px;
     min-width: 80px;
   }
 
   .rotating-image {
-    max-width: 390px;
+    max-width: 350px;
     min-width: 60px;
   }
 
