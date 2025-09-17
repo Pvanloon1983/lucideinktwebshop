@@ -215,8 +215,7 @@ button {
 }
 
 input,
-textarea
-{
+textarea {
   box-sizing: border-box;
   padding: 0px 8px;
   width: 100%;
@@ -972,7 +971,7 @@ i {
   border-radius: 50%;
   aspect-ratio: 1/1;
   object-fit: cover;
-  display: none;  
+  display: none;
 }
 
 @keyframes spinReverse {
@@ -998,7 +997,7 @@ i {
     max-width: 540px;
   }
 
-    .hero-image-background {
+  .hero-image-background {
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -1012,7 +1011,8 @@ i {
     border-radius: 50%;
     position: relative;
     background-color: transparent;
-    overflow: visible; /* Allow ring to overflow */
+    overflow: visible;
+    /* Allow ring to overflow */
   }
 
   .rotating-image {
@@ -1044,7 +1044,7 @@ i {
 }
 
 .hero-image-background .sub-title {
-  bottom: 23%;
+  bottom: 28%;
   width: 60%;
   max-width: 400px;
   min-width: 60px;
@@ -1104,37 +1104,6 @@ i {
   }
 }
 
-@media (max-width: 650px) {
-  .page.home {
-    padding-top: 100px;
-  }
-
-  .hero-image-background {
-    max-width: 450px;
-    min-width: 80px;
-  }
-
-  .rotating-image {
-    max-width: 350px;
-    min-width: 60px;
-  }
-
-  .hero-image-background .title {
-    width: 60%;
-    max-width: 200px;
-    top: 25%;
-  }
-
-  .hero-image-background .sub-title {
-    width: 60%;
-    max-width: 300px;
-    bottom: 22%;
-  }
-
-  .ring-image {
-    width: 485px;
-  }
-}
 
 /* === Admin panel Sidebar === */
 .admin-sidebar-toggle {
@@ -2346,13 +2315,14 @@ i {
 .confirm-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(44,32,16,0.18);
+  background: rgba(44, 32, 16, 0.18);
   backdrop-filter: blur(1px);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 99999;
 }
+
 .confirm-dialog {
   background: var(--surface-1);
   color: var(--main-font-color);
@@ -2366,22 +2336,26 @@ i {
   flex-direction: column;
   align-items: center;
 }
+
 .confirm-dialog h3 {
   font-size: 20px;
   margin: 0 0 10px 0;
   color: var(--main-font-color);
 }
+
 .confirm-dialog p {
   font-size: 17px;
   margin: 0 0 18px 0;
   text-align: center;
 }
+
 .confirm-actions {
   display: flex;
   gap: 18px;
   justify-content: center;
   margin-top: 10px;
 }
+
 .confirm-actions .btn.confirm {
   background: var(--red-2);
   color: var(--ink-inverse);
@@ -2389,6 +2363,7 @@ i {
   padding: 10px 22px;
   border: none;
 }
+
 .confirm-actions .btn.cancel {
   background: var(--main-color);
   color: var(--ink-inverse);
@@ -2398,7 +2373,9 @@ i {
   box-shadow: 0 2px 8px rgba(171, 15, 20, 0.08);
 }
 
-#confirmModal[hidden] { display: none !important; }
+#confirmModal[hidden] {
+  display: none !important;
+}
 
 
 
@@ -2496,6 +2473,7 @@ i {
     min-height: unset;
     gap: 50px;
   }
+
   .hero-image,
   .hero-text {
     height: auto;
@@ -2548,6 +2526,10 @@ i {
     text-align: center;
   }
 
+  .hero-section {
+    margin-top: 50px;
+  }
+
 }
 
 .page.checkout.success {
@@ -2579,10 +2561,12 @@ i {
   padding: 6px 18px 6px 18px;
   border-radius: 4px 4px 0 0;
 }
+
 .order-bestelling-col.product {
   flex: 2;
   text-align: left;
 }
+
 .order-bestelling-col.subtotal {
   flex: 1;
   text-align: right;
@@ -2596,10 +2580,12 @@ i {
   color: var(--main-font-color);
   padding: 8px 18px 0 18px;
 }
+
 .order-bestelling-product {
   flex: 2;
   text-align: left;
 }
+
 .order-bestelling-subtotal {
   flex: 1;
   text-align: right;
@@ -2622,10 +2608,12 @@ i {
   font-weight: bold;
   padding: 0px 18px 0px 18px;
 }
+
 .order-bestelling-total-label {
   flex: 2;
   text-align: left;
 }
+
 .order-bestelling-total-value {
   flex: 1;
   text-align: right;
@@ -2638,21 +2626,25 @@ i {
   margin-top: 18px;
   margin-bottom: 18px;
 }
+
 .order-address-block {
   max-width: 250px;
   flex: 1;
 }
+
 .order-address-block h3 {
   margin-bottom: 8px;
   font-size: 16px;
   color: var(--main-font-color);
   font-weight: bold;
 }
+
 .order-address-block .address-details {
   font-size: 14px;
   line-height: 1.6;
   color: var(--main-font-color);
 }
+
 .order-address-block .address-details .address-email {
   color: var(--main-font-color);
   font-size: 14px;
@@ -2674,6 +2666,7 @@ i {
     flex-direction: column;
     gap: 18px;
   }
+
   .order-address-block {
     min-width: 0;
     width: 100%;
@@ -2684,8 +2677,9 @@ i {
   display: none;
 }
 
-.myparcel-delivery-options .mp-grid  button:after {
-  content: "\25BC"; /* ▼ Unicode dropdown arrow */
+.myparcel-delivery-options .mp-grid button:after {
+  content: "\25BC";
+  /* ▼ Unicode dropdown arrow */
   display: inline-block;
   margin-left: 8px;
   font-size: 1em;
@@ -2720,7 +2714,7 @@ input[type="radio"]:checked {
 }
 
 .mp-border.mp-p-5.mp-rounded-lg.mp-mb-2 {
-    display: none;
+  display: none;
 }
 
 b.mp-block {
@@ -2745,8 +2739,7 @@ b.mp-block {
   margin-left: 10px;
 }
 
-.hero-section
-.upper-text  {
+.hero-section .upper-text {
   position: absolute;
   top: 16%;
   left: 50%;
@@ -2754,7 +2747,7 @@ b.mp-block {
   font-size: 2.5rem;
   font-weight: bold;
   color: #fff;
-  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   letter-spacing: 2px;
   z-index: 2;
   pointer-events: none;
@@ -2764,11 +2757,217 @@ b.mp-block {
 }
 
 @media (max-width: 992px) {
-  .hero-section
-  .upper-text {
+  .hero-section .upper-text {
     top: 19%;
     font-size: 1.8rem;
     display: block;
   }
 }
 
+/* Clock styling */
+.hero-image-background {
+  position: relative;
+  z-index: 20;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 95vw;
+  max-width: 650px;
+  min-width: 250px;
+  aspect-ratio: 1/1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  overflow: visible;
+  /* Allow ring to overflow */
+  box-shadow:
+    0 8px 32px 0 rgba(98, 5, 5, 0.18),
+    0 2px 8px 0 rgba(171, 15, 20, 0.10),
+    0 1.5px 0.5px 0 rgba(0, 0, 0, 0.10);
+  /* box-shadow: 0 8px 32px 0 rgba(98, 5, 5, 0.18),
+                                       0 2px 16px 0 rgba(14, 30, 37, 0.18),
+                                       0 1.5px 8px 0 rgba(171, 15, 20, 0.10),
+                                       0 0 32px 8px rgba(255, 255, 255, 0.10); */
+  /* box-shadow: rgba(0, 0, 0, 0.09) 0px 3px 12px; */
+  margin-top: -50px;
+}
+
+.hero-image-background::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-sizing: border-box;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.rotating-image {
+  max-width: 500px;
+  min-width: 250px;
+  width: 95vw;
+  position: relative;
+  z-index: 1;
+  opacity: 0.2;
+}
+
+.ring-image {
+  max-width: 700px;
+  min-width: 300px;
+  width: 110vw;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+
+.css-clock-wrapper {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  pointer-events: none;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.css-clock {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  background: transparent;
+  border-radius: 50%;
+}
+
+.css-hour-hand,
+.css-minute-hand,
+.css-second-hand {
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
+  transform-origin: 50% 100%;
+  background: linear-gradient(0deg, #300d0e 0%, #712022 100%);
+  border-radius: 0 0 6px 6px;
+  clip-path: polygon(48% 100%, 52% 100%, 54% 20%, 50% 0, 46% 20%);
+  box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.18), 0 1.5px 4px 0 rgba(86, 32, 28, 0.12);
+}
+
+.css-hour-hand {
+  width: 50px;
+  height: 170px;
+  z-index: 3;
+  clip-path: polygon(38% 100%, 62% 100%, 52% 10%, 48% 10%);
+}
+
+.css-minute-hand {
+  width: 50px;
+  height: 210px;
+  z-index: 2;
+  clip-path: polygon(40% 100%, 60% 100%, 52% 10%, 48% 10%);
+}
+
+.css-second-hand {
+  width: 20px;
+  height: 270px;
+  z-index: 4;
+  clip-path: polygon(42% 100%, 58% 100%, 53% 10%, 47% 10%);
+}
+
+.css-clock-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 26px;
+  height: 26px;
+  background: linear-gradient(0deg, #2f0d0d 0%, #712022 100%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+@media screen and (max-width: 1200px) {
+
+  .css-hour-hand {
+    height: 180px;
+  }
+
+  .css-second-hand {
+    height: 270px;
+  }
+
+  .css-minute-hand {
+    height: 210px;
+  }
+
+}
+
+@media screen and (max-width: 1200px) {
+
+  .css-hour-hand {
+    height: 100px;
+  }
+
+  .css-second-hand {
+    height: 160px;
+  }
+
+  .css-minute-hand {
+    height: 120px;
+  }
+
+  .css-clock-center {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    background: linear-gradient(0deg, #2f0d0d 0%, #712022 100%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+  }
+
+}
+
+@media (max-width: 650px) {
+  .page.home {
+    padding-top: 100px;
+  }
+
+  .hero-image-background {
+    max-width: 360px;
+    min-width: 80px;
+  }
+
+  .rotating-image {
+    max-width: 370px;
+    min-width: 60px;
+  }
+
+  .hero-image-background .title {
+    width: 60%;
+    max-width: 200px;
+    top: 25%;
+  }
+
+  .hero-image-background .sub-title {
+    width: 60%;
+    max-width: 300px;
+    bottom: 25%;
+  }
+
+  .ring-image {
+    width: 485px;
+  }
+}

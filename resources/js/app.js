@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
       history.scrollRestoration = 'manual';
     }
     setTimeout(() => window.scrollTo(0, 0), 0);
-  } catch (_) {}
+  } catch (_) { }
 
   // ------------------------------------------------------------
   // Sidebar toggles
@@ -203,8 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('form').forEach(form => {
     // Remove previous submit event listeners
-    form.removeEventListener('submit', form._loaderSubmitHandler || (()=>{}));
-    form._loaderSubmitHandler = function(e) {
+    form.removeEventListener('submit', form._loaderSubmitHandler || (() => { }));
+    form._loaderSubmitHandler = function (e) {
       // Only show loader for actual submit, not for .needs-confirm
       if (!form.classList.contains('needs-confirm')) {
         // Find the button that triggered submit
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      try { hardResetMyParcelState(); } catch (_) {}
+      try { hardResetMyParcelState(); } catch (_) { }
     });
   }
 
@@ -662,22 +662,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ---------------- Event Listeners ---------------- */
-// Listen ONCE for widget updates
+  // Listen ONCE for widget updates
   document.addEventListener('myparcel_updated_delivery_options', (e) => {
     console.log('[MyParcel] updated_delivery_options event:', e.detail);
     const input = ensureMyParcelInput();
     input.value = e.detail ? JSON.stringify(e.detail) : '';
 
-    
+
 
   });
 
-// Listen for errors
+  // Listen for errors
   document.addEventListener('myparcel_error_delivery_options', (e) => {
     console.error('[MyParcel] error_delivery_options event:', e.detail);
   });
 
-// Attach listeners to relevant fields
+  // Attach listeners to relevant fields
   [
     'billing_country',
     'billing_postal_code',
@@ -698,14 +698,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-// Initial dispatch
+  // Initial dispatch
   dispatchMyParcel();
 
 
   // On form submit, ensure input is present and not empty
   const formCheck = document.querySelector('.form.checkout');
   if (formCheck) {
-    formCheck.addEventListener('submit', function(e) {
+    formCheck.addEventListener('submit', function (e) {
       const input = ensureMyParcelInput();
       if (!input.value || input.value === '{}' || input.value === 'null') {
         // e.preventDefault();
@@ -719,7 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const formOrder = document.querySelector('.form.order');
   if (formOrder) {
-    formOrder.addEventListener('submit', function(e) {
+    formOrder.addEventListener('submit', function (e) {
       const input = ensureMyParcelInput();
       if (!input.value || input.value === '{}' || input.value === 'null') {
         // e.preventDefault();
@@ -733,7 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Universal confirmation modal logic for forms with .needs-confirm class
   function setupUniversalConfirmModals() {
-    document.querySelectorAll('form.needs-confirm').forEach(function(form) {
+    document.querySelectorAll('form.needs-confirm').forEach(function (form) {
       const formId = form.id;
       let triggerBtns = [];
       if (formId) {
@@ -744,10 +744,10 @@ document.addEventListener('DOMContentLoaded', () => {
       triggerBtns = Array.from(new Set(triggerBtns));
       triggerBtns.forEach(triggerBtn => {
         if (!triggerBtn) return;
-        triggerBtn.removeEventListener('click', triggerBtn._universalConfirmHandler || (()=>{}));
-        triggerBtn._universalConfirmHandler = function(e) {
+        triggerBtn.removeEventListener('click', triggerBtn._universalConfirmHandler || (() => { }));
+        triggerBtn._universalConfirmHandler = function (e) {
           e.preventDefault();
-          window.showConfirmModal(form.getAttribute('data-confirm') || 'Weet je het zeker?', function() {
+          window.showConfirmModal(form.getAttribute('data-confirm') || 'Weet je het zeker?', function () {
             showLoaderAndDisable(triggerBtn);
             form.submit();
             // Optionally, re-enable after navigation or error
@@ -773,8 +773,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (node.nodeType === 1) {
           if (node.tagName === 'FORM') {
             // Setup loader logic for new forms
-            node.removeEventListener('submit', node._loaderSubmitHandler || (()=>{}));
-            node._loaderSubmitHandler = function(e) {
+            node.removeEventListener('submit', node._loaderSubmitHandler || (() => { }));
+            node._loaderSubmitHandler = function (e) {
               if (!node.classList.contains('needs-confirm')) {
                 let btn = e.submitter || null;
                 if (!btn) {
@@ -787,8 +787,8 @@ document.addEventListener('DOMContentLoaded', () => {
             node.addEventListener('submit', node._loaderSubmitHandler);
           }
           else node.querySelectorAll?.('form').forEach(form => {
-            form.removeEventListener('submit', form._loaderSubmitHandler || (()=>{}));
-            form._loaderSubmitHandler = function(e) {
+            form.removeEventListener('submit', form._loaderSubmitHandler || (() => { }));
+            form._loaderSubmitHandler = function (e) {
               if (!form.classList.contains('needs-confirm')) {
                 let btn = e.submitter || null;
                 if (!btn) {
@@ -857,7 +857,57 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPasswordToggles();
   }).observe(document.body, { childList: true, subtree: true });
 
-  // Shipping costs
-  
+  // Configurable speed (degrees per second) and direction (1=clockwise, -1=counterclockwise) for each hand
+  const config = {
+    hour: {
+      speed: 400,
+      direction: 1
+    }, // 1x real speed, clockwise
+    minute: {
+      speed: 90,
+      direction: 1
+    }, // 1x real speed, clockwise
+    second: {
+      speed: 5,
+      direction: 1
+    } // 1x real speed, clockwise
+  };
+
+  // Internal state for virtual time
+  let base = new Date();
+  let last = Date.now();
+  let hourAngle = ((base.getHours() % 12) + base.getMinutes() / 60 + base.getSeconds() / 3600) * 30;
+  let minuteAngle = (base.getMinutes() + base.getSeconds() / 60 + base.getMilliseconds() / 60000) * 6;
+  let secondAngle = (base.getSeconds() + base.getMilliseconds() / 1000) * 6;
+
+  function animateHands() {
+    const now = Date.now();
+    const delta = (now - last) / 1000; // seconds since last frame
+    last = now;
+
+    // Advance each hand by its own speed and direction
+    hourAngle += config.hour.speed * config.hour.direction * (360 / 43200) * delta; // 12h = 43200s
+    minuteAngle += config.minute.speed * config.minute.direction * (360 / 3600) * delta; // 1h = 3600s
+    secondAngle += config.second.speed * config.second.direction * (360 / 60) * delta; // 1m = 60s
+
+    // Normalize angles
+    hourAngle = ((hourAngle % 360) + 360) % 360;
+    minuteAngle = ((minuteAngle % 360) + 360) % 360;
+    secondAngle = ((secondAngle % 360) + 360) % 360;
+
+    document.querySelector('.css-hour-hand').style.transform =
+      `translate(-50%, 0) rotate(${hourAngle}deg)`;
+    document.querySelector('.css-minute-hand').style.transform =
+      `translate(-50%, 0) rotate(${minuteAngle}deg)`;
+    document.querySelector('.css-second-hand').style.transform =
+      `translate(-50%, 0) rotate(${secondAngle}deg)`;
+    requestAnimationFrame(animateHands);
+  }
+  animateHands();
+
+  // Example: to change speed/direction dynamically, you can do:
+  // config.hour.speed = 2; // 2x speed
+  // config.minute.direction = -1; // counterclockwise
+
 
 });
