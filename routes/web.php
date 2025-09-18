@@ -161,6 +161,9 @@ Route::get('/risale-i-nur', function () { return view('risale'); })->name('risal
 Route::get('/said-nursi', function () { return view('saidnursi'); })->name('saidnursi');
 Route::get('/contact', function () { return view('contact'); })->name('contact');
 
+Route::get('/home2', function () { return view('home2'); })->name('home2');
+Route::get('/home3', function () { return view('home3'); })->name('home3');
+
 
 // Mollie payments
 Route::get('/payment/success/', [CheckoutController::class, 'paymentSuccess'])->name('payment.success');
