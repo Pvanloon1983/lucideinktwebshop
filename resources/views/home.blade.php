@@ -4,7 +4,7 @@
         {{-- <div class="logo-container mobile">
           <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>
       </div>    --}}
-      
+
 
         <div class="hero-section">
 
@@ -14,7 +14,7 @@
                     style="background-image: url('{{ asset('images/clockassets/clock-faded-6.webp') }}');">
 
                     <div class="upper-text">
-                        Stichting!!!
+                        Stichting
                     </div>
 
                     <img class="ring-image" src="{{ asset('images/clockassets/ClockAsset5.webp') }}" alt="Decorative Ring">
