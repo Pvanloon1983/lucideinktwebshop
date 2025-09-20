@@ -84,7 +84,7 @@
       @endrole
 
       @role('admin')
-      <a href="{{ route('shippingCostIndex') }}">
+      <a href="{{ route('productCategoryIndex') }}">
         <li class="nav-item {{ request()->routeIs('productCategoryIndex') || request()->routeIs('productCategoryCreatePage') || request()->routeIs('productCategoryEditPage') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('productCategoryIndex') ? 'active-admin-link' : '' }}">Productcategorieën</span>
         </li>  

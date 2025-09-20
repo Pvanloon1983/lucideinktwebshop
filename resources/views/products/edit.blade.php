@@ -168,7 +168,7 @@
                             @endif
                         </div>
 
-                        <button type="button" class="remove-image-btn"
+                        <button type="button" class="btn small"
                             data-input="image_{{ $i }}"
                             data-label="image_{{ $i }}_label_text"
                             data-preview="image_{{ $i }}_preview"

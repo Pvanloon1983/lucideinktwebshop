@@ -144,13 +144,19 @@ class OrderController extends Controller
         $this->authorize('update', $order);
 
         $request->validate([
-            'order-status' => 'required|in:pending,shipped,cancelled,paid,completed'
+            'order-status' => 'required|in:pending,shipped,cancelled,paid,completed',
+            'payment-status' => 'required|in:pending,paid,failed,refunded'
         ], [
             'order-status.required' => 'Selecteer een geldige status.',
             'order-status.in' => 'De gekozen status is ongeldig.',
+            'payment-status.required' => 'Selecteer een geldige status.',
+            'payment-status.in' => 'De gekozen status is ongeldig.',
         ]);
 
-        $order->update(['status' => $request->input('order-status')]);
+        $order->update([
+            'status' => $request->input('order-status'),
+            'payment_status' => $request->input('payment-status'),
+        ]);
 
         return back()->with('success', 'Bestelling is bijgewerkt');
     }

@@ -16,7 +16,7 @@
                         {{ $order->customer->billing_last_name }}</p>
                     <p><strong>Email:</strong> {{ $order->customer->billing_email }}</p>
                     <p><strong>Telefoonnummer:</strong> {{ $order->customer->billing_phone ?? '-' }}</p>
-                    <p><strong>Datum:</strong> {{ $order->created_at->format('d-m-Y H:i') }}</p>
+                    <p><strong>Datum aangemaakt:</strong> {{ $order->created_at->format('d-m-Y H:i') }}</p>
 
                     @if (empty($order->invoice_pdf_path))
                         <div>
@@ -68,7 +68,31 @@
                             </select>
                         </p>
 
-                        <p><strong>Betaalstatus:</strong> {{ $order->payment_status_label ?? 'Onbekend' }}</p>
+                        @php
+                            $paymentStatus = [
+                                'pending' => 'In afwachting',
+                                'paid' => 'Betaald',
+                                'failed' => 'Mislukt',
+                                'refunded' => 'Terugbetaald',
+                            ];
+                        @endphp
+                        <p>
+                            <strong>Betaalstatus:</strong>
+
+                            <select style="width: fit-content;margin-bottom: 10px" name="payment-status">
+                                @foreach ($paymentStatus as $key => $label)
+                                    <option value="{{ $key }}"
+                                            @if ($order->payment_status === $key) selected @endif>
+                                        {{ $label }}
+                                    </option>
+                                    @error('payment-status')
+                                    <div class="error">{{ $message }}</div>
+                                    @enderror
+                                @endforeach
+                            </select>
+
+
+                        </p>
 
                         @if (!empty($order->invoice_pdf_path))
                             <p><strong>Factuur:</strong>
@@ -77,7 +101,13 @@
                             </p>
                         @endif
 
+
+
+                        <button class="btn small" type="submit"><span class="loader"></span>Bestelling
+                            bijwerken</button>
+
                         @if ($order->payment_status !== 'paid' && $order->payment_link)
+                            <p>
                             <strong>Betaallink:</strong>
                             <div class="payment-link-box">
 
@@ -86,13 +116,12 @@
                                         betaallink</a>
                                 </button>
                                 <button class="btn small" id="copy-payment-link"
-                                    data-payment-link="{{ $order->payment_link }}">
+                                        data-payment-link="{{ $order->payment_link }}">
                                     Kopieer betaallink
                                 </button>
                             </div>
+                            </p>
                         @endif
-                        <button class="btn small" type="submit"><span class="loader"></span>Bestelling
-                            bijwerken</button>
                     </form>
                 </div>
 
