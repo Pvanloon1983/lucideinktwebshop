@@ -1032,6 +1032,10 @@ i {
   min-width: 80px;
 }
 
+.hero-section .upper-text {
+  display: none;
+}
+
 .hero-image-background .sub-title {
   bottom: 28%;
   width: 60%;
@@ -2436,22 +2440,6 @@ i {
   font-family: var(--font-regular), sans-serif;
 }
 
-.hero-section .upper-text {
-  position: absolute;
-  top: 16%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 2.5rem;
-  font-weight: bold;
-  color: #ecd6af;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  letter-spacing: 2px;
-  z-index: 2;
-  pointer-events: none;
-  font-family: 'AridaBold', serif;
-  display: none;
-}
-
 /* Remove redundant px units */
 .auth-page .form .alert-success {
   background: var(--surface-4);
@@ -2752,6 +2740,27 @@ i {
     margin-bottom: 20px;
   }
 
+  .hero-section .upper-text {
+  position: absolute;
+  top: 19%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
+  font-weight: bold;
+  color: #ecd6af;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+  z-index: 2;
+  pointer-events: none;
+  font-family: 'AridaBold', serif;
+  display: block;
+}
+
+  .hero-image-background .title {
+    width: 325px;
+    top: 25%;
+  }
+
   .css-hour-hand {
     height: 150px;
   }
@@ -2798,6 +2807,28 @@ i {
   .hero-section {
     margin-top: 0x;
   }
+
+    .hero-section .upper-text {
+  position: absolute;
+  top: 19%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 25px;
+  font-weight: bold;
+  color: #ecd6af;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  letter-spacing: 2px;
+  z-index: 2;
+  pointer-events: none;
+  font-family: 'AridaBold', serif;
+  display: block;
+}
+
+  .hero-image-background .title {
+    width: 200px;
+    top: 25%;
+  }
+
 
     .css-hour-hand {
     height: 110px;
