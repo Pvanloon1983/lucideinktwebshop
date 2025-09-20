@@ -623,7 +623,7 @@ thead {
   animation: spin 100s linear infinite;
   margin: 0;
   width: 100vw;
-  max-width: 1350px;
+  max-width: 530px;
   min-width: 250px;
   aspect-ratio: 1/1;
   object-fit: contain;
