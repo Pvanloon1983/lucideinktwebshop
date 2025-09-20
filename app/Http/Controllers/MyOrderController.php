@@ -19,38 +19,39 @@ class MyOrderController extends Controller
 
     public function showMyOrders()
     {
-           $user = auth()->user();
-            $customer = Customer::where('billing_email', $user->email)->first();
-            if (!$customer) {
-                // Return empty paginator if no customer found
-                $orders = Order::whereRaw('1=0')->paginate(10);
-                return view('orders.customerOrders', ['orders' => $orders]);
-            }
-            $orders = Order::where('customer_id', $customer->id)->with(['items', 'customer'])->orderBy('created_at', 'desc')->paginate(10);
+        $user = auth()->user();
+        $customer = Customer::where('billing_email', $user->email)->first();
+        if (!$customer) {
+            // Return empty paginator if no customer found
+            $orders = Order::whereRaw('1=0')->paginate(10);
             return view('orders.customerOrders', ['orders' => $orders]);
+        }
+        $orders = Order::where('customer_id', $customer->id)->with(['items', 'customer'])->orderBy('created_at',
+            'desc')->paginate(10);
+        return view('orders.customerOrders', ['orders' => $orders]);
     }
 
     public function showMyOrder(string $id)
     {
-            $user = auth()->user();
-            $customer = Customer::where('billing_email', $user->email)->first();
-            if (!$customer) {
-                // Return empty paginator if no customer found
-                $orders = Order::whereRaw('1=0')->paginate(10);
-                return view('orders.customerOrders', ['orders' => $orders]);
-            }
-            $order = Order::where('customer_id', $customer->id)->with(['items', 'customer'])->findOrFail($id);
-            $items = $order->items()->paginate(10);
-            $order->setRelation('items', $items);
+        $user = auth()->user();
+        $customer = Customer::where('billing_email', $user->email)->first();
+        if (!$customer) {
+            // Return empty paginator if no customer found
+            $orders = Order::whereRaw('1=0')->paginate(10);
+            return view('orders.customerOrders', ['orders' => $orders]);
+        }
+        $order = Order::where('customer_id', $customer->id)->with(['items', 'customer'])->findOrFail($id);
+        $items = $order->items()->paginate(10);
+        $order->setRelation('items', $items);
 
 
-            $delivery = json_decode($order->myparcel_delivery_json, true);
-            $pickupLocation = '';
-            if (!empty($delivery['deliveryType']) && strtolower($delivery['deliveryType']) === 'pickup') {
-                $pickupLocation = $delivery['pickup'] ?? $delivery['pickupLocation'] ?? null;
-            }
+        $delivery = json_decode($order->myparcel_delivery_json, true);
+        $pickupLocation = '';
+        if (!empty($delivery['deliveryType']) && strtolower($delivery['deliveryType']) === 'pickup') {
+            $pickupLocation = $delivery['pickup'] ?? $delivery['pickupLocation'] ?? null;
+        }
 
-            return view('orders.customerOrderShow', ['order' => $order, 'pickupLocation' => $pickupLocation]);
+        return view('orders.customerOrderShow', ['order' => $order, 'pickupLocation' => $pickupLocation]);
     }
 
     public function download_invoice($id)

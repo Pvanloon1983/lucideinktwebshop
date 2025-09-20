@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Customer;
-use App\Models\OrderItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -60,8 +58,8 @@ class Order extends Model
         'discount_price_total',
         'discount_code_checkout'
         ];
-    
-    public function getStatusLabelAttribute()
+
+    public function getStatusLabelAttribute(): string
     {
         $labels = [
             'pending' => 'In afwachting',

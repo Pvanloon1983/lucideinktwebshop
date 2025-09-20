@@ -13,6 +13,7 @@ class ProductCategoryController extends Controller
     {
         $this->middleware(['auth', 'role:admin']);
     }
+
     /**
      * Display a listing of the resource.
      */
@@ -20,7 +21,7 @@ class ProductCategoryController extends Controller
     {
         $this->authorize('viewAny', ProductCategory::class);
         $productCategories = ProductCategory::orderBy('created_at', 'desc')
-        ->paginate(10);
+            ->paginate(10);
         return view('productcategories.index', ['productCategories' => $productCategories]);
     }
 
@@ -46,7 +47,7 @@ class ProductCategoryController extends Controller
                 'max:255',
                 Rule::unique('product_categories', 'name')->whereNull('deleted_at'),
             ],
-            'is_published' => 'required|boolean',            
+            'is_published' => 'required|boolean',
         ], [
             'name.required' => 'Naam is verplicht.',
             'name.unique' => 'Deze naam is al in gebruik.',
@@ -62,7 +63,7 @@ class ProductCategoryController extends Controller
         $originalSlug = $slug;
         $counter = 1;
         while (ProductCategory::where('slug', $slug)->exists()) {
-            $slug = $originalSlug . '-' . $counter++;
+            $slug = $originalSlug.'-'.$counter++;
         }
 
         $productCategory = ProductCategory::create([
@@ -94,12 +95,12 @@ class ProductCategoryController extends Controller
         $category = ProductCategory::findOrFail($id);
         $this->authorize('update', $category);
         $validated = $request->validate([
-          'name' => [
-            'required',
-            'string',
-            'max:255',
-            Rule::unique('product_categories', 'name')->whereNull('deleted_at')->ignore($category->id),
-          ],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('product_categories', 'name')->whereNull('deleted_at')->ignore($category->id),
+            ],
             'is_published' => 'required|boolean',
         ], [
             'name.required' => 'Naam is verplicht.',
@@ -115,11 +116,11 @@ class ProductCategoryController extends Controller
         $originalSlug = $slug;
         $counter = 1;
         while (
-            ProductCategory::where('slug', $slug)
-                ->where('id', '!=', $category->id)
-                ->exists()
+        ProductCategory::where('slug', $slug)
+            ->where('id', '!=', $category->id)
+            ->exists()
         ) {
-            $slug = $originalSlug . '-' . $counter++;
+            $slug = $originalSlug.'-'.$counter++;
         }
 
         $category->update([
@@ -146,7 +147,8 @@ class ProductCategoryController extends Controller
         return back()->with('success', 'Productcategorie is succesvol verwijderd.');
     }
 
-    public function get () {
-	    return redirect()->route('dashboard');
-	}
+    public function get()
+    {
+        return redirect()->route('dashboard');
+    }
 }

@@ -7,22 +7,22 @@ use Illuminate\Http\Request;
 
 class CustomerController extends Controller
 {
-		public function __construct()
-		{
-			$this->middleware(['auth', 'role:admin']);
-		}
-		
-		public function index()
-		{
-			$customers = Customer::paginate(10);
+    public function __construct()
+    {
+        $this->middleware(['auth', 'role:admin']);
+    }
 
-			return view('customers.index', ['customers' => $customers]);
-		}
+    public function index()
+    {
+        $customers = Customer::paginate(10);
 
-		public function show(String $id)
-		{
-			$customer = Customer::findOrFail($id);
+        return view('customers.index', ['customers' => $customers]);
+    }
 
-			return view('customers.show', ['customer' => $customer]);
-		}
+    public function show(string $id)
+    {
+        $customer = Customer::findOrFail($id);
+
+        return view('customers.show', ['customer' => $customer]);
+    }
 }

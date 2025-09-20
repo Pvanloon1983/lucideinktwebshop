@@ -83,12 +83,12 @@ class CartController extends Controller
 
         // Use variant product id for cart key to differentiate prices per variant
         $productId = $product->id;
-        $cartKey = $productId . '-' . $productCopyId;
+        $cartKey = $productId.'-'.$productCopyId;
         $currentQty = isset($cart[$cartKey]) ? $cart[$cartKey]['quantity'] : 0;
         $newQty = $currentQty + $quantity;
         if ($newQty > $product->stock) {
             return back()->withInput()->withErrors([
-                'stock' => 'Je probeert meer toe te voegen dan op voorraad. Maximaal ' . $product->stock . ' beschikbaar.'
+                'stock' => 'Je probeert meer toe te voegen dan op voorraad. Maximaal '.$product->stock.' beschikbaar.'
             ]);
         }
 
@@ -133,13 +133,13 @@ class CartController extends Controller
             $productId = $item['product_id'];
             $productCopyId = $item['product_copy_id'];
             $quantity = $item['quantity'];
-            $cartKey = $productId . '-' . $productCopyId;
+            $cartKey = $productId.'-'.$productCopyId;
             $product = Product::find($productId);
 
             if (isset($cart[$cartKey])) {
                 if ($quantity > 0) {
                     if ($quantity > $product->stock) {
-                        $errors[] = 'Geen voldoende voorraad meer van ' . $product->title . '.<br>Er zijn nog maar ' . $product->stock . ' op voorraad.';
+                        $errors[] = 'Geen voldoende voorraad meer van '.$product->title.'.<br>Er zijn nog maar '.$product->stock.' op voorraad.';
                         continue;
                     }
                     $cart[$cartKey]['quantity'] = $quantity;
@@ -149,7 +149,7 @@ class CartController extends Controller
                     $updated = true;
                 }
             } else {
-                $errors[] = 'Product niet gevonden in winkelwagen: ' . ($product ? $product->title : $cartKey);
+                $errors[] = 'Product niet gevonden in winkelwagen: '.($product ? $product->title : $cartKey);
             }
         }
 
@@ -166,7 +166,7 @@ class CartController extends Controller
         }
     }
 
-    public function deleteItemFromCart(Request $request) 
+    public function deleteItemFromCart(Request $request)
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
@@ -175,7 +175,7 @@ class CartController extends Controller
 
         $productId = $request->input('product_id');
         $productCopyId = $request->input('product_copy_id');
-        $cartKey = $productId . '-' . $productCopyId;
+        $cartKey = $productId.'-'.$productCopyId;
         $cart = session()->get('cart', []);
 
         if (isset($cart[$cartKey])) {
@@ -187,7 +187,7 @@ class CartController extends Controller
         }
     }
 
-    public function removeCart(Request $request) 
+    public function removeCart(Request $request)
     {
         session()->forget('cart');
         return redirect()->back()->with('success', 'Winkelwagen is geleegd');

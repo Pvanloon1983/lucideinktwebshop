@@ -91,7 +91,7 @@ class ProductController extends Controller
         ];
 
         $validated = $request->validate([
-            'title' => ['required','string','max:255'],
+            'title' => ['required', 'string', 'max:255'],
             'is_published' => 'required|boolean',
             'short_description' => 'nullable|string',
             'long_description' => 'nullable|string',
@@ -117,7 +117,7 @@ class ProductController extends Controller
 
         // base_title altijd zonder exemplaar
         if ($copy && $copy->name) {
-            $baseTitle = preg_replace('/\s*-\s*'.preg_quote($copy->name,'/').'$/iu', '', $title);
+            $baseTitle = preg_replace('/\s*-\s*'.preg_quote($copy->name, '/').'$/iu', '', $title);
         } else {
             $baseTitle = $title;
         }
@@ -125,7 +125,7 @@ class ProductController extends Controller
 
         // title = base_title + exemplaar (indien aanwezig)
         if ($copy && $copy->name) {
-            $title = $baseTitle . ' - ' . $copy->name;
+            $title = $baseTitle.' - '.$copy->name;
         }
 
         // Uniekheid check
@@ -140,15 +140,15 @@ class ProductController extends Controller
 
         // Slug genereren
         $slug = Str::slug($title);
-        $originalSlug = $slug; 
+        $originalSlug = $slug;
         $counter = 1;
         while (Product::where('slug', $slug)->whereNull('deleted_at')->exists()) {
-            $slug = $originalSlug . '-' . $counter++;
+            $slug = $originalSlug.'-'.$counter++;
         }
 
         // Afbeeldingen verwerken
         for ($i = 1; $i <= 4; $i++) {
-            $imageField = 'image_' . $i;
+            $imageField = 'image_'.$i;
             if ($request->hasFile($imageField)) {
                 $validated[$imageField] = $request->file($imageField)->store('product_images', 'public');
             }
@@ -177,7 +177,8 @@ class ProductController extends Controller
             'created_by' => auth()->id(),
         ]);
 
-        return redirect()->route('productIndex')->with('success', 'Product met ID: '.$product->id.' succesvol aangemaakt.');
+        return redirect()->route('productIndex')->with('success',
+            'Product met ID: '.$product->id.' succesvol aangemaakt.');
     }
 
     /**
@@ -245,7 +246,7 @@ class ProductController extends Controller
         ];
 
         $validated = $request->validate([
-            'title' => ['required','string','max:255'],
+            'title' => ['required', 'string', 'max:255'],
             'is_published' => 'required|boolean',
             'short_description' => 'nullable|string',
             'long_description' => 'nullable|string',
@@ -272,7 +273,7 @@ class ProductController extends Controller
 
         // base_title altijd zonder exemplaar
         if ($copy && $copy->name) {
-            $baseTitle = preg_replace('/\s*-\s*'.preg_quote($copy->name,'/').'$/iu', '', $title);
+            $baseTitle = preg_replace('/\s*-\s*'.preg_quote($copy->name, '/').'$/iu', '', $title);
         } else {
             $baseTitle = $title;
         }
@@ -280,7 +281,7 @@ class ProductController extends Controller
 
         // title = base_title + exemplaar (indien aanwezig)
         if ($copy && $copy->name) {
-            $title = $baseTitle . ' - ' . $copy->name;
+            $title = $baseTitle.' - '.$copy->name;
         }
 
         // Uniekheid check
@@ -290,16 +291,16 @@ class ProductController extends Controller
 
         // Slug genereren
         $slug = Str::slug($title);
-        $originalSlug = $slug; 
+        $originalSlug = $slug;
         $counter = 1;
         while (Product::where('slug', $slug)->whereNull('deleted_at')->where('id', '!=', $product->id)->exists()) {
-            $slug = $originalSlug . '-' . $counter++;
+            $slug = $originalSlug.'-'.$counter++;
         }
 
         // Afbeeldingen verwerken
         for ($i = 1; $i <= 4; $i++) {
-            $imageField = 'image_' . $i;
-            $deleteField = 'delete_image_' . $i;
+            $imageField = 'image_'.$i;
+            $deleteField = 'delete_image_'.$i;
 
             if ($request->has($deleteField) && $product->$imageField) {
                 if (Storage::disk('public')->exists($product->$imageField)) {
@@ -352,7 +353,7 @@ class ProductController extends Controller
 
         // Verwijder afbeeldingen uit storage
         for ($i = 1; $i <= 4; $i++) {
-            $imageField = 'image_' . $i;
+            $imageField = 'image_'.$i;
             if (!empty($product->$imageField) && Storage::disk('public')->exists($product->$imageField)) {
                 Storage::disk('public')->delete($product->$imageField);
             }

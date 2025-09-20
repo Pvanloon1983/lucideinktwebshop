@@ -1,4 +1,6 @@
 /* === Fonts === */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
 @font-face {
   font-family: 'DelimaMTProLight';
   src: url('../fonts/DelimaMTPro-Light.otf') format('opentype');
@@ -44,6 +46,8 @@
   font-style: normal;
 }
 
+
+
 /* === Root Variables === */
 :root {
   /* Brand & typography */
@@ -59,7 +63,7 @@
   --mobile-header-height: 70px;
   --text-font-size: 18px;
   --text-font-size-page: 17px;
-  --text-font-size-menu-item: 20px;
+  --text-font-size-menu-item: 19px;
 
   /* Palette */
   --bg-parchment: #ecd6af;
@@ -539,18 +543,12 @@ thead {
   border-bottom: 4px solid var(--gold-2);
 }
 
-.desktop-navbar-container a {
-  font-family: 'CinzelBold';
-}
-
-.sidebar a {
-  font-family: 'CinzelRegular';
-  font-size: 15px;
-}
-
 .desktop-navbar-container a,
 .desktop-navbar-container .fa-cart-shopping {
   color: var(--cream-1);
+}
+
+.desktop-navbar-container a {font-family: 'CinzelBold';
 }
 
 @media (max-width: 992px) {
@@ -734,7 +732,7 @@ i {
 }
 
 .sidebar .navbar ul li a {
-  font-size: var(--text-font-size);
+  font-size: var(--text-font-size-menu-item);
   transition: color .1s ease-in-out;
 }
 
@@ -896,6 +894,11 @@ i {
 .header.dashboard .desktop-navbar-container a,
 .header.dashboard .desktop-navbar-container i {
   color: var(--main-font-color);
+  font-size: 18px;
+}
+
+.header.dashboard .desktop-navbar-container a {
+  font-family: var(--font-regular);
 }
 
 .page.dashboard h2 {
