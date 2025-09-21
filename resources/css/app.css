@@ -631,7 +631,7 @@ thead {
     object-fit: cover;
     width: 100vw;
     max-width: 650px;
-    overflow: visible;
+    overflow: unset;
 }
 
 .rotating-image {
