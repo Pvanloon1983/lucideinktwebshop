@@ -105,7 +105,7 @@ class OrderController extends Controller
         }
 
         [$discountValue, $discountType, $discountAmount, $totalAfter] =
-            $this->calculateDiscount($totalBefore, $data['discount_value'] ?? 0.0, $data['discount_type'] ?? null);
+            $this->calculateDiscount($totalBefore, (float)($data['discount_value'] ?? 0.0), $data['discount_type'] ?? null);
 
         $customer = $this->upsertCustomer($request);
 
@@ -265,23 +265,27 @@ class OrderController extends Controller
         ]);
     }
 
-    private function calculateDiscount(float $totalBefore, float $discountValue, ?string $discountType): array
+    private function calculateDiscount(float $totalBefore, float $discountValue, ?string $discountType = null): array
     {
         $discountAmount = 0.0;
 
         if ($discountValue > 0.0 && $discountType) {
             if ($discountType === 'percent') {
-                $discountAmount = round((float)$totalBefore * ((float)$discountValue / 100.0), 2);
-                $discountValue = (float)$discountValue;
+                $discountAmount = (float)number_format($totalBefore * ($discountValue / 100.0), 2, '.', '');
             } else {
-                $discountAmount = round((float)$discountValue, 2);
+                $discountAmount = (float)number_format($discountValue, 2, '.', '');
             }
         }
 
-        $discountAmount = min($discountAmount, (float)$totalBefore);
-        $totalAfter = round((float)$totalBefore - $discountAmount, 2);
+        $discountAmount = min($discountAmount, $totalBefore);
+        $totalAfter = (float)number_format($totalBefore - $discountAmount, 2, '.', '');
 
-        return [(float)$discountValue, $discountType, (float)$discountAmount, (float)$totalAfter];
+        return [
+            (float)number_format($discountValue, 2, '.', ''),
+            $discountType,
+            $discountAmount,
+            $totalAfter
+        ];
     }
 
     private function upsertCustomer(Request $request): Customer
@@ -362,7 +366,7 @@ class OrderController extends Controller
             $total += $subtotal;
         }
 
-        return [$lines, round($total, 2)];
+        return [$lines, (float)number_format($total, 2, '.', '')];
     }
 
     private function checkStock(array $lines): ?string

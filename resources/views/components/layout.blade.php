@@ -20,18 +20,12 @@
 
 <body style="position: relative;">
     <div
-        style="position: fixed; inset: 0; z-index: 0; background-image: url('{{ asset('images/sand-texture-min.webp') }}'); background-size: cover; background-position: center; opacity: 0.1; pointer-events: none;">
+        style="position: fixed; inset: 0; z-index: 40; background-image: url('{{ asset('images/sand-texture-min.webp') }}'); background-size: cover; background-position: center; opacity: 0.1; pointer-events: none;">
     </div>
 
-{{--    <div class="logo-container desktop">--}}
-{{--        <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>--}}
-{{--    </div>--}}
     <header class="header">
-
-
-
         <div class="header-box">
-                <div class="navbar-cart-sidebar-toggle">                    
+                <div class="navbar-cart-sidebar-toggle">
                     <li class="nav-item">
                         <a href="{{ route('cartPage') }}"><i
                                 class="fa-solid fa-cart-shopping"></i>
