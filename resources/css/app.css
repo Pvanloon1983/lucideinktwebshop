@@ -2815,7 +2815,7 @@ i {
       aspect-ratio: 1/1;
       object-fit: cover;
       width: 100vw;
-      max-width: 325px;
+      max-width: 360px;
       overflow: visible;
   }
 
