@@ -49,26 +49,35 @@
 
         </div>
 
-        <div style="display: none;" class="hero-text">
-            <div>
-                <img class="hero-text-image" src="{{ asset('images/bismillah.png') }}" alt="">
-                <h1 class="main-heading">Het doel van de Risale-i Nur is het redden van het geloof.</h1>
-                <p class="sub-text">Lucide Inkt is een non-profit organisatie die zich ter bevordering van het
-                    persoonlijke evenals het maatschappelijke welzijn richt op de verspreiding van geloofswaarheden die
-                    omschreven zijn in de boekenreeks van de Risale-i Nur.</p>
 
-                <div class="btn-box">
-                    <a href="#">
-                        <button class="btn">Lees de vertalingen</button>
-                    </a>
-                    <a href="{{ route('shop') }}">
-                        <button class="btn outlined">Naar de winkel</button>
-                    </a>
-                </div>
+        <section class="li-wrap li-section li-intro" aria-labelledby="welkom-title">
+            <h2 id="welkom-title">Welkom bij Stichting Lucide Inkt</h2>
+            <p>
+                Lucide Inkt is een non-profit organisatie toegewijd aan de vertaling en publicatie van de <em>Risale-i Nur</em>, in het Nederlands en Engels. Wij brengen deze betekenisvolle werken uit om geloofswaarheden helder en toegankelijk te maken.
+            </p>
+            <div class="li-divider" aria-hidden="true"></div>
 
+            <!-- De Risale-i Nur & vertalingen -->
+            <div class="li-grid-3" role="list">
+                <article class="li-card" role="listitem">
+                    <h3>De Risale-i Nur</h3>
+                    <p>Een verzameling van traktaten geschreven door Bediüzzaman Said Nursi waarin geloof en rede samenkomen om geloofsfundamenten te verduidelijken.</p>
+                    <a class="li-btn li-btn--primary" href="/risale-i-nur">Meer over Risale-i Nur</a>
+                </article>
+
+                <article class="li-card" role="listitem">
+                    <h3>Vertalingen & Uitgaven</h3>
+                    <p>Beschikbaar in het Nederlands en Engels. Elke uitgave is met zorg vertaald, geredigeerd en vormgegeven.</p>
+                    <a class="li-btn" href="/boeken">Bekijk onze boeken</a>
+                </article>
+
+                <article class="li-card" role="listitem">
+                    <h3>Webshop</h3>
+                    <p>Kies je uitgave en bestel direct. Mogelijkheid om online te lezen waar beschikbaar.</p>
+                    <a class="li-btn" href="/winkel">Ga naar winkel</a>
+                </article>
             </div>
-        </div>
-
+        </section>
 
 
     </main>

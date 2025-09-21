@@ -105,7 +105,7 @@ class OrderController extends Controller
         }
 
         [$discountValue, $discountType, $discountAmount, $totalAfter] =
-            $this->calculateDiscount($totalBefore, $data['discount_value'] ?? 0, $data['discount_type'] ?? null);
+            $this->calculateDiscount($totalBefore, $data['discount_value'] ?? 0.0, $data['discount_type'] ?? null);
 
         $customer = $this->upsertCustomer($request);
 
@@ -267,21 +267,21 @@ class OrderController extends Controller
 
     private function calculateDiscount(float $totalBefore, float $discountValue, ?string $discountType): array
     {
-        $discountAmount = 0;
+        $discountAmount = 0.0;
 
-        if ($discountValue > 0 && $discountType) {
+        if ($discountValue > 0.0 && $discountType) {
             if ($discountType === 'percent') {
-                $discountAmount = round($totalBefore * ((int) $discountValue / 100), 2);
-                $discountValue = (int) $discountValue;
+                $discountAmount = round((float)$totalBefore * ((float)$discountValue / 100.0), 2);
+                $discountValue = (float)$discountValue;
             } else {
-                $discountAmount = round($discountValue, 2);
+                $discountAmount = round((float)$discountValue, 2);
             }
         }
 
-        $discountAmount = min($discountAmount, $totalBefore);
-        $totalAfter = round($totalBefore - $discountAmount, 2);
+        $discountAmount = min($discountAmount, (float)$totalBefore);
+        $totalAfter = round((float)$totalBefore - $discountAmount, 2);
 
-        return [$discountValue, $discountType, $discountAmount, $totalAfter];
+        return [(float)$discountValue, $discountType, (float)$discountAmount, (float)$totalAfter];
     }
 
     private function upsertCustomer(Request $request): Customer
@@ -340,7 +340,7 @@ class OrderController extends Controller
         $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
 
         $lines = [];
-        $total = 0;
+        $total = 0.0;
 
         foreach ($rawItems as $id => $item) {
             $qty = (int) ($item['qty'] ?? 0);
@@ -349,13 +349,13 @@ class OrderController extends Controller
             }
 
             $product = $products[$id];
-            $subtotal = $product->price * $qty;
+            $subtotal = (float)$product->price * $qty;
 
             $lines[] = [
                 'product_id' => $product->id,
                 'title' => $product->title,
                 'qty' => $qty,
-                'unit_price' => $product->price,
+                'unit_price' => (float)$product->price,
                 'subtotal' => $subtotal,
             ];
 
