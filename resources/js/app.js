@@ -266,7 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (subItem) subItem.innerText = qty > 0 ? formatEuro(subtotal) : '';
       });
 
-      if (totalEl) totalEl.innerText = total > 0 ? 'Totaal: ' + formatEuro(total) : '';
+      if (totalEl) totalEl.innerText = total > 0 ? ' - Totaal: ' + formatEuro(total) : '';
 
       if (discountValueEl && discountTypeEl && discountedEl) {
         const discountValue = parseFloat(discountValueEl.value) || 0;

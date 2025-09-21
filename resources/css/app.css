@@ -588,22 +588,22 @@ thead {
 }
 
 .hero-image-background {
-  position: relative;
-  z-index: 20;
-  background-size: 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 95vw;
-  max-width: 650px;
-  min-width: 250px;
-  aspect-ratio: 1/1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 50%;
-  overflow: visible;
-  margin-top: 60px;
-  box-shadow: 0 8px 32px 0 rgba(98, 5, 5, 0.18), 0 2px 8px 0 rgba(171, 15, 20, 0.10), 0 1.5px 0.5px 0 rgba(0, 0, 0, 0.10);
+    position: relative;
+    z-index: 20;
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 95vw;
+    max-width: 600px;
+    min-width: 250px;
+    aspect-ratio: 1/1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    overflow: visible;
+    margin-top: 60px;
+    box-shadow: 0 8px 32px 0 rgba(98, 5, 5, 0.18), 0 2px 8px 0 rgba(171, 15, 20, 0.10), 0 1.5px 0.5px 0 rgba(0, 0, 0, 0.10);
 }
 
 .hero-image-background::before {
@@ -616,7 +616,22 @@ thead {
   border-radius: 50%;
   box-sizing: border-box;
   pointer-events: none;
-  z-index: 2;
+}
+
+.ring-image {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 5%;
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+    width: 100vw;
+    max-width: 650px;
+    overflow: visible;
 }
 
 .rotating-image {
@@ -631,23 +646,8 @@ thead {
   border-radius: 50%;
   background: transparent;
   position: relative;
-  z-index: 1;
+  z-index: 20;
   opacity: 0.2;
-}
-
-.ring-image {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.12;
-  border-radius: 50%;
-  object-fit: cover;
-  width: 100vw;
-  max-width: 1350px;
-  overflow: visible;
 }
 
 .css-clock-wrapper {
@@ -2142,6 +2142,7 @@ i {
   padding: 20px 30px;
   width: 100%;
   box-sizing: border-box;
+  position: relative;
 }
 
 .product-list ul {
@@ -2151,6 +2152,7 @@ i {
   display: flex;
   flex-direction: column;
   gap: 10px;
+    margin-top: 40px;
 }
 
 .product-list .input-box {
@@ -2173,9 +2175,21 @@ i {
   font-size: 13px;
 }
 
+.product-list .add-products-price-box h3 {
+    margin-bottom: 0;
+}
+
+
+.product-list .add-products-price-box {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    position: sticky;
+}
+
 .product-list .total-price {
   font-size: 15px;
-  margin-top: 15px;
   font-weight: bold;
 }
 
@@ -2377,7 +2391,7 @@ i {
   justify-content: center;
   gap: 50px;
   padding: 0 15px;
-  margin-top: 0px;
+  margin-top: 0;
   width: 100%;
   text-align: center;
   box-sizing: border-box;
@@ -2395,7 +2409,6 @@ i {
 .hero-text-image {
   text-align: center;
   margin: 0 auto;
-  margin-top: 0px;
   margin-bottom: 30px;
   display: block;
   width: 400px;
@@ -2532,7 +2545,7 @@ i {
   font-size: 16px;
   color: var(--main-font-color);
   font-weight: bold;
-  padding: 0px 18px 0px 18px;
+  padding: 0 18px 0 18px;
 }
 
 .order-bestelling-total-label {
@@ -2690,7 +2703,6 @@ i {
   }
 
   .navbar-cart-sidebar-toggle {
-    display: block;
     display: flex;
     gap: 10px;
   }
@@ -2777,8 +2789,12 @@ i {
 
 @media (max-width: 600px) {
   .hero-image-background {
-    max-width: 100%;
+    max-width: 75%;
     min-width: 80px;
+  }
+
+  .ring-image {
+      max-width: 108%;
   }
 
   .rotating-image {
@@ -2805,40 +2821,52 @@ i {
   }
 
   .hero-section {
-    margin-top: 0x;
+    margin-top: 0px;
   }
 
     .hero-section .upper-text {
-  position: absolute;
-  top: 19%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 25px;
-  font-weight: bold;
-  color: #ecd6af;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  letter-spacing: 2px;
-  z-index: 2;
-  pointer-events: none;
-  font-family: 'AridaBold', serif;
-  display: block;
-}
+    position: absolute;
+    top: 19%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    font-weight: bold;
+    color: #ecd6af;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    letter-spacing: 2px;
+    z-index: 2;
+    pointer-events: none;
+    font-family: 'AridaBold', serif;
+    display: block;
+  }
 
   .hero-image-background .title {
-    width: 200px;
+    width: 150px;
     top: 25%;
   }
 
+  .hero-image-background .sub-title {
+      margin-top: -25px;
+      width: 130px;
+  }
 
-    .css-hour-hand {
-    height: 110px;
+  .css-clock-center {
+      width: 15px;
+      height: 15px;
+  }
+
+  .css-hour-hand {
+    width: 20px;
+    height: 60px;
   }
 
   .css-second-hand {
-    height: 165px;
+    width: 15px;
+    height: 110px;
   }
 
   .css-minute-hand {
-    height: 140px;
+    width: 20px;
+    height: 80px;
   }
 }

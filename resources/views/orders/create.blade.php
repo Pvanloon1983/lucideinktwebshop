@@ -23,14 +23,19 @@
 
         {{-- Producten --}}
         <div class="item product-list" id="product-list">
-          <h3>Voeg producten toe</h3>
 
-          @if($errors->has('items'))
+          <div class="add-products-price-box">
+              <h3>Voeg producten toe</h3>
+              <div class="total-price" id="total-price"></div>
+          </div>
+
+        @if($errors->has('items'))
             <div class="alert alert-error">
               {{ $errors->first('items') }}
               <button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
             </div>
           @endif
+
 
           <ul>
             @foreach ($products as $product)
@@ -56,8 +61,6 @@
               </li>
             @endforeach
           </ul>
-
-          <div class="total-price" id="total-price"></div>
         </div>
 
         {{-- Korting --}}

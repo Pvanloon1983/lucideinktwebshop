@@ -12,7 +12,7 @@
             {{--                    <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>--}}
             {{--                </div>--}}
 
-            <div class="hero-image">
+            <div class="hero-image hero-wrap">
 
                 <div class="hero-image-background desktop"
                      style="background-image: url('{{ asset('images/clockassets/clock-faded-6.webp') }}');">
@@ -23,7 +23,7 @@
 
                     {{--                    <img class="logo-in-clock" src="{{ asset('images/Lucide-Inkt-Logo3.svg') }}" alt="">--}}
 
-                    <img class="ring-image" src="{{ asset('images/wittehtergrond.webp') }}" alt="Decorative Ring">
+                    <img class="ring-image" src="{{ asset('images/clockassets/clock-ring-15.webp') }}" alt="Decorative Ring">
 
                     <img class="rotating-image" src="{{ asset('images/clockassets/inner-turning2.webp') }}" alt="">
 
