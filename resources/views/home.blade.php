@@ -67,17 +67,17 @@
                 <div class="grid">
                     <div class="card one">
                         <h3>De Risale-i Nur</h3>
-                        <p>Een verzameling van traktaten geschreven door Bediüzzaman Said Nursi waarin geloof en rede samenkomen om geloofsfundamenten te verduidelijken.</p>
+                        <p>Een omvangrijke verzameling traktaten van Bediüzzaman Said Nursi, waarin geloof en rede samenkomen om de fundamenten van het geloof helder uiteen te zetten en richting te geven aan het dagelijks leven.</p>
                     </div>
 
                     <div class="card">
                         <h3>Vertalingen & Uitgaven</h3>
-                        <p>Beschikbaar in het Nederlands en Engels. Elke uitgave is met zorg vertaald, geredigeerd en vormgegeven.</p>
+                        <p>Beschikbaar in zowel Nederlands als Engels, zorgvuldig vertaald en geredigeerd, met aandacht voor stijl en vormgeving zodat de essentie en diepgang van de boodschap behouden blijft voor iedere lezer.</p>
                     </div>
 
                     <div class="card">
                         <h3>Webshop</h3>
-                        <p>Kies je uitgave en bestel direct. Mogelijkheid om online te lezen waar beschikbaar.</p>
+                        <p>Ontdek de beschikbare uitgaven in verschillende edities, bestel eenvoudig en veilig online, en lees geselecteerde delen direct digitaal waar dit mogelijk is, zodat je altijd toegang hebt tot de boodschap.</p>
                     </div>
                 </div>
             </section>

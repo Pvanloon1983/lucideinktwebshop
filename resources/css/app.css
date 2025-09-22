@@ -2810,7 +2810,7 @@ i {
 
 @media (max-width: 600px) {
   .hero-image-background {
-    max-width: 75%;
+    max-width: 85%;
     min-width: 80px;
   }
 
@@ -2832,7 +2832,7 @@ i {
       aspect-ratio: 1/1;
       object-fit: cover;
       width: 100vw;
-      max-width: 360px;
+      max-width: 405px;
       overflow: visible;
   }
 
@@ -2953,7 +2953,7 @@ i {
 
 @media screen and (max-width: 600px) {
     .intro-section .title {
-        font-size: 30px;
+        font-size: 28px;
         margin-top: 0;
         margin-bottom: 20px;
         margin-top: 10px;
@@ -2982,11 +2982,21 @@ i {
         grid-template-columns: 1fr;
         gap: 20px;
     }
+
+    .intro-section .sub-text {
+        width: 100%;
+        margin: 0 auto;
+        margin-top: 10px;
+        max-width: 800px;
+        text-align: center;
+        color: #224039;
+        margin-bottom: 30px;
+    }
 }
 
 .intro-section .grid .card {
     background-color: #fff7d6;
-    padding: 20px;
+    padding: 30px;
     border-radius: 20px;
     text-align: center;
     color:  #224039;
