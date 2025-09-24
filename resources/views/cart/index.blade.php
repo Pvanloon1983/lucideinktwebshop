@@ -74,8 +74,8 @@
                                     <input type="hidden" name="products[{{ $index }}][product_copy_id]" value="{{ $item['product_copy_id'] }}">
                                 </td>
                                 <td data-label="Exemplaar">{{ $item['product_copy_name'] }}</td>
-                                <td data-label="Stukprijs">€ {{ number_format($item['price'], 2, ',', '.') }}</td>
-                                <td data-label="Totaal">€ {{ number_format($item['price'] * $item['quantity'], 2, ',', '.') }}</td>
+                                <td data-label="Stukprijs">€{{ number_format($item['price'], 2, ',', '.') }}</td>
+                                <td data-label="Totaal">€{{ number_format($item['price'] * $item['quantity'], 2, ',', '.') }}</td>
                                 <td data-label="Actie">
                                     <button type="submit" class="btn small" form="delete-{{ $item['product_id'] }}-{{ $item['product_copy_id'] }}">Verwijderen</button>
                                 </td>
@@ -92,7 +92,7 @@
                                     $total += $item['price'] * $item['quantity'];
                                 }
                             @endphp
-                            <p><strong>Totaal: € {{ number_format($total, 2, ',', '.') }}</strong></p>
+                            <p><strong>Totaal: €{{ number_format($total, 2, ',', '.') }}</strong></p>
                         </div>
 
                         <div class="button-box">

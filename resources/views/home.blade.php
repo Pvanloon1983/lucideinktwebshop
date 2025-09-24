@@ -30,7 +30,7 @@
                     <img class="rotating-image" src="{{ asset('images/clockassets/inner-turning2.webp') }}" alt="">
 
                     <img class="title" src="{{ asset('images/clockassets/clock-faded-5.webp') }}" alt="">
-                    <img class="sub-title" src="{{ asset('images/clockassets/Text-2.webp') }}" alt="">
+                    <img class="sub-title" src="{{ asset('images/levensminuten.webp') }}" alt="">
 
                     <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>
 

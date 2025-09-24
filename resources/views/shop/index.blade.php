@@ -41,8 +41,18 @@
                         </div>
                         <div class="title-price">
                             <h6 class="title">{{ $product->base_title ?? $product->title }}</h6>
-                            @if (isset($product->price) && !empty($product->category->name))
-                                <p class="price">€ {{ $product->price }}</p>
+
+                            @php
+                                $baseTitleProducts = \App\Models\Product::where('base_title', $product->base_title)->get();
+                            @endphp
+                            @if (isset($product->price))
+                                <p class="price">
+                                    @if(isset($baseTitleProducts) && $baseTitleProducts->count() > 1)
+                                        €{{ number_format($baseTitleProducts->min('price'), 2) }} - €{{ number_format($baseTitleProducts->max('price'), 2) }}
+                                    @else
+                                        {{ number_format($product->price, 2) }}
+                                    @endif
+                                </p>
                             @endif
                         </div>
                     </div>

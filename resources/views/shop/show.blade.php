@@ -15,7 +15,7 @@
 		<div class="alert alert-error">
 			<div>
 				{!! $errors->first('stock') !!}
-			</div>  
+			</div>
 			<button type="button" class="alert-close" onclick="this.parentElement.style.display='none';">&times;</button>
 		</div>
 		@endif
@@ -49,9 +49,20 @@
                         <p class="category">{{ $product->category->name }}</p>
                     @endif
                     <div id="exemplaar-info">
-                        <p class="price">&nbsp;</p>
-                        <p class="short_description">&nbsp;</p>
-                        <div class="product-stock">&nbsp;</div>
+                        @php
+                            $baseTitleProducts = \App\Models\Product::where('base_title', $product->base_title)->get();
+                        @endphp
+                        <p class="price">
+                            @if(isset($baseTitleProducts) && $baseTitleProducts->count() > 1)
+                                €{{ number_format($baseTitleProducts->min('price'), 2) }} - €{{ number_format($baseTitleProducts->max('price'), 2) }}
+                            @else
+                                {{ number_format($product->price, 2) }}
+                            @endif
+                        </p>
+                        <p class="long_description">
+                            {{ $product->long_description }}
+                        </p>
+                        <div class="product-stock"></div>
                     </div>
 
                     <form action="{{ route('addToCart') }}" method="POST" id="addToCartForm">
@@ -59,8 +70,8 @@
                         <input type="hidden" name="product_id" value="{{ $product->id }}">
                         <input type="hidden" name="quantity" value="1">
                         <div class="form-input">
-                            <label for="product_copy_id">Exemplaar</label>
                             <select style="width: auto;display: block;" name="product_copy_id" id="product_copy_id" required>
+                                <option value="">Kies een exemplaar</option>
                                 @foreach ($productCopies as $i => $productCopy)
                                     <option value="{{ $productCopy->id }}" {{ $i === 0 ? 'selected' : '' }}>{{ $productCopy->name }}</option>
                                 @endforeach
@@ -81,6 +92,7 @@
         </div>
     </main>
     <script>
+
         document.addEventListener('DOMContentLoaded', function() {
             const select = document.getElementById('product_copy_id');
             const btn = document.getElementById('addToCartBtn');
@@ -88,23 +100,39 @@
             const exemplaren = @json($exemplaren);
             const imageEl = document.querySelector('.single-product .image img');
 
+            // Store original product info
+            const original = {
+                price: exemplaarInfo.querySelector('.price').innerHTML,
+                long_description: exemplaarInfo.querySelector('.long_description').innerHTML,
+                product_stock: exemplaarInfo.querySelector('.product-stock').innerHTML,
+                image: imageEl.src
+            };
+
             function updateExemplaarInfo(copyId) {
-                let info = {price: '', short_description: '', stock: '', image_1: ''};
+                if (!copyId) {
+                    // Restore original info
+                    exemplaarInfo.querySelector('.price').innerHTML = original.price;
+                    exemplaarInfo.querySelector('.long_description').innerHTML = original.long_description;
+                    exemplaarInfo.querySelector('.product-stock').innerHTML = original.product_stock;
+                    imageEl.src = original.image;
+                    btn.disabled = true;
+                    return;
+                }
                 let ex = exemplaren.find(e => e.product_copy_id == copyId);
                 if (ex) {
-                    info.price = '€ ' + ex.price;
-                    info.short_description = ex.short_description || '';
+                    exemplaarInfo.querySelector('.price').innerHTML = '€' + ex.price;
+                    exemplaarInfo.querySelector('.long_description').innerHTML = ex.long_description || '';
                     if (ex.stock == 0) {
-                        info.stock = '<p class="no-stock">Niet meer op voorraad</p>';
+                        exemplaarInfo.querySelector('.product-stock').innerHTML = '<p class="no-stock">Niet meer op voorraad</p>';
                         btn.disabled = true;
                     } else if (ex.stock > 0 && ex.stock <= 3) {
-                        info.stock = '<p class="low-stock">Nog maar ' + ex.stock + ' op voorraad</p>';
+                        exemplaarInfo.querySelector('.product-stock').innerHTML = '<p class="low-stock">Nog maar ' + ex.stock + ' op voorraad</p>';
                         btn.disabled = false;
                     } else {
-                        info.stock = '';
+                        exemplaarInfo.querySelector('.product-stock').innerHTML = '';
                         btn.disabled = false;
                     }
-                    // Dynamisch afbeelding
+                    // Dynamically update image
                     if (ex.image_1) {
                         let imgSrc = ex.image_1;
                         if (!imgSrc.startsWith('https://')) {
@@ -119,20 +147,17 @@
                         imageEl.src = imgSrc;
                     }
                 }
-                exemplaarInfo.querySelector('.price').innerHTML = info.price;
-                exemplaarInfo.querySelector('.short_description').innerHTML = info.short_description;
-                exemplaarInfo.querySelector('.product-stock').innerHTML = info.stock;
             }
 
-            // Initieel: selecteer eerste exemplaar
-            if (select.options.length > 0) {
-                select.selectedIndex = 0;
-                updateExemplaarInfo(select.value);
-            }
+            // On page load, show original info and disable button
+            select.selectedIndex = 0;
+            updateExemplaarInfo(select.value);
 
             select.addEventListener('change', function() {
-                updateExemplaarInfo(select.value);
+                updateExemplaarInfo(this.value);
             });
         });
+
+
     </script>
 </x-layout>
