@@ -155,7 +155,7 @@ button,
   cursor: pointer;
   border-radius: 20px;
   border: none;
-  background: #719497;
+  background: var(--green-2);
   color: var(--ink-inverse);
   transition: filter .1s ease-in-out;
   font-size: 16px;
@@ -164,6 +164,7 @@ button,
   align-items: center;
   gap: 5px;
   height: 40px;
+  border-bottom: 4px solid var(--gold-2);
 }
 
 .btn.small {
@@ -880,10 +881,11 @@ i {
 }
 
 .auth-page .form .form-input .btn {
-  background: var(--main-font-color);
+  background: var(--green-2);
   color: var(--ink-inverse);
-  border-radius: 4px;
+  border-radius: 20px;
   font-size: 16px;
+  border-bottom: 4px solid var(--gold-2);
 }
 
 .auth-page .form-input a {
@@ -1695,11 +1697,12 @@ i {
 
 .single-product .add-to-cart-button {
   border: none;
-  background: #719497;
+  background: var(--green-2);
   border-radius: 20px;
   color: var(--ink-inverse);
   margin: 18px 0 30px;
   transition: background-color .15s;
+  border-bottom: 4px solid var(--gold-2);
 }
 
 /* === Cart === */
