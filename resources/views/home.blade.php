@@ -35,9 +35,9 @@
 
             <section class="intro-section">
 
-{{--                <div class="bismillah">--}}
-{{--                    <img src="{{ url('/images/bismillah_red.webp') }}" alt="">--}}
-{{--                </div>--}}
+                <div class="bismillah">
+                    <img src="{{ url('/images/bismillah_red.webp') }}" alt="">
+                </div>
 
                 <h2 class="title">Welkom bij Stichting Lucide Inkt</h2>
                 <div class="sub-text">
