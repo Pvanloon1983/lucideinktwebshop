@@ -549,52 +549,14 @@ thead {
   box-sizing: border-box;
 }
 
-.hero-image {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  overflow: visible;
-  background: none;
-}
-
-.hero-text {
-  margin-top: 50px;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  background: linear-gradient(to bottom, #f7ecd7 0%, #fff 100%);
-  padding: 75px 0;
-}
-
-.hero-text .main-heading {
-  margin-top: 5px;
-  line-height: 1.4em;
-  font-size: 40px;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 20px;
-  font-family: 'AridaBold', serif;
-}
-
-.hero-text .sub-text {
-  margin: 0 auto 30px auto;
-  font-size: 19px;
-  text-align: center;
-  width: 100%;
-  max-width: 1200px;
-  font-family: var(--font-regular), sans-serif;
-}
-
 .hero-image-background {
     position: relative;
-    z-index: 20;
+    z-index:20;
     background-size: 100%;
     background-repeat: no-repeat;
     background-position: center;
-    width: 95vw;
-    max-width: 600px;
+    width: 100%;
+    max-width: 900px;
     min-width: 250px;
     aspect-ratio: 1/1;
     display: flex;
@@ -602,62 +564,35 @@ thead {
     align-items: center;
     border-radius: 50%;
     overflow: visible;
-    margin-top: 60px;
-    box-shadow: 0 8px 32px 0 rgba(98, 5, 5, 0.18), 0 2px 8px 0 rgba(171, 15, 20, 0.10), 0 1.5px 0.5px 0 rgba(0, 0, 0, 0.10);
+    margin-top: 20px;
 }
 
-.hero-image-background::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  box-sizing: border-box;
-  pointer-events: none;
+.gradient_bg {
+    width: 100%;
 }
 
-.ring-image {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    z-index: 0;
-    opacity: 5%;
-    border-radius: 50%;
-    aspect-ratio: 1/1;
-    object-fit: cover;
-    width: 100vw;
-    max-width: 650px;
-    overflow: unset;
-}
-
-.ring-image-mobile {
-    display: none;
-}
 
 .rotating-image {
-  animation: spin 100s linear infinite;
-  margin: 0;
-  width: 100vw;
-  max-width: 450px;
-  min-width: 250px;
-  aspect-ratio: 1/1;
-  object-fit: contain;
-  display: block;
-  border-radius: 50%;
-  background: transparent;
-  position: relative;
-  z-index: 20;
-  opacity: 0.2;
+  /*animation: spin 100s linear infinite;*/
+  /*margin: 0;*/
+  /*width: 100vw;*/
+  /*max-width: 300px;*/
+  /*min-width: 250px;*/
+  /*aspect-ratio: 1/1;*/
+  /*object-fit: contain;*/
+  /*display: block;*/
+  /*border-radius: 50%;*/
+  /*background: transparent;*/
+  /*position: relative;*/
+  /*z-index: 200;*/
+  /*opacity: 1;*/
+  /*  top: -5%;*/
+  /*  left: 1%;*/
 }
+
 
 .css-clock-wrapper {
   position: absolute;
-  left: 50%;
-  top: 50%;
   transform: translate(-50%, -50%);
   z-index: 20;
   pointer-events: none;
@@ -691,21 +626,21 @@ thead {
 
 .css-hour-hand {
   width: 70px;
-  height: 100px;
+  height: 90px;
   z-index: 3;
   clip-path: polygon(38% 100%, 62% 100%, 52% 10%, 48% 10%);
 }
 
 .css-minute-hand {
   width: 60px;
-  height: 160px;
+  height: 130px;
   z-index: 2;
   clip-path: polygon(40% 100%, 60% 100%, 52% 10%, 48% 10%);
 }
 
 .css-second-hand {
   width: 25px;
-  height: 230px;
+  height: 170px;
   z-index: 4;
   clip-path: polygon(42% 100%, 58% 100%, 53% 10%, 47% 10%);
 }
@@ -714,8 +649,8 @@ thead {
   position: absolute;
   left: 50%;
   top: 50%;
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   background: linear-gradient(0deg, #2f0d0d 0%, #712022 100%);
   border-radius: 50%;
   transform: translate(-50%, -50%);
@@ -2835,8 +2770,10 @@ i {
 
 @media (max-width: 600px) {
   .hero-image-background {
-    max-width: 85%;
+    max-width: 100%;
     min-width: 80px;
+    margin-top: -20px;
+      margin-right: 10px;
   }
 
   .ring-image {
@@ -2915,23 +2852,23 @@ i {
   }
 
   .css-clock-center {
-      width: 15px;
-      height: 15px;
+      width: 10px;
+      height: 10px;
   }
 
   .css-hour-hand {
     width: 20px;
-    height: 60px;
+    height: 40px;
   }
 
   .css-second-hand {
     width: 15px;
-    height: 110px;
+    height: 70px;
   }
 
   .css-minute-hand {
     width: 20px;
-    height: 80px;
+    height: 50px;
   }
 }
 
@@ -2944,6 +2881,7 @@ i {
     width: 100%;
     max-width: 1200px;
     margin: 50px auto;
+    margin-top: -40px;
 }
 
 .intro-section .bismillah {
@@ -3088,3 +3026,198 @@ i {
 .book-presentation .title {
     color: var(--main-font-color);
 }
+
+
+/* ===== Container: vierkant, gecentreerd, responsive ===== */
+.hero-section{
+    --size: clamp(260px, 85vw, 900px);  /* maximaal 900px zoals je ontwerp */
+    position: relative;
+    width: var(--size);
+    aspect-ratio: 1 / 1;
+    margin: 20px auto 0;
+    filter: drop-shadow(0 8px 24px rgba(0,0,0,.15));
+}
+
+/* Alle lagen vullen de container en centreren hun inhoud */
+.hero-section .layer{
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+}
+
+/* Afbeeldingen schalen netjes binnen de cirkel */
+.hero-section img{
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    position: relative;
+    top: 0px;
+}
+
+
+/* Laag-volgorde (achter → voor) */
+.layer-rotor { z-index: 1; }
+.layer-bg    { z-index: 2; }
+.layer-ring  { z-index: 3; }
+.layer-clock { z-index: 4; pointer-events: none; }
+
+.layer-rotor {
+    position: relative !important;
+    top: -5% !important;
+    left: 1% !important;
+    width: 35%;
+}
+
+.grd-bg {
+    position: absolute;
+    width: 41.5% !important;
+    height: 41.5% !important;
+    top: -4.9% !important;
+    left: 1% !important;
+    border-radius: 50%;
+    box-shadow: 0 8px 32px #6205052e,0 2px 8px #ab0f141a,0 1.5px .5px #0000001a;
+    opacity: 80%;
+}
+
+/* Rotatie van de achterste rotor */
+.rotating-image{
+    animation: spin 40s linear infinite;
+    will-change: transform;
+    position: relative;
+    opacity: 0.6;
+}
+@keyframes spin{
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(-360deg); }
+}
+
+/* ===== Klok exact midden ===== */
+.css-clock-wrapper{
+    position: absolute;
+    left: 51%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    /*  pas deze aan om verhouding t.o.v. ring te finetunen */
+    width: 58%;
+    height: 58%;
+    display: grid;
+    place-items: center;
+    pointer-events: none;
+    z-index: 4;
+}
+.css-clock{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border-radius: 50%;
+}
+
+/* Wijzers */
+.css-hour-hand,
+.css-minute-hand,
+.css-second-hand{
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    transform-origin: 50% 100%;
+    background: linear-gradient(0deg, #300d0e 0%, #712022 100%);
+    border-radius: 0 0 6px 6px;
+    clip-path: polygon(48% 100%, 52% 100%, 54% 20%, 50% 0, 46% 20%);
+    box-shadow: 0 4px 12px rgba(0,0,0,.18), 0 1.5px 4px rgba(86,32,28,.12);
+}
+
+/* Lengtes (pas gerust aan tot het mooi binnen je ring valt) */
+.css-hour-hand   { width: clamp(20px, 7vw, 70px);  height: clamp(40px, 9vw, 90px);  z-index: 3; clip-path: polygon(38% 100%, 62% 100%, 52% 10%, 48% 10%); }
+.css-minute-hand { width: clamp(20px, 6vw, 60px);  height: clamp(50px, 13vw, 130px); z-index: 2; clip-path: polygon(40% 100%, 60% 100%, 52% 10%, 48% 10%); }
+.css-second-hand { width: clamp(15px, 3vw, 25px);  height: clamp(70px, 15vw, 170px); z-index: 4; clip-path: polygon(42% 100%, 58% 100%, 53% 10%, 47% 10%); }
+
+/* Middelpunt */
+.css-clock-center{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: clamp(10px, 3vw, 23px);
+    height: clamp(10px, 3vw, 23px);
+    background: linear-gradient(0deg, #2f0d0d 0%, #712022 100%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+.hero-section img{
+
+}
+
+/* ===== Responsive tweaks (optioneel) ===== */
+@media (max-width: 992px){
+    .hero-section {
+        margin-top: -2.5vw;
+    }
+
+    .css-clock-center{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: clamp(10px, 3vw, 18px);
+        height: clamp(10px, 3vw, 18px);
+        background: linear-gradient(0deg, #2f0d0d 0%, #712022 100%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+    }
+}
+
+@media (max-width: 600px){
+    .hero-section img{
+        width: 115%;
+        height: 115%;
+        object-fit: contain;
+        display: block;
+        position: relative;
+        top: -10px;
+        right: 4px;
+    }
+
+    .css-clock-wrapper {
+        position: absolute;
+        left: 50%;
+        top: 49%;
+    }
+
+    .grd-bg {
+        position: absolute;
+        width: 48% !important;
+        height: 48% !important;
+        top: -1% !important;
+        left: 0% !important;
+        border-radius: 50%;
+        box-shadow: 0 8px 32px #6205052e,0 2px 8px #ab0f141a,0 1.5px .5px #0000001a;
+        opacity: 80%;
+    }
+
+    .layer-rotor {
+        position: relative !important;
+        top: 2% !important;
+        left: 1.5% !important;
+        width: 35%;
+    }
+
+    .css-clock-center{
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: clamp(10px, 3vw, 4px);
+        height: clamp(10px, 3vw, 4px);
+        background: linear-gradient(0deg, #2f0d0d 0%, #712022 100%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10;
+    }
+}
+
+
+
+

@@ -857,57 +857,40 @@ document.addEventListener('DOMContentLoaded', () => {
     setupPasswordToggles();
   }).observe(document.body, { childList: true, subtree: true });
 
-  // Configurable speed (degrees per second) and direction (1=clockwise, -1=counterclockwise) for each hand
-  const config = {
-    hour: {
-      speed: 400,
-      direction: 1
-    }, // 1x real speed, clockwise
-    minute: {
-      speed: 90,
-      direction: 1
-    }, // 1x real speed, clockwise
-    second: {
-      speed: 5,
-      direction: 1
-    } // 1x real speed, clockwise
-  };
+    /* ===== Realtime klok-animatie =====
+       Bereken elke frame de echte tijd → geen drift, altijd synchroon.
+       Wil je versnellen/vertragen? Zet multipliers <> 1.
+    */
+    (function(){
+        const hourEl   = document.querySelector('.css-hour-hand');
+        const minuteEl = document.querySelector('.css-minute-hand');
+        const secondEl = document.querySelector('.css-second-hand');
 
-  // Internal state for virtual time
-  let base = new Date();
-  let last = Date.now();
-  let hourAngle = ((base.getHours() % 12) + base.getMinutes() / 60 + base.getSeconds() / 3600) * 30;
-  let minuteAngle = (base.getMinutes() + base.getSeconds() / 60 + base.getMilliseconds() / 60000) * 6;
-  let secondAngle = (base.getSeconds() + base.getMilliseconds() / 1000) * 6;
+        const speed = { hour: 400, minute: 100, second: 8 }; // 1 = realtime
 
-  function animateHands() {
-    const now = Date.now();
-    const delta = (now - last) / 1000; // seconds since last frame
-    last = now;
+        function frame(){
+            const now = new Date();
 
-    // Advance each hand by its own speed and direction
-    hourAngle += config.hour.speed * config.hour.direction * (360 / 43200) * delta; // 12h = 43200s
-    minuteAngle += config.minute.speed * config.minute.direction * (360 / 3600) * delta; // 1h = 3600s
-    secondAngle += config.second.speed * config.second.direction * (360 / 60) * delta; // 1m = 60s
+            // Hoeken in graden
+            const h = now.getHours() % 12;
+            const m = now.getMinutes();
+            const s = now.getSeconds();
+            const ms = now.getMilliseconds();
 
-    // Normalize angles
-    hourAngle = ((hourAngle % 360) + 360) % 360;
-    minuteAngle = ((minuteAngle % 360) + 360) % 360;
-    secondAngle = ((secondAngle % 360) + 360) % 360;
+            // Realtime berekening (met fracties) + optionele speed multipliers
+            const secondAngle = ((s + ms/1000) * 6) * speed.second;                // 360/60 = 6
+            const minuteAngle = ((m + (s + ms/1000)/60) * 6) * speed.minute;       // 360/60 = 6
+            const hourAngle   = ((h + (m + s/60)/60) * 30) * speed.hour;           // 360/12 = 30
 
-    document.querySelector('.css-hour-hand').style.transform =
-      `translate(-50%, 0) rotate(${hourAngle}deg)`;
-    document.querySelector('.css-minute-hand').style.transform =
-      `translate(-50%, 0) rotate(${minuteAngle}deg)`;
-    document.querySelector('.css-second-hand').style.transform =
-      `translate(-50%, 0) rotate(${secondAngle}deg)`;
-    requestAnimationFrame(animateHands);
-  }
-  animateHands();
+            // Transform (let op: onze origin is onderaan; we vertalen -50% in X en 0 in Y)
+            hourEl.style.transform   = `translate(-50%, 0) rotate(${hourAngle}deg)`;
+            minuteEl.style.transform = `translate(-50%, 0) rotate(${minuteAngle}deg)`;
+            secondEl.style.transform = `translate(-50%, 0) rotate(${secondAngle}deg)`;
 
-  // Example: to change speed/direction dynamically, you can do:
-  // config.hour.speed = 2; // 2x speed
-  // config.minute.direction = -1; // counterclockwise
+            requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+    })();
 
 
 });

@@ -1,52 +1,34 @@
 <x-layout>
     <main class="page home">
 
-        {{-- <div class="logo-container mobile">
-          <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>
-      </div>    --}}
-
-
+        <!-- ===== HERO + CLOCK (Blade) ===== -->
         <section class="hero-section">
-
-            {{--                <div class="logo-container desktop">--}}
-            {{--                    <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>--}}
-            {{--                </div>--}}
-
-            <div class="hero-image hero-wrap">
-
-                <div class="hero-image-background desktop"
-                     style="background-image: url('{{ asset('images/clockassets/clock-faded-6.webp') }}');">
-
-                    <div class="upper-text">
-                        Stichting
-                    </div>
-
-                    {{--                    <img class="logo-in-clock" src="{{ asset('images/Lucide-Inkt-Logo3.svg') }}" alt="">--}}
-
-                    <img class="ring-image" src="{{ asset('images/clockassets/clock-ring-15.webp') }}" alt="Decorative Ring">
-
-                    <img class="ring-image-mobile" src="{{ asset('images/clockassets/MobielBackGround.webp') }}" alt="Decorative Ring">
-
-                    <img class="rotating-image" src="{{ asset('images/clockassets/inner-turning2.webp') }}" alt="">
-
-                    <img class="title" src="{{ asset('images/clockassets/clock-faded-5.webp') }}" alt="">
-                    <img class="sub-title" src="{{ asset('images/levensminuten.webp') }}" alt="">
-
-                    <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>
-
-
-                    <div class="css-clock-wrapper">
-                        <div class="css-clock">
-                            <div class="css-hour-hand"></div>
-                            <div class="css-minute-hand"></div>
-                            <div class="css-second-hand"></div>
-                            <div class="css-clock-center"></div>
-                        </div>
-                    </div>
-                </div>
-
+            <!-- Achterste laag: draaiende rotor -->
+            <div class="layer layer-rotor">
+                <img class="rotating-image" src="{{ asset('images/clockassets/inner-turning2.webp') }}" alt="">
             </div>
 
+            <!-- Middenlaag: gradient / ornament achtergrond -->
+            <div class="layer layer-bg">
+                <img class="grd-bg" src="{{ asset('images/grd_bg.webp') }}" alt="">
+            </div>
+
+            <!-- Bovenlaag: sier-ring -->
+            <div class="layer layer-ring">
+                <img src="{{ asset('images/ring_85.webp') }}" alt="">
+            </div>
+
+            <!-- Voorste laag: CSS klok -->
+            <div class="layer layer-clock">
+                <div class="css-clock-wrapper">
+                    <div class="css-clock">
+                        <div class="css-hour-hand"></div>
+                        <div class="css-minute-hand"></div>
+                        <div class="css-second-hand"></div>
+                        <div class="css-clock-center"></div>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <div class="section-wrapper">
