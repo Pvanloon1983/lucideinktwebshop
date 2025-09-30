@@ -866,7 +866,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const minuteEl = document.querySelector('.css-minute-hand');
         const secondEl = document.querySelector('.css-second-hand');
 
-        const speed = { hour: 400, minute: 100, second: 8 }; // 1 = realtime
+        const speed = { hour: 400, minute: 100, second: 4 }; // 1 = realtime
 
         function frame(){
             const now = new Date();
@@ -892,5 +892,46 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(frame);
     })();
 
+    /* Home page modal */
+    const modal = document.getElementById('leesMeerModal');
+    const openBtn = document.getElementById('openModalBtn');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const scrollModalContent = document.getElementById('scrollModalContent');
+    function openScrollModal() {
+        modal.classList.remove('hidden');
+        // Force reflow to allow transition
+        void modal.offsetWidth;
+        modal.classList.add('show');
+        modal.classList.remove('fading-out');
+        scrollModalContent.classList.remove('close');
+        setTimeout(function() {
+            scrollModalContent.classList.add('open');
+        }, 10);
+    }
+    function closeScrollModal() {
+        scrollModalContent.classList.remove('open');
+        scrollModalContent.classList.add('close');
+        modal.classList.add('fading-out');
+        modal.classList.remove('show');
+        setTimeout(function() {
+            modal.classList.add('hidden');
+            modal.classList.remove('fading-out');
+            scrollModalContent.classList.remove('close');
+        }, 1100); // match the new slower transition duration
+    }
+    // Initially hide modal
+    modal.classList.add('hidden');
+    openBtn.addEventListener('click', openScrollModal);
+    closeBtn.addEventListener('click', closeScrollModal);
+    window.addEventListener('click', function(e) {
+        if (e.target === modal || e.target.classList.contains('custom-modal-overlay')) {
+            closeScrollModal();
+        }
+    });
+    window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeScrollModal();
+        }
+    });
 
 });

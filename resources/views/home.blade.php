@@ -2,34 +2,56 @@
     <main class="page home">
 
         <!-- ===== HERO + CLOCK (Blade) ===== -->
-        <section class="hero-section">
-            <!-- Achterste laag: draaiende rotor -->
-            <div class="layer layer-rotor">
-                <img class="rotating-image" src="{{ asset('images/clockassets/inner-turning2.webp') }}" alt="">
-            </div>
+        <div class="video-bg-wrapper">
+            <video autoplay loop muted playsinline class="bg-video">
+                <source src="{{ asset('video/bg_final_video.mp4') }}" type="video/mp4">
+            </video>
 
-            <!-- Middenlaag: gradient / ornament achtergrond -->
-            <div class="layer layer-bg">
-                <img class="grd-bg" src="{{ asset('images/grd_bg.webp') }}" alt="">
-            </div>
+            <section class="hero-section">
 
-            <!-- Bovenlaag: sier-ring -->
-            <div class="layer layer-ring">
-                <img src="{{ asset('images/ring_85.webp') }}" alt="">
-            </div>
 
-            <!-- Voorste laag: CSS klok -->
-            <div class="layer layer-clock">
-                <div class="css-clock-wrapper">
-                    <div class="css-clock">
-                        <div class="css-hour-hand"></div>
-                        <div class="css-minute-hand"></div>
-                        <div class="css-second-hand"></div>
-                        <div class="css-clock-center"></div>
+                <!-- Achterste laag: draaiende rotor -->
+                <div class="layer layer-rotor">
+                    <img class="rotating-image" src="{{ asset('images/inner-turning2.webp') }}" alt="">
+                </div>
+
+                <!-- Middenlaag: gradient / ornament achtergrond -->
+                {{--            <div class="layer layer-bg">--}}
+                {{--                <img class="grd-bg" src="{{ asset('images/grd_bg.webp') }}" alt="">--}}
+                {{--            </div>--}}
+
+                <div class="text-lucideinkt">
+                    <img src="{{ asset('images/lucide_inkt.webp') }}" alt="">
+                </div>
+
+                <div class="text-life-minutes">
+                    <img src="{{ asset('images/life_minutes.webp') }}" alt="">
+                </div>
+
+                <!-- Middenlaag: text inside clock -->
+                <div class="text-clock">
+                    <button class="clock-button" id="openModalBtn">Lees meer</button>
+                </div>
+
+                <!-- Bovenlaag: sier-ring -->
+                <div class="layer layer-ring">
+                    <img src="{{ asset('images/clock_ready_final.webp') }}" alt="">
+                </div>
+
+                <!-- Voorste laag: CSS klok -->
+                <div class="layer layer-clock">
+                    <div class="css-clock-wrapper">
+                        <div class="css-clock">
+                            <div class="css-hour-hand"></div>
+                            <div class="css-minute-hand"></div>
+                            <div class="css-second-hand"></div>
+                            <div class="css-clock-center"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+        </div>
 
         <div class="section-wrapper">
 
@@ -74,15 +96,26 @@
 
             <section class="book-presentation">
                 <div class="text">
-                    <h2 class="title">Geloofswaarheden</h2>
-                  <p>In dit boek worden uiteenlopende geloofskwesties helder en zorgvuldig behandeld. Het verduidelijkt de waarheden achter kernpunten van het islamitische geloof, zoals de diepe wijsheid in de vijf dagelijkse gebedstijden en de betekenis en beproeving achter de schepping van de duivel. Met heldere redeneringen, voorbeelden uit het dagelijks leven en verwijzingen naar klassieke bronnen helpt het boek hardnekkige misvattingen te corrigeren en twijfel te verminderen. Controversiële onderwerpen worden stap voor stap ontrafeld, zodat de lezer niet alleen begrijpt wát de leer stelt, maar vooral waarom. Daardoor biedt het zowel de zoekende lezer als degene die verdieping wil een betrouwbare gids: een uitnodiging tot reflectie, een versterking van geloof en vertrouwen, en een praktische handreiking om overtuigingen met rust en inzicht te beleven.</p>
+                    <p>Waarlijk, dit voortrazende leven is een diepe slaap; het vloeit als een droom voorbij… Maar wees beraden, want de vluchtige minuten des levens dienen als zaden. Terwijl ze ogenschijnlijk verwelken en vergaan tijdens dit aardse bestaan, ontkiemen en floreren ze in het rijk der eeuwigheid. Afhankelijk van de wijze waarop ze verstrijken, zullen ze ofwel als duistere voortbrengselen van onachtzaamheid, ofwel als stralende vruchten van weldaden tot de mens wederkeren.</p>
                 </div>
                 <div class="book-image">
                     <img src="{{ url('/images/geloofswaarheden.png') }}" alt="">
                 </div>
             </section>
 
-        </div>
+            <!-- Modal Structure -->
+            <div id="leesMeerModal" class="custom-modal">
+                <div class="custom-modal-overlay"></div>
+                <div class="custom-modal-content scroll-effect" id="scrollModalContent">
+                    <span class="custom-modal-close" id="closeModalBtn">&times;</span>
+                    <div class="scroll-inner">
+                        <p>
+                            Waarlijk, dit voortrazende leven is een diepe slaap; het vloeit als een droom voorbij… Maar wees beraden, want de vluchtige minuten des levens dienen als zaden. Terwijl ze ogenschijnlijk verwelken en vergaan tijdens dit aardse bestaan, ontkiemen en floreren ze in het rijk der eeuwigheid. Afhankelijk van de wijze waarop ze verstrijken, zullen ze ofwel als duistere voortbrengselen van onachtzaamheid, ofwel als stralende vruchten van weldaden tot de mens wederkeren.
+                        </p>
+                    </div>
+                </div>
+            </div>
+       </div>
 
 
     </main>

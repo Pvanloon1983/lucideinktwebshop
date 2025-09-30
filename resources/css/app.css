@@ -1,5 +1,5 @@
 /* === Fonts === */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Faculty+Glyphic&family=Funnel+Sans:ital,wght@0,300..800;1,300..800&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 @font-face {
   font-family: 'DelimaMTProLight';
@@ -11,8 +11,15 @@
 @font-face {
   font-family: 'DelimaMTProRegular';
   src: url('../fonts/DelimaMTPro-Regular.otf') format('opentype');
-  font-weight: 500;
+  font-weight: 400;
   font-style: normal;
+}
+
+@font-face {
+    font-family: 'DelimaMTProBold';
+    src: url('../fonts/DelimaMTPro-Bold.otf') format('opentype');
+    font-weight: 600;
+    font-style: normal;
 }
 
 @font-face {
@@ -51,7 +58,9 @@
   --main-color: #ab0f14;
   --secondary-color: #fffcf4;
   --font-light: 'DelimaMTProLight';
-  --font-regular: 'DelimaMTProRegular';
+  --font-regular: 'DelimaMTProRegular', sans-serif;
+  --font-bold: 'DelimaMTProBold', sans-serif;
+  --font-regular-weight: 500;
   --main-font-color: #620505;
   --header-height: 80px;
   --mobile-header-height: 70px;
@@ -102,6 +111,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: var(--font-regular), sans-serif;
+  font-weight: 400;
   color: var(--main-font-color);
   background: var(--bg-parchment);
   line-height: 1.8;
@@ -165,6 +175,7 @@ button,
   gap: 5px;
   height: 40px;
   border-bottom: 4px solid var(--gold-2);
+  font-family: var(--font-bold);
 }
 
 .btn.small {
@@ -1538,7 +1549,7 @@ i {
 .single-product .image img {
   width: 100%;
   max-width: 320px;
-  box-shadow: 0 2px 12px rgba(171, 15, 20, .10);
+  /*box-shadow: 0 2px 12px rgba(171, 15, 20, .10);*/
   object-fit: cover;
 }
 
@@ -3036,6 +3047,26 @@ i {
 
 
 /* ===== Container: vierkant, gecentreerd, responsive ===== */
+.bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    border: none;
+    opacity: 40%;
+    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+
+}
+
+.video-bg-wrapper {
+    position: relative;
+    /*overflow: hidden;*/
+    width: 100%;
+}
+
 .hero-section{
     --size: clamp(260px, 85vw, 900px);  /* maximaal 900px zoals je ontwerp */
     position: relative;
@@ -3065,16 +3096,52 @@ i {
 
 
 /* Laag-volgorde (achter → voor) */
-.layer-rotor { z-index: 1; }
+.layer-rotor { z-index: 3; }
 .layer-bg    { z-index: 2; }
-.layer-ring  { z-index: 3; }
-.layer-clock { z-index: 4; pointer-events: none; }
+.layer-ring  { z-index: 1; }
+.layer-clock { z-index: 4; }
+.text-clock { z-index: 8; }
+.clock-button { z-index: 12; }
+.text-lucideinkt { z-index: 8; }
+.text-life-minutes { z-index: 8; }
+
+.clock-button {
+    position: absolute;
+    border: none;
+    height: auto;
+    font-size: 11px;
+    letter-spacing: 0.9px;
+    display: flex;
+    padding: 5px 8px;
+    justify-content: center;
+    align-items: center;
+    top: 59.5%;
+    left: 46.1%;
+    box-shadow: 0 4px 24px rgba(17, 12, 46, 0.18), 0 1.5px 8px rgba(100, 127, 84, 0.22);
+    background: linear-gradient(135deg, #647f54 0%, #8fa97a 100%);
+    text-transform: uppercase;
+}
+
+.text-lucideinkt {
+    position: absolute;
+    width: 27.5%;
+    bottom: 62%;
+    right: 35.3%;
+}
+
+.text-life-minutes {
+    position: absolute;
+    width: 28.5%;
+    bottom: 42%;
+    right: 36%;
+}
 
 .layer-rotor {
     position: relative !important;
-    top: -5% !important;
+    top: -2.1% !important;
     left: 1% !important;
     width: 35%;
+    opacity: 40%;
 }
 
 .grd-bg {
@@ -3085,7 +3152,7 @@ i {
     left: 1% !important;
     border-radius: 50%;
     box-shadow: 0 8px 32px #6205052e,0 2px 8px #ab0f141a,0 1.5px .5px #0000001a;
-    opacity: 80%;
+    opacity: 0;
 }
 
 /* Rotatie van de achterste rotor */
@@ -3137,8 +3204,8 @@ i {
 }
 
 /* Lengtes (pas gerust aan tot het mooi binnen je ring valt) */
-.css-hour-hand   { width: clamp(20px, 7vw, 70px);  height: clamp(40px, 9vw, 90px);  z-index: 3; clip-path: polygon(38% 100%, 62% 100%, 52% 10%, 48% 10%); }
-.css-minute-hand { width: clamp(20px, 6vw, 60px);  height: clamp(50px, 13vw, 130px); z-index: 2; clip-path: polygon(40% 100%, 60% 100%, 52% 10%, 48% 10%); }
+.css-hour-hand   { width: clamp(20px, 7vw, 40px);  height: clamp(40px, 9vw, 90px);  z-index: 3; clip-path: polygon(38% 100%, 62% 100%, 52% 10%, 48% 10%); }
+.css-minute-hand { width: clamp(20px, 6vw, 50px);  height: clamp(50px, 13vw, 130px); z-index: 2; clip-path: polygon(40% 100%, 60% 100%, 52% 10%, 48% 10%); }
 .css-second-hand { width: clamp(15px, 3vw, 25px);  height: clamp(70px, 15vw, 170px); z-index: 4; clip-path: polygon(42% 100%, 58% 100%, 53% 10%, 47% 10%); }
 
 /* Middelpunt */
@@ -3152,10 +3219,6 @@ i {
     border-radius: 50%;
     transform: translate(-50%, -50%);
     z-index: 10;
-}
-
-.hero-section img{
-
 }
 
 /* ===== Responsive tweaks (optioneel) ===== */
@@ -3225,6 +3288,93 @@ i {
     }
 }
 
+/* Home page modal */
+.custom-modal {
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.custom-modal.hidden {
+    display: none;
+}
+.custom-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.35);
+    opacity: 0;
+    transition: opacity 0.45s cubic-bezier(.55,0,.55,1);
+    z-index: 1;
+    pointer-events: none;
+}
+.custom-modal.show .custom-modal-overlay {
+    opacity: 1;
+    pointer-events: auto;
+}
+.custom-modal.fading-out .custom-modal-overlay {
+    opacity: 0;
+    pointer-events: none;
+}
+.custom-modal-content.scroll-effect {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(135deg, #f3e5c8 0%, #ead8b7 50%, #dec9a8 100%);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(32, 56, 48, 0.18), 0 2px 8px 0 rgba(171, 15, 20, 0.10);
+    border: 2px solid #bfa36b;
+    text-align: left;
+    color: var(--green-2);
+    overflow: visible;
+    max-height: 80vh;
+    min-width: 260px;
+    width: 90vw;
+    max-width: 420px;
+    padding: 0;
+    transform: scaleY(0.1);
+    opacity: 0;
+    transition: transform 0.9s cubic-bezier(.4,2,.6,1), opacity 0.7s cubic-bezier(.4,2,.6,1);
+    will-change: transform, opacity;
+}
+.custom-modal-content.scroll-effect.open {
+    transform: scaleY(1);
+    opacity: 1;
+    transition: transform 0.9s cubic-bezier(.4,2,.6,1), opacity 0.7s cubic-bezier(.4,2,.6,1);
+}
+.custom-modal-content.scroll-effect.close {
+    transform: scaleY(0.1);
+    opacity: 0;
+    transition: transform 1.1s cubic-bezier(.55,0,.55,1), opacity 0.8s cubic-bezier(.55,0,.55,1);
+}
 
-
-
+.scroll-inner {
+    padding: 55px 40px 30px 40px;
+    overflow-y: auto;
+    max-height: 60vh;
+}
+.custom-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    font-size: 2rem;
+    color: #a13e1c;
+    cursor: pointer;
+    font-weight: bold;
+    transition: color 0.2s;
+    z-index: 3;
+}
+.custom-modal-close:hover {
+    color: #b85c38;
+}
+@media (max-width: 600px) {
+    .scroll-inner { padding: 1.2rem 0.7rem 1rem 0.7rem; }
+    .scroll-inner h2 { font-size: 1.2rem; }
+}
