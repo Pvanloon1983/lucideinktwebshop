@@ -7,8 +7,25 @@
                 <source src="{{ asset('video/bg_final_video.mp4') }}" type="video/mp4">
             </video>
 
-            <section class="hero-section">
+            <div class="bismillah">
+                <img src="{{ url('/images/logo_new_logo.webp') }}" alt="">
+            </div>
 
+
+            <nav class="home-button-grid" role="navigation" aria-label="Hoofdmenu">
+                <div class="inner-grid" role="group" aria-label="Linkerkolom">
+                    <button class="btn left one focusable" tabindex="0">Home</button>
+                    <button class="btn left two focusable" tabindex="0">Said Nursi</button>
+                    <button class="btn left three focusable" tabindex="0">Contact</button>
+                </div>
+                <div class="inner-grid" role="group" aria-label="Rechterkolom">
+                    <button class="btn right one focusable" tabindex="0">Risale-i Nur</button>
+                    <button class="btn right two focusable" tabindex="0">Winkel</button>
+                    <button class="btn right three focusable" tabindex="0">Account</button>
+                </div>
+            </nav>
+
+            <section class="hero-section">
 
                 <!-- Achterste laag: draaiende rotor -->
                 <div class="layer layer-rotor">
@@ -21,7 +38,7 @@
                 {{--            </div>--}}
 
                 <div class="text-lucideinkt">
-                    <img src="{{ asset('images/lucide_inkt.webp') }}" alt="">
+                    <img src="{{ asset('images/Bismillah_1.webp') }}" alt="">
                 </div>
 
                 <div class="text-life-minutes">
@@ -35,7 +52,7 @@
 
                 <!-- Bovenlaag: sier-ring -->
                 <div class="layer layer-ring">
-                    <img src="{{ asset('images/clock_ready_final.webp') }}" alt="">
+                    <img src="{{ asset('images/ring_clock_10.webp') }}" alt="">
                 </div>
 
                 <!-- Voorste laag: CSS klok -->
@@ -49,6 +66,7 @@
                         </div>
                     </div>
                 </div>
+
             </section>
 
         </div>
@@ -56,10 +74,6 @@
         <div class="section-wrapper">
 
             <section class="intro-section">
-
-                <div class="bismillah">
-                    <img src="{{ url('/images/bismillah_red.webp') }}" alt="">
-                </div>
 
                 <h2 class="title">Welkom bij Stichting Lucide Inkt</h2>
                 <div class="sub-text">

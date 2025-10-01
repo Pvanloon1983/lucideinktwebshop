@@ -406,6 +406,7 @@ thead {
   z-index: 30;
   background: transparent;
   transition: background .3s, box-shadow .3s;
+  display: none;
 }
 
 .header.scrolled {
@@ -2892,7 +2893,9 @@ i {
     width: 100%;
     max-width: 1200px;
     margin: 50px auto;
-    margin-top: -40px;
+    margin-top: -200px;
+    position: relative;
+    z-index: 20;
 }
 
 .intro-section .bismillah {
@@ -2901,6 +2904,98 @@ i {
     margin-bottom: 30px;
     margin-top: 75px;
 }
+
+.btn.focusable:focus {
+    outline: 3px solid #0078d4;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(0,120,212,0.2);
+    z-index: 1;
+}
+
+.home-button-grid {
+    position: absolute;
+    display: flex;
+    width: 60%;
+    min-width: 1145px;
+    justify-content: space-between;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 17%;
+
+}
+
+.home-button-grid .inner-grid {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 80px;
+    z-index: 20;
+}
+
+.home-button-grid .btn {
+    padding: 2px 18px;
+    width: 180px;
+    box-sizing: border-box;
+    cursor: pointer;
+    border-radius: 32px;
+    background: linear-gradient(145deg, #f7ecd7 0%, #e6d3a2 100%);
+    color: #5a4327;
+    font-size: 18px;
+    font-family: 'CinzelBold', serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    height: inherit;
+    border: 3px solid #bfa76a;
+    box-shadow:
+        0 4px 18px rgba(171, 140, 20, 0.18),
+        0 2px 0 #e6d3a2,
+        inset 0 1px 0 #fffbe6,
+        0 0 0 4px #f7ecd7;
+    position: relative;
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 0 #fffbe6, 0 2px 2px #bfa76a33;
+    transition: filter 0.1s, box-shadow 0.1s, transform 0.1s, background 0.2s;
+    outline: 2px solid #bfa76a;
+    outline-offset: 2px;
+}
+
+.home-button-grid .btn:active {
+    box-shadow:
+        0 1px 4px rgba(171, 140, 20, 0.12),
+        0 1px 0 #e6d3a2,
+        inset 0 1px 0 #fffbe6;
+    transform: translateY(2px) scale(0.98);
+    background: linear-gradient(145deg, #e6d3a2 0%, #f7ecd7 100%);
+}
+
+.home-button-grid .btn.left.one  {
+    margin-left: 170%;
+}
+
+.home-button-grid .btn.left.two  {
+    margin-left: 50%;
+}
+
+.home-button-grid .btn.left.three  {
+    margin-left: -10%;
+}
+
+.home-button-grid .btn.right.three  {
+    margin-right: -10%;
+}
+
+.home-button-grid .btn.right.two  {
+    margin-right: 50%;
+}
+
+.home-button-grid .btn.right.one  {
+    margin-right: 170%;
+}
+
 
 @media screen and (max-width: 600px) {
     .intro-section .bismillah {
@@ -2920,7 +3015,7 @@ i {
 
 .intro-section .bismillah img {
     width: 100%;
-    max-width: 600px;
+    max-width: 500px;
     opacity: 100%;
 }
 
@@ -3057,18 +3152,19 @@ i {
     z-index: 0;
     border: none;
     opacity: 40%;
-    mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
-
+    mask-image: linear-gradient(to bottom, transparent 0%, black 0%, black 85%, transparent 100%);
 }
 
 .video-bg-wrapper {
     position: relative;
     /*overflow: hidden;*/
     width: 100%;
+    top: -20px;
+    padding-bottom: 200px;
 }
 
 .hero-section{
-    --size: clamp(260px, 85vw, 900px);  /* maximaal 900px zoals je ontwerp */
+    --size: clamp(260px, 85vw, 800px);  /* maximaal 900px zoals je ontwerp */
     position: relative;
     width: var(--size);
     aspect-ratio: 1 / 1;
@@ -3104,6 +3200,7 @@ i {
 .clock-button { z-index: 12; }
 .text-lucideinkt { z-index: 8; }
 .text-life-minutes { z-index: 8; }
+.home-button-grid { z-index: 3; }
 
 .clock-button {
     position: absolute;
@@ -3115,8 +3212,8 @@ i {
     padding: 5px 8px;
     justify-content: center;
     align-items: center;
-    top: 59.5%;
-    left: 46.1%;
+    top: 61.5%;
+    left: 44.3%;
     box-shadow: 0 4px 24px rgba(17, 12, 46, 0.18), 0 1.5px 8px rgba(100, 127, 84, 0.22);
     background: linear-gradient(135deg, #647f54 0%, #8fa97a 100%);
     text-transform: uppercase;
@@ -3124,22 +3221,23 @@ i {
 
 .text-lucideinkt {
     position: absolute;
-    width: 27.5%;
-    bottom: 62%;
-    right: 35.3%;
+    width: 20%;
+    bottom: 60%;
+    right: 40%;
+    opacity: 80%;
 }
 
 .text-life-minutes {
     position: absolute;
     width: 28.5%;
-    bottom: 42%;
-    right: 36%;
+    bottom: 40%;
+    right: 37%;
 }
 
 .layer-rotor {
     position: relative !important;
-    top: -2.1% !important;
-    left: 1% !important;
+    top: 0.1% !important;
+    left: 0% !important;
     width: 35%;
     opacity: 40%;
 }
@@ -3170,8 +3268,8 @@ i {
 /* ===== Klok exact midden ===== */
 .css-clock-wrapper{
     position: absolute;
-    left: 51%;
-    top: 45%;
+    left: 50%;
+    top: 47%;
     transform: translate(-50%, -50%);
     /*  pas deze aan om verhouding t.o.v. ring te finetunen */
     width: 58%;
@@ -3288,6 +3386,21 @@ i {
     }
 }
 
+.bismillah {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    top: 50px;
+    margin-bottom: 80px;
+}
+
+.bismillah img {
+    width: 8%;
+    min-width: 150px;
+}
+
+
 /* Home page modal */
 .custom-modal {
     position: fixed;
@@ -3378,3 +3491,5 @@ i {
     .scroll-inner { padding: 1.2rem 0.7rem 1rem 0.7rem; }
     .scroll-inner h2 { font-size: 1.2rem; }
 }
+
+
