@@ -1,40 +1,42 @@
 <x-layout>
     <main class="page home">
 
-        {{-- <div class="logo-container mobile">
-          <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>
-      </div>    --}}
+        <!-- ===== HERO + CLOCK (Blade) ===== -->
+        <div class="video-bg-wrapper" style="background-image: url('{{ url('/images/paper_bg_4.jpg') }}');background-repeat: no-repeat;background-size: cover;height: 100vh;">
 
 
-        <div class="hero-section">
+            <section class="hero-section">
 
-            {{--                <div class="logo-container desktop">--}}
-            {{--                    <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>--}}
-            {{--                </div>--}}
+                <!-- Achterste laag: draaiende rotor -->
+                <div class="layer layer-rotor">
+                    <img class="rotating-image" src="{{ asset('images/inner-turning2.webp') }}" alt="">
+                </div>
 
-            <div class="hero-image hero-wrap">
+                <!-- Middenlaag: gradient / ornament achtergrond -->
+                <div class="layer layer-bg">
+                    <img class="grd-bg" src="{{ asset('images/grd_bg.webp') }}" alt="">
+                </div>
 
-                <div class="hero-image-background desktop"
-                     style="background-image: url('{{ asset('images/clockassets/clock-faded-6.webp') }}');">
+                <div class="text-lucideinkt">
+                    <img src="{{ asset('images/Bismillah_1.webp') }}" alt="">
+                </div>
 
-                    <div class="upper-text">
-                        Stichting
-                    </div>
+                <div class="text-life-minutes">
+                    <img src="{{ asset('images/life_minutes_new.webp') }}" alt="">
+                </div>
 
-                    {{--                    <img class="logo-in-clock" src="{{ asset('images/Lucide-Inkt-Logo3.svg') }}" alt="">--}}
+                <!-- Middenlaag: text inside clock -->
+                <div class="text-clock">
+                    <button class="clock-button" id="openModalBtn">Lees meer</button>
+                </div>
 
-                    <img class="ring-image" src="{{ asset('images/clockassets/clock-ring-15.webp') }}" alt="Decorative Ring">
+                <!-- Bovenlaag: sier-ring -->
+                <div class="layer layer-ring">
+                    <img src="{{ asset('images/clock_time.webp') }}" alt="">
+                </div>
 
-                    <img class="ring-image-mobile" src="{{ asset('images/clockassets/MobielBackGround.webp') }}" alt="Decorative Ring">
-
-                    <img class="rotating-image" src="{{ asset('images/clockassets/inner-turning2.webp') }}" alt="">
-
-                    <img class="title" src="{{ asset('images/clockassets/clock-faded-5.webp') }}" alt="">
-                    <img class="sub-title" src="{{ asset('images/clockassets/Text-2.webp') }}" alt="">
-
-                    <a href="{{ route('home') }}"><img src="{{ url('/images/Lucide-Inkt-Logo3.svg') }}" alt=""></a>
-
-
+                <!-- Voorste laag: CSS klok -->
+                <div class="layer layer-clock">
                     <div class="css-clock-wrapper">
                         <div class="css-clock">
                             <div class="css-hour-hand"></div>
@@ -45,30 +47,69 @@
                     </div>
                 </div>
 
-            </div>
+            </section>
 
         </div>
 
-        <div style="display: none;" class="hero-text">
-            <div>
-                <img class="hero-text-image" src="{{ asset('images/bismillah.png') }}" alt="">
-                <h1 class="main-heading">Het doel van de Risale-i Nur is het redden van het geloof.</h1>
-                <p class="sub-text">Lucide Inkt is een non-profit organisatie die zich ter bevordering van het
-                    persoonlijke evenals het maatschappelijke welzijn richt op de verspreiding van geloofswaarheden die
-                    omschreven zijn in de boekenreeks van de Risale-i Nur.</p>
+        <div class="section-wrapper">
 
-                <div class="btn-box">
-                    <a href="#">
-                        <button class="btn">Lees de vertalingen</button>
-                    </a>
-                    <a href="{{ route('shop') }}">
-                        <button class="btn outlined">Naar de winkel</button>
-                    </a>
+            <section class="intro-section">
+
+                <h2 class="title">Welkom bij Stichting Lucide Inkt</h2>
+                <div class="sub-text">
+                    <p>
+                        Lucide Inkt is een non-profit organisatie toegewijd aan de vertaling en publicatie van de <em>Risale-i Nur</em>, in het Nederlands en Engels. Wij brengen deze betekenisvolle werken uit om geloofswaarheden helder en toegankelijk te maken.
+                    </p>
                 </div>
 
+                <div class="grid">
+                    <div class="card one">
+                        <h3>De Risale-i Nur</h3>
+                        <p>Een omvangrijke verzameling traktaten van Bediüzzaman Said Nursi, waarin geloof en rede samenkomen om de fundamenten van het geloof helder uiteen te zetten en richting te geven aan het dagelijks leven.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Vertalingen & Uitgaven</h3>
+                        <p>Beschikbaar in zowel Nederlands als Engels, zorgvuldig vertaald en geredigeerd, met aandacht voor stijl en vormgeving zodat de essentie en diepgang van de boodschap behouden blijft voor iedere lezer.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Webshop</h3>
+                        <p>Ontdek de beschikbare uitgaven in verschillende edities, bestel eenvoudig en veilig online, en lees geselecteerde delen direct digitaal waar dit mogelijk is, zodat je altijd toegang hebt tot de boodschap.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="quote-section">
+                <p class="text">Er is geen Schepper en geen Onderhouder behalve
+                    Hij. Voor- en tegenspoed rusten in Zijn Handen. Bovendien is Hij Alwijs; Hij
+                    vermijdt futiliteit. Ook is Hij Genadig; Zijn Goedgunstigheid en Zijn Erbarmen
+                    zijn omvangrijk.</p>
+                <p class="sub-text"><em>- Risale-i Nur</em></p>
+            </section>
+
+            <section class="book-presentation">
+                <div class="text">
+                    <p>Waarlijk, dit voortrazende leven is een diepe slaap; het vloeit als een droom voorbij… Maar wees beraden, want de vluchtige minuten des levens dienen als zaden. Terwijl ze ogenschijnlijk verwelken en vergaan tijdens dit aardse bestaan, ontkiemen en floreren ze in het rijk der eeuwigheid. Afhankelijk van de wijze waarop ze verstrijken, zullen ze ofwel als duistere voortbrengselen van onachtzaamheid, ofwel als stralende vruchten van weldaden tot de mens wederkeren.</p>
+                </div>
+                <div class="book-image">
+                    <img src="{{ url('/images/geloofswaarheden.png') }}" alt="">
+                </div>
+            </section>
+
+            <!-- Modal Structure -->
+            <div id="leesMeerModal" class="custom-modal">
+                <div class="custom-modal-overlay"></div>
+                <div class="custom-modal-content scroll-effect" id="scrollModalContent">
+                    <span class="custom-modal-close" id="closeModalBtn">&times;</span>
+                    <div class="scroll-inner">
+                        <p>
+                            Waarlijk, dit voortrazende leven is een diepe slaap; het vloeit als een droom voorbij… Maar wees beraden, want de vluchtige minuten des levens dienen als zaden. Terwijl ze ogenschijnlijk verwelken en vergaan tijdens dit aardse bestaan, ontkiemen en floreren ze in het rijk der eeuwigheid. Afhankelijk van de wijze waarop ze verstrijken, zullen ze ofwel als duistere voortbrengselen van onachtzaamheid, ofwel als stralende vruchten van weldaden tot de mens wederkeren.
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
-
 
 
     </main>

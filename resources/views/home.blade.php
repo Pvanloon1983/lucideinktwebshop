@@ -2,72 +2,52 @@
     <main class="page home">
 
         <!-- ===== HERO + CLOCK (Blade) ===== -->
-        <div class="video-bg-wrapper">
-            <video autoplay loop muted playsinline class="bg-video">
-                <source src="{{ asset('video/bg_final_video.mp4') }}" type="video/mp4">
-            </video>
-
-            <div class="bismillah">
-                <img src="{{ url('/images/logo_new_logo.webp') }}" alt="">
-            </div>
+        <div class="video-bg-wrapper" style="background-image: url('{{ url('/images/paper_bg_4.jpg') }}');background-repeat: no-repeat;background-size: cover;height: 80vh;">
 
 
-            <nav class="home-button-grid" role="navigation" aria-label="Hoofdmenu">
-                <div class="inner-grid" role="group" aria-label="Linkerkolom">
-                    <button class="btn left one focusable" tabindex="0">Home</button>
-                    <button class="btn left two focusable" tabindex="0">Said Nursi</button>
-                    <button class="btn left three focusable" tabindex="0">Contact</button>
-                </div>
-                <div class="inner-grid" role="group" aria-label="Rechterkolom">
-                    <button class="btn right one focusable" tabindex="0">Risale-i Nur</button>
-                    <button class="btn right two focusable" tabindex="0">Winkel</button>
-                    <button class="btn right three focusable" tabindex="0">Account</button>
-                </div>
-            </nav>
+                        <section class="hero-section">
 
-            <section class="hero-section">
+                            <!-- Achterste laag: draaiende rotor -->
+                            <div class="layer layer-rotor">
+                                <img class="rotating-image" src="{{ asset('images/inner-turning2.webp') }}" alt="">
+                            </div>
 
-                <!-- Achterste laag: draaiende rotor -->
-                <div class="layer layer-rotor">
-                    <img class="rotating-image" src="{{ asset('images/inner-turning2.webp') }}" alt="">
-                </div>
+                            <!-- Middenlaag: gradient / ornament achtergrond -->
+                                        <div class="layer layer-bg">
+                                            <img class="grd-bg" src="{{ asset('images/grd_bg.webp') }}" alt="">
+                                        </div>
 
-                <!-- Middenlaag: gradient / ornament achtergrond -->
-                {{--            <div class="layer layer-bg">--}}
-                {{--                <img class="grd-bg" src="{{ asset('images/grd_bg.webp') }}" alt="">--}}
-                {{--            </div>--}}
+                            <div class="text-lucideinkt">
+                                <img src="{{ asset('images/Bismillah_1.webp') }}" alt="">
+                            </div>
 
-                <div class="text-lucideinkt">
-                    <img src="{{ asset('images/Bismillah_1.webp') }}" alt="">
-                </div>
+                            <div class="text-life-minutes">
+                                <img src="{{ asset('images/life_minutes_second.webp') }}" alt="">
+                            </div>
 
-                <div class="text-life-minutes">
-                    <img src="{{ asset('images/life_minutes.webp') }}" alt="">
-                </div>
+                            <!-- Middenlaag: text inside clock -->
+                            <div class="text-clock">
+                                <button class="clock-button" id="openModalBtn">Lees meer</button>
+                            </div>
 
-                <!-- Middenlaag: text inside clock -->
-                <div class="text-clock">
-                    <button class="clock-button" id="openModalBtn">Lees meer</button>
-                </div>
+                            <!-- Bovenlaag: sier-ring -->
+                            <div class="layer layer-ring">
+                                <img src="{{ asset('images/clock_time.webp') }}" alt="">
+                            </div>
 
-                <!-- Bovenlaag: sier-ring -->
-                <div class="layer layer-ring">
-                    <img src="{{ asset('images/ring_clock_10.webp') }}" alt="">
-                </div>
+                            <!-- Voorste laag: CSS klok -->
+                            <div class="layer layer-clock">
+                                <div class="css-clock-wrapper">
+                                    <div class="css-clock">
+                                        <div class="css-hour-hand"></div>
+                                        <div class="css-minute-hand"></div>
+                                        <div class="css-second-hand"></div>
+                                        <div class="css-clock-center"></div>
+                                    </div>
+                                </div>
+                            </div>
 
-                <!-- Voorste laag: CSS klok -->
-                <div class="layer layer-clock">
-                    <div class="css-clock-wrapper">
-                        <div class="css-clock">
-                            <div class="css-hour-hand"></div>
-                            <div class="css-minute-hand"></div>
-                            <div class="css-second-hand"></div>
-                            <div class="css-clock-center"></div>
-                        </div>
-                    </div>
-                </div>
-
-            </section>
+                        </section>
 
         </div>
 
@@ -129,7 +109,7 @@
                     </div>
                 </div>
             </div>
-       </div>
+        </div>
 
 
     </main>
