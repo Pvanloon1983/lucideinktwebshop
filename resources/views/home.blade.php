@@ -32,7 +32,7 @@
 
                         <!-- Bovenlaag: sier-ring -->
                         <div class="layer layer-ring">
-                            <img src="{{ asset('images/clockassets/ClockEffect_2.png') }}" alt="">
+                            <img src="{{ asset('images/clockassets/clockeffect_2.png') }}" alt="">
                         </div>
 
                         <!-- Voorste laag: CSS klok -->
