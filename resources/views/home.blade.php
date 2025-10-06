@@ -2,59 +2,60 @@
     <main class="page home">
 
         <!-- ===== HERO + CLOCK (Blade) ===== -->
-        <div class="video-bg-wrapper" style="background-image: url('{{ url('/images/paper_bg_4.jpg') }}');background-repeat: no-repeat;background-size: cover;height: 80vh;">
+        <div class="video-bg-wrapper"
+             style="background-image: url('{{ url('/images/bg_background_website.png') }}');background-repeat:no-repeat;background-size:cover;">
 
+            <section class="home-hero">
 
-                        <section class="hero-section">
+                <div class="book-image">
+                    <img class="book-shot" src="{{ asset('images/IMG_9096_modified_shadow_low.png') }}" alt="">
+                </div>
 
-                            <!-- Achterste laag: draaiende rotor -->
-                            <div class="layer layer-rotor">
-                                <img class="rotating-image" src="{{ asset('images/inner-turning2.webp') }}" alt="">
-                            </div>
+                <div class="clock-image" >
+                    <div class="hero-section">
 
-                            <!-- Middenlaag: gradient / ornament achtergrond -->
-                                        <div class="layer layer-bg">
-                                            <img class="grd-bg" src="{{ asset('images/grd_bg.webp') }}" alt="">
-                                        </div>
+                        <!-- Achterste laag: draaiende rotor -->
+                        <div class="layer layer-rotor">
+                            <img class="rotating-image" src="{{ asset('images/inner-turning2.webp') }}" alt="">
+                        </div>
 
+                        <!-- Middenlaag: text inside clock -->
+                        <div class="text-clock">
                             <div class="text-lucideinkt">
-                                <img src="{{ asset('images/Bismillah_1.webp') }}" alt="">
+                                <img src="{{ asset('images/Bismillah5.webp') }}" alt="">
                             </div>
-
                             <div class="text-life-minutes">
-                                <img src="{{ asset('images/life_minutes_second.webp') }}" alt="">
+                                <img src="{{ asset('images/clockassets/Text-2.webp') }}" alt="">
                             </div>
+                            <button class="clock-button" id="openModalBtn">Lees meer</button>
+                        </div>
 
-                            <!-- Middenlaag: text inside clock -->
-                            <div class="text-clock">
-                                <button class="clock-button" id="openModalBtn">Lees meer</button>
-                            </div>
+                        <!-- Bovenlaag: sier-ring -->
+                        <div class="layer layer-ring">
+                            <img src="{{ asset('images/clockassets/ClockEffect_2.png') }}" alt="">
+                        </div>
 
-                            <!-- Bovenlaag: sier-ring -->
-                            <div class="layer layer-ring">
-                                <img src="{{ asset('images/clock_time.webp') }}" alt="">
-                            </div>
-
-                            <!-- Voorste laag: CSS klok -->
-                            <div class="layer layer-clock">
-                                <div class="css-clock-wrapper">
-                                    <div class="css-clock">
-                                        <div class="css-hour-hand"></div>
-                                        <div class="css-minute-hand"></div>
-                                        <div class="css-second-hand"></div>
-                                        <div class="css-clock-center"></div>
-                                    </div>
+                        <!-- Voorste laag: CSS klok -->
+                        <div class="layer layer-clock">
+                            <div class="css-clock-wrapper">
+                                <div class="css-clock">
+                                    <div class="css-hour-hand"></div>
+                                    <div class="css-minute-hand"></div>
+                                    <div class="css-second-hand"></div>
+                                    <div class="css-clock-center"></div>
                                 </div>
                             </div>
+                        </div>
 
-                        </section>
+                    </div>
+                </div>
 
+            </section>
         </div>
 
         <div class="section-wrapper">
 
             <section class="intro-section">
-
                 <h2 class="title">Welkom bij Stichting Lucide Inkt</h2>
                 <div class="sub-text">
                     <p>
@@ -90,7 +91,7 @@
 
             <section class="book-presentation">
                 <div class="text">
-                    <p>Waarlijk, dit voortrazende leven is een diepe slaap; het vloeit als een droom voorbij… Maar wees beraden, want de vluchtige minuten des levens dienen als zaden. Terwijl ze ogenschijnlijk verwelken en vergaan tijdens dit aardse bestaan, ontkiemen en floreren ze in het rijk der eeuwigheid. Afhankelijk van de wijze waarop ze verstrijken, zullen ze ofwel als duistere voortbrengselen van onachtzaamheid, ofwel als stralende vruchten van weldaden tot de mens wederkeren.</p>
+                    <p>Waarlijk, dit voortrazende leven is een diepe slaap; het vloeit als een droom voorbij… Maar wees beraden, want de vluchtige minuten des levens dienen als zaden. Terwijl ze ogenschijnlijk verwelken en vergaan tijdens dit aardse bestaan, ontkiemen en floreren ze in het rijk der eeuwigheid. Afhankelijk van de wijze waarop ze verstrijken, zullen ze ofwel als duistere voortbrengselen van onachtzaamheid, ofwel als stralende vruchten van weldaden tot de mens wederkeren.</p>
                 </div>
                 <div class="book-image">
                     <img src="{{ url('/images/geloofswaarheden.png') }}" alt="">
@@ -104,13 +105,12 @@
                     <span class="custom-modal-close" id="closeModalBtn">&times;</span>
                     <div class="scroll-inner">
                         <p>
-                            Waarlijk, dit voortrazende leven is een diepe slaap; het vloeit als een droom voorbij… Maar wees beraden, want de vluchtige minuten des levens dienen als zaden. Terwijl ze ogenschijnlijk verwelken en vergaan tijdens dit aardse bestaan, ontkiemen en floreren ze in het rijk der eeuwigheid. Afhankelijk van de wijze waarop ze verstrijken, zullen ze ofwel als duistere voortbrengselen van onachtzaamheid, ofwel als stralende vruchten van weldaden tot de mens wederkeren.
+                            Waarlijk, dit voortrazende leven is een diepe slaap; het vloeit als een droom voorbij… Maar wees beraden, want de vluchtige minuten des levens dienen als zaden. Terwijl ze ogenschijnlijk verwelken en vergaan tijdens dit aardse bestaan, ontkiemen en floreren ze in het rijk der eeuwigheid. Afhankelijk van de wijze waarop ze verstrijken, zullen ze ofwel als duistere voortbrengselen van onachtzaamheid, ofwel als stralende vruchten van weldaden tot de mens wederkeren.
                         </p>
                     </div>
                 </div>
             </div>
         </div>
-
 
     </main>
 </x-layout>

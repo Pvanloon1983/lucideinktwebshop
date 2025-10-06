@@ -872,17 +872,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const now = new Date();
 
             // Hoeken in graden
-            const h = now.getHours() % 12;
-            const m = now.getMinutes();
-            const s = now.getSeconds();
+            const h  = now.getHours() % 12;
+            const m  = now.getMinutes();
+            const s  = now.getSeconds();
             const ms = now.getMilliseconds();
 
             // Realtime berekening (met fracties) + optionele speed multipliers
-            const secondAngle = ((s + ms/1000) * 6) * speed.second;                // 360/60 = 6
-            const minuteAngle = ((m + (s + ms/1000)/60) * 6) * speed.minute;       // 360/60 = 6
-            const hourAngle   = ((h + (m + s/60)/60) * 30) * speed.hour;           // 360/12 = 30
+            const secondAngle = ((s + ms/1000) * 6) * speed.second;          // 360/60 = 6
+            const minuteAngle = ((m + (s + ms/1000)/60) * 6) * speed.minute; // 360/60 = 6
+            const hourAngle   = ((h + (m + s/60)/60) * 30) * speed.hour;     // 360/12 = 30
 
-            // Transform (let op: onze origin is onderaan; we vertalen -50% in X en 0 in Y)
+            // Transform (origin onderaan; translate X -50%)
             hourEl.style.transform   = `translate(-50%, 0) rotate(${hourAngle}deg)`;
             minuteEl.style.transform = `translate(-50%, 0) rotate(${minuteAngle}deg)`;
             secondEl.style.transform = `translate(-50%, 0) rotate(${secondAngle}deg)`;
@@ -933,5 +933,7 @@ document.addEventListener('DOMContentLoaded', () => {
             closeScrollModal();
         }
     });
+
+
 
 });
