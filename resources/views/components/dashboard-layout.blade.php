@@ -10,12 +10,9 @@
   <script src="https://cdn.jsdelivr.net/npm/vue@3.4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@myparcel/delivery-options@6/dist/myparcel.lib.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@myparcel/delivery-options@6/dist/style.css" />
-   @vite(['resources/css/app.css', 'resources/js/app.js'])
+   @vite(['resources/js/app.js', 'resources/css/dashboard.css'])
 </head>
 <body style="position: relative">
-  <div
-    style="position: fixed; inset: 0; z-index: 0; background-image: url('{{ asset('images/sand-texture-min.webp') }}'); background-size: cover; background-position: center; opacity: 0.1; pointer-events: none;">
-</div>
 
 <header class="header dashboard">
     <div class="container">
@@ -66,10 +63,10 @@
   <nav class="navbar">
     <ul>
 
-      @anyrole('admin','user') 
+      @anyrole('admin','user')
       <a href="{{ route('dashboard') }}">
-        <li class="nav-item {{ request()->routeIs('dashboard') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('dashboard') ? 'active-admin-link' : '' }}">Dashboard</span></li>  
-      </a>      
+        <li class="nav-item {{ request()->routeIs('dashboard') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('dashboard') ? 'active-admin-link' : '' }}">Dashboard</span></li>
+      </a>
       <a href="{{ route('editProfile') }}">
         <li class="nav-item {{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}"><span class="{{ request()->routeIs('editProfile') ? 'active-admin-link' : '' }}">Mijn Profiel</span></li>
       </a>
@@ -79,7 +76,7 @@
       <a href="{{ route('productIndex') }}">
         <li class="nav-item {{ request()->routeIs('productIndex') || request()->routeIs('productCreatePage') || request()->routeIs('productEditPage') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('productIndex') || request()->routeIs('productCreatePage') || request()->routeIs('productEditPage') ? 'active-admin-link' : '' }}">Producten</span>
-        </li>  
+        </li>
       </a>
       @endrole
 
@@ -87,7 +84,7 @@
       <a href="{{ route('productCategoryIndex') }}">
         <li class="nav-item {{ request()->routeIs('productCategoryIndex') || request()->routeIs('productCategoryCreatePage') || request()->routeIs('productCategoryEditPage') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('productCategoryIndex') ? 'active-admin-link' : '' }}">Productcategorieën</span>
-        </li>  
+        </li>
       </a>
       @endrole
 
@@ -103,7 +100,7 @@
       <a href="{{ route('orderIndex') }}">
         <li class="nav-item {{ request()->routeIs('orderIndex') || request()->routeIs('orderShow') || request()->routeIs('orderCreatePage') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('orderIndex') || request()->routeIs('orderShow') || request()->routeIs('orderCreatePage') ? 'active-admin-link' : '' }}">Bestellingen</span>
-        </li>  
+        </li>
       </a>
       @endrole
 
@@ -123,11 +120,11 @@
       </a>
       @endrole
 
-      @anyrole('admin','user') 
+      @anyrole('admin','user')
       <a href="{{ route('showMyOrders') }}">
         <li class="nav-item {{ request()->routeIs('showMyOrders') || request()->routeIs('showMyOrder') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('showMyOrders') || request()->routeIs('showMyOrder') ? 'active-admin-link' : '' }}">Mijn bestellingen</span>
-        </li>  
+        </li>
       </a>
       @endanyrole
 
@@ -135,7 +132,7 @@
       <a href="{{ route('customerIndex') }}">
         <li class="nav-item {{ request()->routeIs('customerIndex') || request()->routeIs('customerShow') ? 'active-admin-link' : '' }}">
         <span class="{{ request()->routeIs('customerIndex') || request()->routeIs('customerShow') ? 'active-admin-link' : '' }}">Klanten</span>
-        </li>  
+        </li>
       </a>
       @endrole
 
@@ -157,7 +154,7 @@
           </form>
       </li>
       @endauth
-    </ul>   
+    </ul>
   </nav>
 </div>
 

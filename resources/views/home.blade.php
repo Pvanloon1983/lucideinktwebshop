@@ -91,10 +91,10 @@
 
             <section class="book-presentation">
                 <div class="text">
-                    <p>Waarlijk, dit voortrazende leven is een diepe slaap; het vloeit als een droom voorbij… Maar wees beraden, want de vluchtige minuten des levens dienen als zaden. Terwijl ze ogenschijnlijk verwelken en vergaan tijdens dit aardse bestaan, ontkiemen en floreren ze in het rijk der eeuwigheid. Afhankelijk van de wijze waarop ze verstrijken, zullen ze ofwel als duistere voortbrengselen van onachtzaamheid, ofwel als stralende vruchten van weldaden tot de mens wederkeren.</p>
+                    <p>In dit waardevolle werk schuilt een verheven zegenrijkheid en een grenzeloze voortreffelijkheid die nooit eerder in een dergelijke mate zijn geconstateerd. En het is gebleken dat dit werk de zegeningen van het Goddelijke Licht, de Zon van leiding en de Schittering van gelukzaligheid alias de Heilige Qur’an als geen enkel ander werk heeft geërfd. Aldus is het niet meer dan evident dat de essentie van dit werk uit het Pure Licht van de Qur’an bestaat, dat dit werk meer zegeningen uit de Mohammedaanse Lichten dan de werken van heiligen draagt, dat het aandeel, de betrokkenheid en de heilige inbreng van de onberispelijke profeet bij dit werk meer dan bij de werken van heiligen voorkomen, en dat de begiftigde en de vertolker van dit werk een spirituele persoonlijkheid bezit met gaven en volmaaktheden die naar dezelfde verhouding verheven en onvergelijkelijk zijn; dit is een waarheid die zo helder is als de zon.</p>
                 </div>
                 <div class="book-image">
-                    <img src="{{ url('/images/geloofswaarheden.png') }}" alt="">
+                    <img src="{{ url('/images/IMG_9082_modified_png_shadow.png') }}" alt="">
                 </div>
             </section>
 

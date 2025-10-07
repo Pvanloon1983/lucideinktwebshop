@@ -13,7 +13,7 @@
         @csrf
         <div class="form-input">
           <label for="name">Naam</label>
-						<input type="text" name="name" value="{{ old('name', $category->name) }}">
+            <input type="text" name="name" value="{{ old('name', $category->name) }}" id="name">
           @error('name')
           <div class="error">{{ $message }}</div>
           @enderror
