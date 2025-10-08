@@ -3,7 +3,7 @@
 
         <!-- ===== HERO + CLOCK (Blade) ===== -->
         <div class="video-bg-wrapper"
-             style="background-image: url('{{ url('/images/bg_background_website.png') }}');background-repeat:no-repeat;background-size:cover;">
+             style="background-image: url('{{ url('/images/bg_background_website.png') }}'); background-repeat: no-repeat; background-size: cover; background-position: center center;">
 
             <section class="home-hero">
 
