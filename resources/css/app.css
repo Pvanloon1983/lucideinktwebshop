@@ -110,7 +110,7 @@
         border-radius:4px;
         font-size:15px;
         border:1px solid var(--border-1);
-        background: #ffffff;
+        background: #ffffff87;
         display:flex;
         align-items:center;
     }
@@ -180,12 +180,13 @@
        ========================================================= */
     .table-wrapper{ width:100%; overflow-x:auto; margin-top:20px; }
     .table{
-        width:100%; border-collapse:collapse; background:var(--surface-4); margin-bottom:20px;
+        width:100%; border-collapse:collapse; background-color:var(--surface-2); margin-bottom:20px;
         box-shadow:var(--shadow-1); border-radius:4px; overflow:hidden;
+        border: none;
     }
     .table img{ width:40px; height:auto; }
     thead{ border-left:1px solid var(--ink-1); border-right:1px solid var(--ink-1); }
-    .table tr{ border-left:1px solid var(--border-2); border-right:1px solid var(--border-2); background-color:var(--surface-1); }
+    .table tr{ background-color:var(--surface-2); }
     .table th,.table td{ padding:4px 8px; text-align:left; border-bottom:1px solid var(--border-4); font-size:15px; }
     .table th{
         background:var(--ink-1); color:var(--ink-inverse); font-weight:400; letter-spacing:.5px; font-size:15px;
@@ -679,13 +680,25 @@
     .custom-file-input{ opacity:0; width:100%; height:40px; position:absolute; left:0; top:0; cursor:pointer; }
     .remove-image-btn{ border:none; background:var(--main-color); color:var(--ink-inverse); border-radius:4px; padding:4px 15px; margin-top:10px; }
 
+
+    .container.page{ padding-top:100px; }
+
+
     /* =========================================================
        SHOP / PRODUCT PAGES
        ========================================================= */
     .page h1,.page h2{ margin-top:20px; }
     .page.shop{ padding-bottom:50px; }
     .page.shop .book-box{
-        display:grid; grid-template-columns:repeat(4,1fr); gap:20px; align-items:stretch; margin-top:50px;
+        display:grid;
+        grid-template-columns:repeat(4,1fr);
+        gap:20px;
+        align-items:stretch;
+        margin-top:50px;
+        background-color: var(--surface-2);
+        padding:20px;
+        border-radius: 10px;
+        box-shadow: var(--shadow-1);
     }
     .page.shop .book-box img{ border-radius:4px; }
     .page.shop .book-box .card{ position:relative; display:flex; flex-direction:column; height:100%; }
@@ -745,11 +758,43 @@
     .page.checkout h1,.page.checkout h2{ margin-top:20px; }
     .page.checkout .form{ margin-bottom:50px; position:relative; }
     .page.checkout .checkout-grid{ display:grid; grid-template-columns:50% auto; gap:20px; position:relative; }
-    .page.checkout .item{ background:var(--surface-1); padding:20px; box-shadow:var(--shadow-1); border-radius:20px; }
+    .page.checkout .item
+    {
+        background:var(--surface-2);
+        padding:20px;
+        box-shadow:var(--shadow-1);
+        border-radius:10px;
+    }
     .item input,.item textarea,.item select{ border:1px solid var(--border-1); background:#ffffff87; }
+
+    .page.checkout .checkout-create-account {
+        background-color: #ffffff;
+        padding:20px;
+        margin-bottom: 20px;
+        border-radius: 10px;
+        box-shadow: var(--shadow-1);
+    }
+
     .page.checkout .name-box{ display:grid; grid-template-columns:auto auto; gap:20px; }
     .page.checkout .street-box{ display:grid; grid-template-columns:60% auto; gap:20px; }
     .page.checkout .housnumber-box{ display:flex; gap:20px; }
+
+    .page.checkout .street-box{
+        display:grid;
+        grid-template-columns: 1fr;
+        gap:20px;
+    }
+
+    .page.checkout .street-box .form-input.street{
+        margin-bottom: 0;
+    }
+
+    .page.checkout .housnumber-box {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
     .page.checkout .customer-details.alternate{ margin-top:20px; display:none; }
     .page.checkout .customer-details.alternate.open{ display:block; }
     .page.checkout .alt-shipping,.page.checkout .customer-account{ display:flex; align-items:center; flex-direction:row; margin-bottom:0; }
@@ -1074,6 +1119,7 @@
             gap: 0px;
             grid-auto-flow: dense;
         }
+
     }
 
     @media (max-width:992px){
@@ -1140,8 +1186,8 @@
         .total-cart-box .button-box{ flex-direction:column; align-items:flex-start; }
         .page.cart .table thead{ display:none; }
         .page.cart .table,.page.cart .table tbody,.page.cart .table tr,.page.cart .table td{ display:block; width:100%; }
-        .page.cart table{ background:transparent; border-bottom:none; margin-bottom:0; }
-        .page.cart .table tr{ margin-bottom:18px; background:var(--surface-1); box-shadow:var(--shadow-1); padding:10px 0; border-radius:4px; }
+        .page.cart table{ background-color: var(--surface-2);border:none; margin-bottom:0; }
+        .page.cart .table tr{ margin-bottom:18px; background:var(--surface-2); box-shadow:var(--shadow-1); padding:10px 0; border-radius:4px; }
         .page.cart .table{ box-shadow:none; border-radius:4px; }
         .page.cart .table td{
             position:relative; padding-left:120px; min-height:40px; border-bottom:none; font-size:15px; text-align:left;
@@ -1183,6 +1229,7 @@
         .intro-section {
             margin-top: -250px;
         }
+
     }
 
     @media (max-width:700px){

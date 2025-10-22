@@ -68,7 +68,7 @@
                         </div>
 
                         <div class="street-box">
-                            <div class="form-input">
+                            <div class="form-input street">
                                 <label for="billing_street">Straatnaam</label>
                                 <input type="text" name="billing_street" autocomplete="address-line1"
                                     value="{{ old('billing_street') }}">
@@ -145,29 +145,17 @@
                             @enderror
                         </div>
 
-                        <div class="form-input customer-account">
-                            <label for="customer-account">Account aanmaken? Vul dan een wachtwoord in.</label>
-                        </div>
-
-                        <div class="create-account-box">
-                            <div class="form-input">
-                                <label for="password">Wachtwoord</label>
-                                <input type="password" name="password">
-                                @error('password')
-                                    <div class="error">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="form-input">
-                                <label for="password_confirmation">Bevestig wachtwoord</label>
-                                <input type="password" name="password_confirmation">
-                            </div>
-                        </div>
-
                         <div class="form-input alt-shipping">
                             <label for="alt-shipping">Verzenden naar een ander adres?</label>
                             <input type="checkbox" name="alt-shipping" id="alt-shipping"
                                 {{ old('alt-shipping') ? 'checked' : '' }}>
                         </div>
+
+
+                        <div style="height: 0px; margin-bottom: 0" class="form-input myparcel_choice" style="visibility: hidden">
+                            <input style="height: 0px" type="radio" checked name="myparcel_choice" value="with_myparcel" id="with_myparcel">
+                        </div>
+
                     </div>
 
                     <div class="item customer-details alternate" id="shipping-fields">
@@ -193,7 +181,7 @@
                         </div>
 
                         <div class="street-box">
-                            <div class="form-input">
+                            <div class="form-input street">
                                 <label for="shipping_street">Straatnaam</label>
                                 <input type="text" name="shipping_street" autocomplete="shipping address-line1"
                                     value="{{ old('shipping_street') }}">
@@ -342,6 +330,30 @@
                     <div id="opening-hours" class="pickup-opening-hours"></div>
 
                     <input type="hidden" name="myparcel_delivery_options" id="myparcel_delivery_options" />
+
+                    <div class="checkout-create-account">
+                        <div class="form-input customer-account">
+                            <p>
+                                <b>Nog geen account? (optioneel)</b><br>
+                                Vul hieronder je gegevens en een wachtwoord in, we maken dan automatisch een account voor je aan.
+                                Heb je al een account? <a style="text-decoration: underline" href="{{ route('login') }}">Log dan in</a> om je eerdere bestellingen te bekijken.
+                            </p>
+                        </div>
+
+                        <div class="create-account-box">
+                            <div class="form-input">
+                                <label for="password">Wachtwoord</label>
+                                <input type="password" name="password">
+                                @error('password')
+                                <div class="error">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-input">
+                                <label for="password_confirmation">Bevestig wachtwoord</label>
+                                <input type="password" name="password_confirmation">
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="place-order">
                         @error('myparcel_delivery_options')

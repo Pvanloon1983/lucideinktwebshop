@@ -95,6 +95,7 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
+
         $this->authorize('create', Order::class);
 
         $data = $this->validateOrder($request);
@@ -124,7 +125,13 @@ class OrderController extends Controller
         );
 
         $this->createOrderItems($order, $lines);
-        $this->processMyParcel($order, $request);
+
+
+        // Process MyParcel only when the customer explicitly chose it
+        if (($data['myparcel_choice'] ?? null) === 'with_myparcel') {
+            $this->processMyParcel($order, $request);
+        }
+
         $this->createMolliePayment($order, $totalAfter);
 
         return back()
@@ -183,7 +190,8 @@ class OrderController extends Controller
     {
         $order = Order::findOrFail($id);
 
-        if (auth()->user()->role !== 'admin') {
+        $user = auth()->user();
+        if (!($user instanceof \App\Models\User) || $user->role !== 'admin') {
             abort(403, 'Je hebt geen toegang tot deze factuur.');
         }
         if (empty($order->invoice_pdf_path)) {
@@ -212,6 +220,8 @@ class OrderController extends Controller
     private function validateOrder(Request $request): array
     {
         $request->merge(['alt-shipping' => $request->has('alt-shipping') ? 1 : 0]);
+        // Ensure a value for myparcel_choice exists; default to without_myparcel when not present
+        $request->merge(['myparcel_choice' => $request->input('myparcel_choice', 'without_myparcel')]);
 
         return $request->validate([
             'items' => 'required|array',
@@ -235,7 +245,9 @@ class OrderController extends Controller
             'shipping_postal_code' => 'required_if:alt-shipping,1|string|nullable',
             'shipping_city' => 'required_if:alt-shipping,1|string|nullable',
             'shipping_country' => 'required_if:alt-shipping,1|string|nullable',
-            'myparcel_delivery_options' => 'nullable|string',
+            // Validate the radio choice and require the MyParcel JSON when chosen
+            'myparcel_choice' => 'required|in:with_myparcel,without_myparcel',
+            'myparcel_delivery_options' => 'required_if:myparcel_choice,with_myparcel|nullable|json',
         ], [
             'items.required' => 'Er moeten producten worden toegevoegd.',
             'items.array' => 'De productenlijst is ongeldig.',
@@ -262,6 +274,10 @@ class OrderController extends Controller
             'shipping_postal_code.required_if' => 'De postcode is verplicht.',
             'shipping_city.required_if' => 'De plaats is verplicht.',
             'shipping_country.required_if' => 'Het land is verplicht.',
+            'myparcel_choice.required' => 'Selecteer of u MyParcel wilt gebruiken.',
+            'myparcel_choice.in' => 'Ongeldige MyParcel keuze.',
+            'myparcel_delivery_options.required_if' => 'Kies een MyParcel bezorgoptie voordat je de bestelling plaatst.',
+            'myparcel_delivery_options.json' => 'De MyParcel bezorgopties zijn ongeldig.',
         ]);
     }
 
@@ -393,7 +409,7 @@ class OrderController extends Controller
         float $discountAmount,
         float $totalAfter,
         Request $request
-    ): Order {
+    ): \Illuminate\Database\Eloquent\Model {
         return $customer->orders()->create([
             'status' => 'pending',
             'payment_status' => 'pending',

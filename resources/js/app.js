@@ -505,231 +505,260 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-
-  // --- MyParcel Delivery Options Widget Integration (v6 compliant) ---
-  const WIDGET_SELECTOR = '#myparcel-delivery-options';
-
-  /* ---------------- Address Handling ---------------- */
-  function currentAddress() {
-    const useAlt = document.getElementById('alt-shipping')?.checked;
-    const p = useAlt ? 'shipping_' : 'billing_';
-    const street = document.querySelector(`[name="${p}street"]`)?.value || '';
-    const nr = document.querySelector(`[name="${p}house_number"]`)?.value || '';
-    return {
-      cc: document.querySelector(`[name="${p}country"]`)?.value || 'NL',
-      postalCode: (document.querySelector(`[name="${p}postal_code"]`)?.value || '')
-        .replace(/\s+/g, '')
-        .toUpperCase(),
-      number: nr,
-      street: street && nr ? `${street} ${nr}` : street,
-      city: document.querySelector(`[name="${p}city"]`)?.value || '',
-    };
-  }
-
-  function addressComplete(a) {
-    return a.cc && a.postalCode && a.number && a.street && a.city;
-  }
-
-  /* ---------------- Hidden Input ---------------- */
-  function ensureMyParcelInput() {
-    let input = document.getElementById('myparcel_delivery_options');
-    if (!input) {
-      input = document.createElement('input');
-      input.type = 'hidden';
-      input.id = 'myparcel_delivery_options';
-      input.name = 'myparcel_delivery_options';
-      document.querySelector('form')?.appendChild(input);
+    // Target only inputs named myparcel_choice
+    const myparcelRadios = document.querySelectorAll('input[name="myparcel_choice"]');
+    // Helper to get currently selected value
+    function getCurrentMyparcelChoice() {
+        const checked = document.querySelector('input[name="myparcel_choice"]:checked');
+        return checked ? checked.value : undefined;
     }
-    return input;
-  }
+    let myparcelChoiceValue = getCurrentMyparcelChoice();
 
-  /* ---------------- Locale Strings ---------------- */
-  function getLocaleStrings(locale) {
-    const strings = {
-      nl: {
-        deliveryTitle: 'Levering thuis of op het werk',
-        pickupTitle: 'Ophalen bij een afleverpunt',
-        deliveryStandard: 'Thuisbezorging',
-        deliverySameDay: 'Vandaag bezorgd',
-        deliveryExpress: 'Snelle levering',
-        deliverySaturday: 'Bezorging op zaterdag',
-        onlyRecipient: 'Alleen geadresseerde',
-        signature: 'Handtekening voor ontvangst',
-        free: 'Gratis',
-        from: 'Vanaf',
-        close: 'Sluiten',
-        loading: 'Opties laden...',
-        noOptions: 'Geen bezorgopties beschikbaar',
-        choosePickup: 'Kies een afhaalpunt',
-        postcode: 'Postcode',
-        houseNumber: 'Huisnummer',
-        street: 'Straat',
-        city: 'Plaats',
-        list: 'Lijst',
-        map: 'Kaart',
-        showMoreHours: 'Toon meer tijdvakken',
-        showMoreLocations: 'Toon meer locaties',
-        deliveryStandardTitle: 'Standaard bezorging',
-        openingHours: 'Openingstijden',
-        closed: 'gesloten',
-      },
-      en: {
-        deliveryTitle: 'Home or work delivery',
-        pickupTitle: 'Pick up at a service point',
-        deliveryStandard: 'Home delivery',
-        deliverySameDay: 'Delivered today',
-        deliveryExpress: 'Express delivery',
-        deliverySaturday: 'Saturday delivery',
-        onlyRecipient: 'Only recipient',
-        signature: 'Signature required',
-        free: 'Free',
-        from: 'From',
-        close: 'Close',
-        loading: 'Loading options...',
-        noOptions: 'No delivery options available',
-        choosePickup: 'Choose a pickup point',
-        postcode: 'Postal code',
-        houseNumber: 'House number',
-        street: 'Street',
-        city: 'City',
-        list: 'List',
-        map: 'Map',
-        showMoreHours: 'Show more time slots',
-        showMoreLocations: 'Show more locations',
-        deliveryStandardTitle: 'Standard delivery',
-        openingHours: 'Opening hours',
-      },
-    };
-    return strings[locale] || strings['en'];
-  }
+    // --- MyParcel Delivery Options Widget Integration (v6 compliant) ---
+    const WIDGET_SELECTOR = '#myparcel-delivery-options';
 
-  /* ---------------- Widget Dispatcher ---------------- */
-  function dispatchMyParcel() {
-    const addr = currentAddress();
-    const container = document.querySelector(WIDGET_SELECTOR);
-    if (!container) return;
-
-    if (!addressComplete(addr)) {
-      container.style.display = 'none';
-      ensureMyParcelInput().value = '';
-      return;
+    /* ---------------- Address Handling ---------------- */
+    function currentAddress() {
+        const useAlt = document.getElementById('alt-shipping')?.checked;
+        const p = useAlt ? 'shipping_' : 'billing_';
+        const street = document.querySelector(`[name="${p}street"]`)?.value || '';
+        const nr = document.querySelector(`[name="${p}house_number"]`)?.value || '';
+        return {
+            cc: document.querySelector(`[name="${p}country"]`)?.value || 'NL',
+            postalCode: (document.querySelector(`[name="${p}postal_code"]`)?.value || '')
+                .replace(/\s+/g, '')
+                .toUpperCase(),
+            number: nr,
+            street: street && nr ? `${street} ${nr}` : street,
+            city: document.querySelector(`[name="${p}city"]`)?.value || '',
+        };
     }
-    container.style.display = '';
 
-    // Determine locale (ISO 639-1)
-    let locale =
-      document.documentElement.lang ||
-      document.querySelector('meta[name="app-locale"]')?.content;
-    if (!locale || typeof locale !== 'string' || locale.length < 2) locale = 'en';
-
-    const configuration = {
-      selector: WIDGET_SELECTOR,
-      address: addr, // expects { cc, postalCode, street, number, city }
-      config: {
-        platform: 'myparcel',
-        locale: locale,
-        packageType: 'package',
-        dropOffDelay: 1,
-        deliveryDaysWindow: 0,
-        allowPickupLocationsViewSelection: true,
-        pickupLocationsDefaultView: 'list',
-        showPriceZeroAsFree: false,
-        carrierSettings: {
-          postnl: {
-            allowDeliveryOptions: true,
-            allowStandardDelivery: true,
-            allowExpressDelivery: false,
-            allowSameDayDelivery: false,
-            allowSaturdayDelivery: false,
-            allowMorningDelivery: false,
-            allowEveningDelivery: false,
-            allowMondayDelivery: false,
-            allowOnlyRecipient: false,
-            allowSignature: false,
-            allowPickupLocations: true,
-          },
-        },
-      },
-      strings: getLocaleStrings(locale),
-    };
-
-    // Dispatch configuration to widget
-    document.dispatchEvent(
-      new CustomEvent('myparcel_update_delivery_options', {
-        detail: configuration,
-      }),
-    );
-  }
-
-  /* ---------------- Event Listeners ---------------- */
-  // Listen ONCE for widget updates
-  document.addEventListener('myparcel_updated_delivery_options', (e) => {
-    console.log('[MyParcel] updated_delivery_options event:', e.detail);
-    const input = ensureMyParcelInput();
-    input.value = e.detail ? JSON.stringify(e.detail) : '';
-
-
-
-  });
-
-  // Listen for errors
-  document.addEventListener('myparcel_error_delivery_options', (e) => {
-    console.error('[MyParcel] error_delivery_options event:', e.detail);
-  });
-
-  // Attach listeners to relevant fields
-  [
-    'billing_country',
-    'billing_postal_code',
-    'billing_street',
-    'billing_house_number',
-    'billing_city',
-    'shipping_country',
-    'shipping_postal_code',
-    'shipping_street',
-    'shipping_house_number',
-    'shipping_city',
-    'alt-shipping',
-  ].forEach((name) => {
-    const el = document.querySelector(`[name="${name}"]`);
-    if (el) {
-      el.addEventListener('input', dispatchMyParcel);
-      el.addEventListener('change', dispatchMyParcel);
+    function addressComplete(a) {
+        return a && a.cc && a.postalCode && a.number && a.street && a.city;
     }
-  });
 
-  // Initial dispatch
-  dispatchMyParcel();
+    /* ---------------- Hidden Input ---------------- */
+    function ensureMyParcelInput() {
+        let input = document.getElementById('myparcel_delivery_options');
+        if (!input) {
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.id = 'myparcel_delivery_options';
+            input.name = 'myparcel_delivery_options';
+            document.querySelector('form')?.appendChild(input);
+        }
+        return input;
+    }
 
+    /* ---------------- Locale Strings ---------------- */
+    function getLocaleStrings(locale) {
+        const strings = {
+            nl: {
+                deliveryTitle: 'Levering thuis of op het werk',
+                pickupTitle: 'Ophalen bij een afleverpunt',
+                deliveryStandard: 'Thuisbezorging',
+                deliverySameDay: 'Vandaag bezorgd',
+                deliveryExpress: 'Snelle levering',
+                deliverySaturday: 'Bezorging op zaterdag',
+                onlyRecipient: 'Alleen geadresseerde',
+                signature: 'Handtekening voor ontvangst',
+                free: 'Gratis',
+                from: 'Vanaf',
+                close: 'Sluiten',
+                loading: 'Opties laden...',
+                noOptions: 'Geen bezorgopties beschikbaar',
+                choosePickup: 'Kies een afhaalpunt',
+                postcode: 'Postcode',
+                houseNumber: 'Huisnummer',
+                street: 'Straat',
+                city: 'Plaats',
+                list: 'Lijst',
+                map: 'Kaart',
+                showMoreHours: 'Toon meer tijdvakken',
+                showMoreLocations: 'Toon meer locaties',
+                deliveryStandardTitle: 'Standaard bezorging',
+                openingHours: 'Openingstijden',
+                closed: 'gesloten',
+            },
+            en: {
+                deliveryTitle: 'Home or work delivery',
+                pickupTitle: 'Pick up at a service point',
+                deliveryStandard: 'Home delivery',
+                deliverySameDay: 'Delivered today',
+                deliveryExpress: 'Express delivery',
+                deliverySaturday: 'Saturday delivery',
+                onlyRecipient: 'Only recipient',
+                signature: 'Signature required',
+                free: 'Free',
+                from: 'From',
+                close: 'Close',
+                loading: 'Loading options...',
+                noOptions: 'No delivery options available',
+                choosePickup: 'Choose a pickup point',
+                postcode: 'Postal code',
+                houseNumber: 'House number',
+                street: 'Street',
+                city: 'City',
+                list: 'List',
+                map: 'Map',
+                showMoreHours: 'Show more time slots',
+                showMoreLocations: 'Show more locations',
+                deliveryStandardTitle: 'Standard delivery',
+                openingHours: 'Opening hours',
+            },
+        };
+        return strings[locale] || strings['en'];
+    }
 
-  // On form submit, ensure input is present and not empty
-  const formCheck = document.querySelector('.form.checkout');
-  if (formCheck) {
-    formCheck.addEventListener('submit', function (e) {
-      const input = ensureMyParcelInput();
-      if (!input.value || input.value === '{}' || input.value === 'null') {
-        // e.preventDefault();
-        // alert('Kies een bezorgoptie voordat je de bestelling plaatst.');
-        console.log('Kies een bezorgoptie voordat je de bestelling plaatst.');
-        const submitBtn = formCheck.querySelector('button[type="submit"]');
-        if (submitBtn) submitBtn.disabled = true;
-      }
+    /* ---------------- Widget Dispatcher ---------------- */
+    let myparcelEnabled = false;
+    function dispatchMyParcel() {
+        if (!myparcelEnabled) return;
+        const addr = currentAddress();
+        const container = document.querySelector(WIDGET_SELECTOR);
+        if (!container) return;
+
+        if (!addressComplete(addr)) {
+            container.style.display = 'none';
+            ensureMyParcelInput().value = '';
+            return;
+        }
+        container.style.display = '';
+
+        // Determine locale (ISO 639-1)
+        let locale =
+            document.documentElement.lang ||
+            document.querySelector('meta[name="app-locale"]')?.content;
+        if (!locale || typeof locale !== 'string' || locale.length < 2) locale = 'en';
+
+        const configuration = {
+            selector: WIDGET_SELECTOR,
+            address: addr, // expects { cc, postalCode, street, number, city }
+            config: {
+                platform: 'myparcel',
+                locale: locale,
+                packageType: 'package',
+                dropOffDelay: 1,
+                deliveryDaysWindow: 0,
+                allowPickupLocationsViewSelection: true,
+                pickupLocationsDefaultView: 'list',
+                showPriceZeroAsFree: false,
+                carrierSettings: {
+                    postnl: {
+                        allowDeliveryOptions: true,
+                        allowStandardDelivery: true,
+                        allowExpressDelivery: false,
+                        allowSameDayDelivery: false,
+                        allowSaturdayDelivery: false,
+                        allowMorningDelivery: false,
+                        allowEveningDelivery: false,
+                        allowMondayDelivery: false,
+                        allowOnlyRecipient: false,
+                        allowSignature: false,
+                        allowPickupLocations: true,
+                    },
+                },
+            },
+            strings: getLocaleStrings(locale),
+        };
+
+        // Dispatch configuration to widget
+        document.dispatchEvent(
+            new CustomEvent('myparcel_update_delivery_options', {
+                detail: configuration,
+            }),
+        );
+    }
+
+    /* ---------------- Event Listeners ---------------- */
+    // Listen for widget updates (always listen, but only set value when enabled)
+    document.addEventListener('myparcel_updated_delivery_options', (e) => {
+        // Only process if widget is enabled
+        if (!myparcelEnabled) return;
+        console.log('[MyParcel] updated_delivery_options event:', e.detail);
+        const input = ensureMyParcelInput();
+        input.value = e.detail ? JSON.stringify(e.detail) : '';
     });
-  }
 
-  const formOrder = document.querySelector('.form.order');
-  if (formOrder) {
-    formOrder.addEventListener('submit', function (e) {
-      const input = ensureMyParcelInput();
-      if (!input.value || input.value === '{}' || input.value === 'null') {
-        // e.preventDefault();
-        // alert('Kies een bezorgoptie voordat je de bestelling plaatst.');
-        console.log('Kies een bezorgoptie voordat je de bestelling plaatst.');
-        const submitBtn = formOrder.querySelector('button[type="submit"]');
-        if (submitBtn) submitBtn.disabled = true;
-      }
+    // Listen for errors
+    document.addEventListener('myparcel_error_delivery_options', (e) => {
+        console.error('[MyParcel] error_delivery_options event:', e.detail);
     });
-  }
+
+    // Attach listeners to relevant fields (attach once)
+    let addressListenersAttached = false;
+    function attachAddressListeners() {
+        if (addressListenersAttached) return;
+        addressListenersAttached = true;
+        [
+            'billing_country',
+            'billing_postal_code',
+            'billing_street',
+            'billing_house_number',
+            'billing_city',
+            'shipping_country',
+            'shipping_postal_code',
+            'shipping_street',
+            'shipping_house_number',
+            'shipping_city',
+            'alt-shipping',
+        ].forEach((name) => {
+            const el = document.querySelector(`[name="${name}"]`);
+            if (el) {
+                el.addEventListener('input', dispatchMyParcel);
+                el.addEventListener('change', dispatchMyParcel);
+            }
+        });
+    }
+
+    function enableMyparcel() {
+        if (myparcelEnabled) return;
+        myparcelEnabled = true;
+        const container = document.querySelector(WIDGET_SELECTOR);
+        if (container) container.style.display = '';
+        attachAddressListeners();
+        dispatchMyParcel();
+    }
+
+    function disableMyparcel() {
+        if (!myparcelEnabled) return;
+        myparcelEnabled = false;
+        const container = document.querySelector(WIDGET_SELECTOR);
+        if (container) {
+            container.style.display = 'none';
+            container.innerHTML = '';
+        }
+        const input = document.getElementById('myparcel_delivery_options');
+        if (input) {
+            input.value = '';
+            input.remove();
+        }
+    }
+
+    // React to radio change
+    myparcelRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (!e.target.checked) return;
+            myparcelChoiceValue = e.target.value;
+            console.log('MyParcel choice:', myparcelChoiceValue);
+            if (myparcelChoiceValue === 'with_myparcel') {
+                enableMyparcel();
+            } else {
+                disableMyparcel();
+            }
+        });
+    });
+
+
+    // Initial setup based on current selection
+    if (myparcelChoiceValue === 'with_myparcel') {
+        enableMyparcel();
+    } else {
+        disableMyparcel();
+    }
+
+
 
   // Universal confirmation modal logic for forms with .needs-confirm class
   function setupUniversalConfirmModals() {

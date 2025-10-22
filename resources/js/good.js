@@ -1,4 +1,3 @@
-
 import axios from 'axios';
 
 // Set CSRF token for all Axios requests
@@ -462,6 +461,14 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- MyParcel Delivery Options Widget Integration (v6 compliant) ---
   const WIDGET_SELECTOR = '#myparcel-delivery-options';
 
+  // Radios and helper
+  const myparcelRadios = document.querySelectorAll('input[name="myparcel_choice"]');
+  function getCurrentMyparcelChoice() {
+    const checked = document.querySelector('input[name="myparcel_choice"]:checked');
+    return checked ? checked.value : undefined;
+  }
+  let myparcelChoiceValue = getCurrentMyparcelChoice();
+
   /* ---------------- Address Handling ---------------- */
   function currentAddress() {
     const useAlt = document.getElementById('alt-shipping')?.checked;
@@ -480,7 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function addressComplete(a) {
-    return a.cc && a.postalCode && a.number && a.street && a.city;
+    return a && a.cc && a.postalCode && a.number && a.street && a.city;
   }
 
   /* ---------------- Hidden Input ---------------- */
@@ -557,7 +564,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ---------------- Widget Dispatcher ---------------- */
+  let myparcelEnabled = false;
   function dispatchMyParcel() {
+    if (!myparcelEnabled) return;
     const addr = currentAddress();
     const container = document.querySelector(WIDGET_SELECTOR);
     if (!container) return;
@@ -615,74 +624,91 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ---------------- Event Listeners ---------------- */
-// Listen ONCE for widget updates
+  // Listen for widget updates (only set hidden input when enabled)
   document.addEventListener('myparcel_updated_delivery_options', (e) => {
-    console.log('[MyParcel] updated_delivery_options event:', e.detail);
+    if (!myparcelEnabled) return;
     const input = ensureMyParcelInput();
     input.value = e.detail ? JSON.stringify(e.detail) : '';
-
-    
-
   });
 
-// Listen for errors
+  // Listen for errors
   document.addEventListener('myparcel_error_delivery_options', (e) => {
     console.error('[MyParcel] error_delivery_options event:', e.detail);
   });
 
-// Attach listeners to relevant fields
-  [
-    'billing_country',
-    'billing_postal_code',
-    'billing_street',
-    'billing_house_number',
-    'billing_city',
-    'shipping_country',
-    'shipping_postal_code',
-    'shipping_street',
-    'shipping_house_number',
-    'shipping_city',
-    'alt-shipping',
-  ].forEach((name) => {
-    const el = document.querySelector(`[name="${name}"]`);
-    if (el) {
-      el.addEventListener('input', dispatchMyParcel);
-      el.addEventListener('change', dispatchMyParcel);
+  // Attach listeners to relevant fields (attach once)
+  let addressListenersAttached = false;
+  function attachAddressListeners() {
+    if (addressListenersAttached) return;
+    addressListenersAttached = true;
+    [
+      'billing_country',
+      'billing_postal_code',
+      'billing_street',
+      'billing_house_number',
+      'billing_city',
+      'shipping_country',
+      'shipping_postal_code',
+      'shipping_street',
+      'shipping_house_number',
+      'shipping_city',
+      'alt-shipping',
+    ].forEach((name) => {
+      const el = document.querySelector(`[name="${name}"]`);
+      if (el) {
+        el.addEventListener('input', dispatchMyParcel);
+        el.addEventListener('change', dispatchMyParcel);
+      }
+    });
+  }
+
+  function enableMyparcel() {
+    if (myparcelEnabled) return;
+    myparcelEnabled = true;
+    const container = document.querySelector(WIDGET_SELECTOR);
+    if (container) container.style.display = '';
+    attachAddressListeners();
+    dispatchMyParcel();
+  }
+
+  function disableMyparcel() {
+    if (!myparcelEnabled) return;
+    myparcelEnabled = false;
+    const container = document.querySelector(WIDGET_SELECTOR);
+    if (container) {
+      container.style.display = 'none';
+      container.innerHTML = '';
     }
+    const input = document.getElementById('myparcel_delivery_options');
+    if (input) {
+      input.value = '';
+      input.remove();
+    }
+  }
+
+  // React to radio changes
+  myparcelRadios.forEach(radio => {
+    radio.addEventListener('change', (e) => {
+      if (!e.target.checked) return;
+      myparcelChoiceValue = e.target.value;
+      if (myparcelChoiceValue === 'with_myparcel') {
+        enableMyparcel();
+      } else {
+        disableMyparcel();
+      }
+    });
   });
 
-// Initial dispatch
-  dispatchMyParcel();
-
-
-  // On form submit, ensure input is present and not empty
-  const formCheck = document.querySelector('.form.checkout');
-  if (formCheck) {
-    formCheck.addEventListener('submit', function(e) {
-      const input = ensureMyParcelInput();
-      if (!input.value || input.value === '{}' || input.value === 'null') {
-        e.preventDefault();
-        alert('Kies een bezorgoptie voordat je de bestelling plaatst.');
-        const submitBtn = formCheck.querySelector('button[type="submit"]');
-        if (submitBtn) submitBtn.disabled = true;
-      }
-    });
+  // Initial setup based on current selection
+  if (myparcelChoiceValue === 'with_myparcel') {
+    enableMyparcel();
+  } else {
+    disableMyparcel();
   }
 
-  const formOrder = document.querySelector('.form.order');
-  if (formOrder) {
-    formOrder.addEventListener('submit', function(e) {
-      const input = ensureMyParcelInput();
-      if (!input.value || input.value === '{}' || input.value === 'null') {
-        e.preventDefault();
-        alert('Kies een bezorgoptie voordat je de bestelling plaatst.');
-        const submitBtn = formOrder.querySelector('button[type="submit"]');
-        if (submitBtn) submitBtn.disabled = true;
-      }
-    });
-  }
-
+  // ------------------------------------------------------------
   // Universal confirmation modal logic for forms with .needs-confirm class
+  // ------------------------------------------------------------
   function setupUniversalConfirmModals() {
     document.querySelectorAll('form.needs-confirm').forEach(function(form) {
       const formId = form.id;
@@ -758,3 +784,4 @@ document.addEventListener('DOMContentLoaded', () => {
   }).observe(document.body, { childList: true, subtree: true });
 
 });
+

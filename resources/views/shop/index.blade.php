@@ -16,6 +16,7 @@
                     onclick="this.parentElement.style.display='none';">&times;</button>
             </div>
         @endif
+
         <div class="book-box">
             @foreach ($products as $product)
                 <a href="{{ route('productShow', $product->base_slug ?? $product->slug) }}">
@@ -59,5 +60,6 @@
                 </a>
             @endforeach
         </div>
+
     </main>
 </x-layout>

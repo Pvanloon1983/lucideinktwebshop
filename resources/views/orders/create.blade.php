@@ -16,6 +16,10 @@
        </div>
     @endif
 
+  <div class="add-products-price-box">
+      <h3>Voeg producten toe<span class="total-price" id="total-price"></span></h3>
+  </div>
+
     <form class="form order" action="{{ route('orderStore') }}" method="POST">
       @csrf
 
@@ -23,11 +27,6 @@
 
         {{-- Producten --}}
         <div class="item product-list" id="product-list">
-
-          <div class="add-products-price-box">
-              <h3>Voeg producten toe</h3>
-              <div class="total-price" id="total-price"></div>
-          </div>
 
         @if($errors->has('items'))
             <div class="alert alert-error">
@@ -160,6 +159,13 @@
             @error('billing_country') <div class="error">{{ $message }}</div> @enderror
           </div>
 
+          <div class="form-input myparcel_choice">
+              <input type="radio" name="myparcel_choice" value="without_myparcel" id="without_myparcel" checked>
+              <label for="without_myparcel">Zonder MyParcel</label>
+              <input type="radio" name="myparcel_choice" value="with_myparcel" id="with_myparcel">
+              <label for="with_myparcel">Met MyParcel</label>
+          </div>
+
           <div id="myparcel-delivery-options"></div>
           <input type="hidden" name="myparcel_delivery_options" id="myparcel_delivery_options" />
 
@@ -251,6 +257,6 @@
 
 <style>
   /* List-only view: keep some height for content but no tall map needed */
-  #myparcel-wrapper { min-height: 120px; }
-  #myparcel-delivery-options { min-height: 120px; }
+  /*#myparcel-wrapper { min-height: 120px; }*/
+  /*#myparcel-delivery-options { min-height: 120px; }*/
 </style>

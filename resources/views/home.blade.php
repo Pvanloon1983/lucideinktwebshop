@@ -8,7 +8,7 @@
             <section class="home-hero">
 
                 <div class="book-image">
-                    <img class="book-shot" src="{{ asset('images/IMG_9096_modified_shadow_low.png') }}" alt="">
+                    <img class="book-shot" src="{{ asset('images/banner_hero.png') }}" alt="">
                 </div>
 
                 <div class="clock-image" >
