@@ -35,6 +35,10 @@
                             <img src="{{ asset('images/clockassets/clockeffect_2.png') }}" alt="">
                         </div>
 
+                        <div class="layer overlay-ring">
+                            <img src="{{ asset('images/clockassets/clock-ring-12.webp') }}" alt="">
+                        </div>
+
                         <!-- Voorste laag: CSS klok -->
                         <div class="layer layer-clock">
                             <div class="css-clock-wrapper">
