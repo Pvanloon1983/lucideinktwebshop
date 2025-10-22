@@ -393,8 +393,8 @@
 
     .overlay-ring img {
         position: absolute;
-        width: 119%;
-        height: 119%;
+        width: 154%;
+        height: 154%;
         border-radius: 50%;
         object-fit: contain;
     }
