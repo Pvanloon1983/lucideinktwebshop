@@ -15,6 +15,11 @@
   <script src="https://cdn.jsdelivr.net/npm/vue@3.4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@myparcel/delivery-options@6/dist/myparcel.lib.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@myparcel/delivery-options@6/dist/style.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.12/dist/js/splide.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@3.6.12/dist/css/splide.min.css"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/css/lightbox.min.css" integrity="sha512-xtV3HfYNbQXS/1R1jP53KbFcU9WXiSA1RFKzl5hRlJgdOJm4OxHCWYpskm6lN0xp0XtKGpAfVShpbvlFH3MDAA==" crossorigin="anonymous" referrerpolicy="no-referrer" /><script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.5/js/lightbox.min.js" integrity="sha512-KbRFbjA5bwNan6DvPl1ODUolvTTZ/vckssnFhka5cG80JVa5zSlRPCr055xSgU/q6oMIGhZWLhcbgIC0fyw3RQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   @vite(['resources/js/app.js', 'resources/css/app.css'])
 </head>
 
@@ -73,6 +78,43 @@
     {{ $slot }}
 </body>
 
+<script>
+    let splide = new Splide( '#main-slider', {
+        pagination: false,
+    } );
 
+    let thumbnails = document.getElementsByClassName( 'thumbnail' );
+    let current;
+
+    for ( let i = 0; i < thumbnails.length; i++ ) {
+        initThumbnail( thumbnails[ i ], i );
+    }
+
+    function initThumbnail( thumbnail, index ) {
+        thumbnail.addEventListener( 'click', function () {
+            splide.go( index );
+        } );
+    }
+
+    splide.on( 'mounted move', function () {
+        let thumbnail = thumbnails[ splide.index ];
+
+        if ( thumbnail ) {
+            if ( current ) {
+                current.classList.remove( 'is-active' );
+            }
+
+            thumbnail.classList.add( 'is-active' );
+            current = thumbnail;
+        }
+    } );
+
+    splide.mount();
+
+    lightbox.option({
+        'albumLabel': "%1 / %2",
+        'alwaysShowNavOnTouchDevices': true
+    })
+</script>
 
 </html>

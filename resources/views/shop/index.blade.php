@@ -17,9 +17,14 @@
             </div>
         @endif
 
+        <x-breadcrumbs :items="[
+          ['label' => 'Home', 'url' => route('home')],
+          ['label' => 'Winkel', 'url' => route('shop')],
+        ]" />
+
         <div class="book-box">
             @foreach ($products as $product)
-                <a href="{{ route('productShow', $product->base_slug ?? $product->slug) }}">
+                <a href="{{ route('productShow', $product->slug) }}">
                     <div class="card">
                         <div class="product-stock">
                             @if ($product->stock > 0 && $product->stock <= 3)
@@ -28,7 +33,8 @@
                                 <p class="no-stock">Geen voorraad</p>
                             @endif
                         </div>
-                        <div class="image-container">
+
+                        <div class="image-container" style="background: #fbf3e4; border-radius: 4px; box-shadow: var(--shadow-1)">
                             <img src="{{ e(
                                 Str::startsWith($product->image_1, 'https://')
                                     ? $product->image_1
@@ -39,22 +45,26 @@
                                             : asset('storage/' . $product->image_1)))
                             ) }}"
                                 alt="">
-                        </div>
-                        <div class="title-price">
-                            <h6 class="title">{{ $product->base_title ?? $product->title }}</h6>
 
-                            @php
-                                $baseTitleProducts = \App\Models\Product::where('base_title', $product->base_title)->get();
-                            @endphp
-                            @if (isset($product->price))
-                                <p class="price">
-                                    @if(isset($baseTitleProducts) && $baseTitleProducts->count() > 1)
-                                        €{{ number_format($baseTitleProducts->min('price'), 2) }} - €{{ number_format($baseTitleProducts->max('price'), 2) }}
-                                    @else
-                                        {{ number_format($product->price, 2) }}
-                                    @endif
-                                </p>
-                            @endif
+                            <div class="title-price" style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: -25px;margin-bottom: 10px">
+                                <h6 class="title" style="max-width: 250px; line-height: 1.5rem">{{ $product->title }}</h6>
+
+                                @php
+                                    //$baseTitleProducts = \App\Models\Product::where('base_title', //$product->base_title)->get();
+                                @endphp
+                                @if (isset($product->price))
+                                    <p class="price" style="display: block">
+                                        @if(isset($baseTitleProducts) && $baseTitleProducts->count() > 1)
+                                            €{{ number_format($baseTitleProducts->min('price'), 2) }} - €{{ number_format($baseTitleProducts->max('price'), 2) }}
+                                        @else
+                                            €{{ number_format($product->price, 2) }}
+                                        @endif
+                                    </p>
+                                @endif
+
+                                <button style="margin-top: 10px" class="btn small"><i style="color: #fff;" class="fa-solid fa-cart-plus"></i> Koop nu</button>
+                            </div>
+
                         </div>
                     </div>
                 </a>

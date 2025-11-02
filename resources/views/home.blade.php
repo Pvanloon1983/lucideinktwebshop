@@ -35,9 +35,9 @@
                             <img src="{{ asset('images/clockassets/clockeffect_2.png') }}" alt="">
                         </div>
 
-                        <div class="layer overlay-ring">
-                            <img src="{{ asset('images/clockassets/ring_new_3.png') }}" alt="">
-                        </div>
+{{--                        <div class="layer overlay-ring">--}}
+{{--                            <img src="{{ asset('images/clockassets/ring_new_3.png') }}" alt="">--}}
+{{--                        </div>--}}
 
                         <!-- Voorste laag: CSS klok -->
                         <div class="layer layer-clock">

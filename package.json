@@ -15,6 +15,8 @@
         "vite": "^7.0.4"
     },
     "dependencies": {
-        "@myparcel/delivery-options": "^6.18.0"
+        "@myparcel/delivery-options": "^6.18.0",
+        "@splidejs/splide": "^4.1.4",
+        "glightbox": "^3.3.1"
     }
 }

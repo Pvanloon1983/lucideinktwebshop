@@ -46,151 +46,83 @@ class DatabaseSeeder extends Seeder
 
   $books = [
           [
-            'title' => 'Afwegingen van Geloof & Ongeloof',
-              'base_title' => 'Afwegingen van Geloof & Ongeloof',
-            'slug' => Str::slug('Afwegingen van Geloof & Ongeloof'),
-              'base_slug' => Str::slug('Afwegingen van Geloof & Ongeloof'),
-            'short_description' => 'In dit boek wordt het verschil tussen de waarnemingen en vruchten van een gelovige visie en een ongelovige visie behandeld.',
+            'title' => 'Afwegingen van Geloof & Ongeloof - Nederlands',
+            'slug' => Str::slug('Afwegingen van Geloof & Ongeloof - Nederlands'),
+            'short_description' => 'In dit boek wordt het verschil tussen de waarnemingen en vruchten van een gelovige visie en een ongelovige visie behandeld. Zodoende wordt de lezer in staat gesteld om af te wegen welke weg beter voor hem is. De logische, rationele en feitelijke bevindingen in dit boek maken duidelijk dat de ene visie op aarde al helse folteringen veroorzaakt, terwijl de andere visie op aarde al paradijselijke geneugten oplevert. Een objectieve lezer zal ervaren dat dit boek zal bijdragen aan het scherpstellen van zijn levensbeschouwing.',
             'long_description' => 'In dit boek wordt het verschil tussen de waarnemingen en vruchten van een gelovige visie en een ongelovige visie behandeld. Zodoende wordt de lezer in staat gesteld om af te wegen welke weg beter voor hem is. De logische, rationele en feitelijke bevindingen in dit boek maken duidelijk dat de ene visie op aarde al helse folteringen veroorzaakt, terwijl de andere visie op aarde al paradijselijke geneugten oplevert. Een objectieve lezer zal ervaren dat dit boek zal bijdragen aan het scherpstellen van zijn levensbeschouwing.',
             'price' => 15.00,
             'is_published' => 1,
             'stock' => 100,
-            'image_1' => 'images/books/afwegingen.jpg',
+            'image_1' => 'images/books/afwegingen_nl/afwegingen_front_NL_WEB.webp',
+            'image_2' => 'images/books/afwegingen_nl/afwegingen_inside_NL_WEB.webp',
             'created_by' => 1,
             'updated_by' => 1,
           ],
           [
-            'title' => 'De Mirakelen van Ahmed',
-              'base_title' => 'De Mirakelen van Ahmed',
-            'slug' => Str::slug('De Mirakelen van Ahmed'),
-              'base_slug' => Str::slug('De Mirakelen van Ahmed'),
-            'short_description' => 'In dit boek worden er in eerste instantie de wijsheden achter de mirakelen van de profeet Mohammed verklaard.',
-            'long_description' => 'In dit boek worden er in eerste instantie de wijsheden achter de mirakelen van de profeet Mohammed verklaard. Daarna worden de verschillende varianten van zijn mirakelen beschreven. Vervolgens worden er van elke variant een aantal voorbeelden genoemd die volgens de authentiekste overleveringen absoluut hebben plaatsgevonden. Bovendien beschrijft dit boek de geestelijke persoonlijkheid van Mohammed. Iemand die dit boek begrijpend uitleest, zal niet meer in staat zijn om het profeetschap van Mohammed te verloochenen.',
-            'price' => 10.00,
-            'is_published' => 1,
-            'stock' => 100,
-            'image_1' => 'images/books/mirakelen.jpg',
-            'created_by' => 1,
-            'updated_by' => 1,
-          ],
-          [
-            'title' => 'Geloofswaarheden',
-              'base_title' => 'Geloofswaarheden',
-            'slug' => Str::slug('Geloofswaarheden'),
-              'base_slug' => Str::slug('Geloofswaarheden'),
-            'short_description' => 'In dit boek worden verscheidene geloofskwesties behandeld.',
-            'long_description' => 'In dit boek worden verscheidene geloofskwesties behandeld. Waarheden achter bepaalde Islamitische geloofsfundamenten worden verhelderd, waaronder de wijsheid achter de dagelijkse vijf tijdstippen van de geboden gebeden en de wijsheid achter de schepping van de duivel. Dit boek zal voor de lezer vele controversiële punten ontwarren.',
+            'title' => 'Het Traktaat Voor de Zieken - Nederlands',
+            'slug' => Str::slug('Het Traktaat Voor de Zieken - Nederlands'),
+            'short_description' => 'In dit boek worden vijfentwintig genezingen behandeld. Deze genezingen zijn als een zalf, een troost en een spiritueel recept voor zieken geschreven. Daarbij is er een condoleance in verband met het verlies van een kind, een traktaat betreffende de profeet Eyyoub en een brief aan een dokter gevoegd. Dit traktaat zal de lezer erbij helpen om alle soorten ziektes en calamiteiten te boven te komen.',
+            'long_description' => 'In dit boek worden vijfentwintig genezingen behandeld. Deze genezingen zijn als een zalf, een troost en een spiritueel recept voor zieken geschreven. Daarbij is er een condoleance in verband met het verlies van een kind, een traktaat betreffende de profeet Eyyoub en een brief aan een dokter gevoegd. Dit traktaat zal de lezer erbij helpen om alle soorten ziektes en calamiteiten te boven te komen.',
             'price' => 5.00,
             'is_published' => 1,
             'stock' => 100,
-            'image_1' => 'images/books/geloofwaarheden.jpg',
+            'image_1' => 'images/books/zieken_nl/zieken_front_NL_WEB.webp',
+            'image_2' => 'images/books/zieken_nl/zieken_inside_NL_WEB.webp',
             'created_by' => 1,
             'updated_by' => 1,
           ],
           [
-            'title' => 'Het Traktaat over de Natuur',
-              'base_title' => 'Het Traktaat over de Natuur',
-            'slug' => Str::slug('Het Traktaat over de Natuur'),
-              'base_slug' => Str::slug('Het Traktaat over de Natuur'),
-            'short_description' => 'In dit boek wordt vanuit velerlei verscheidene natuurwetenschappelijke gezichtspunten aangetoond dat het onbestaan van een Opperwezen onmogelijk is.',
-            'long_description' => 'Terwijl tegenwoordig vaak de natuur wordt aangekaart om het onbestaan van een God aan te tonen, wordt er in dit boek vanuit velerlei verscheidene natuurwetenschappelijke gezichtspunten aangetoond dat het onbestaan van een Opperwezen juist onmogelijk is. Iemand die dit boek begrijpend leest, kan in geen enkel rationeel opzicht het bestaan en de eenheid van een God verloochenen.',
-            'price' => 2.50,
-            'is_published' => 1,
-            'stock' => 100,
-            'image_1' => 'images/books/natuur.jpg',
-            'created_by' => 1,
-            'updated_by' => 1,
-          ],
-          [
-            'title' => 'Broederschap en Oprechtheid',
-              'base_title' => 'Broederschap en Oprechtheid',
-            'slug' => Str::slug('Broederschap en Oprechtheid'),
-              'base_slug' => Str::slug('Broederschap en Oprechtheid'),
-            'short_description' => 'Dit boek beschrijft hoe Islamitische broederschap en oprechtheid in de huidige tijden kunnen worden betracht.',
-            'long_description' => 'Dit boek beschrijft hoe Islamitische broederschap en oprechtheid in de huidige tijden kunnen worden betracht. Oorzaken die broederschap en oprechtheid ondermijnen worden uiteengezet, waarnaast Qur’anische principes worden omschreven die resulteren in de totstandbrenging en handhaving van ware Islamitische broederschap en oprechtheid.',
-            'price' => 7.50,
-            'is_published' => 1,
-            'stock' => 100,
-            'image_1' => 'images/books/broederschap.jpg',
-            'created_by' => 1,
-            'updated_by' => 1,
-          ],
-          [
-            'title' => 'Het Traktaat Voor de Zieken',
-              'base_title' => 'Het Traktaat Voor de Zieken',
-            'slug' => Str::slug('Het Traktaat Voor de Zieken'),
-              'base_slug' => Str::slug('Het Traktaat Voor de Zieken'),
-            'short_description' => 'In dit boek worden vijfentwintig genezingen behandeld.',
-            'long_description' => 'In dit boek worden vijfentwintig genezingen behandeld. Deze genezingen zijn als een zalf, een troost en een spiritueel recept voor zieken geschreven. Daarbij is er een condoleance in verband met het verlies van een kind, een traktaat betreffende de profeet Eyyoub en een brief aan een dokter gevoegd. Dit traktaat zal de lezer erbij helpen om alle soorten ziektes en calamiteiten te boven te komen.',
-            'price' => 5.50,
-            'is_published' => 1,
-            'stock' => 100,
-            'image_1' => 'images/books/zieken.jpg',
-            'created_by' => 1,
-            'updated_by' => 1,
+              'title' => 'Het Traktaat Voor de Zieken - Nederlands-Turks',
+              'slug' => Str::slug('Het Traktaat Voor de Zieken - Nederlands-Turks'),
+              'short_description' => 'In dit boek worden vijfentwintig genezingen behandeld. Deze genezingen zijn als een zalf, een troost en een spiritueel recept voor zieken geschreven. Daarbij is er een condoleance in verband met het verlies van een kind, een traktaat betreffende de profeet Eyyoub en een brief aan een dokter gevoegd. Dit traktaat zal de lezer erbij helpen om alle soorten ziektes en calamiteiten te boven te komen.',
+              'long_description' => 'In dit boek worden vijfentwintig genezingen behandeld. Deze genezingen zijn als een zalf, een troost en een spiritueel recept voor zieken geschreven. Daarbij is er een condoleance in verband met het verlies van een kind, een traktaat betreffende de profeet Eyyoub en een brief aan een dokter gevoegd. Dit traktaat zal de lezer erbij helpen om alle soorten ziektes en calamiteiten te boven te komen.',
+              'price' => 7.50,
+              'is_published' => 1,
+              'stock' => 100,
+              'image_1' => 'images/books/zieken_nl_tr/zieken_front_light_NL-TR_WEB.webp',
+              'image_2' => 'images/books/zieken_nl_tr/zieken_inside_NL-TR_WEB.webp',
+              'created_by' => 1,
+              'updated_by' => 1,
           ]
         ];
 
-      // TR Hardcover
-      $trCopy = ProductCopy::create([
-        'name' => 'TR Hardcover',
-        'is_published' => 1,
-        'created_by' => 1,
-        'updated_by' => 1,
-      ]);
+        foreach ($books as $book) {
+            $book['slug'] = $book['slug'] ?? Str::slug($book['title']);
+            $book['category_id'] = $category->id;
+            Product::create($book);
+        }
 
-      // NL Softcover
+      // Nederlands
       $nlCopy = ProductCopy::create([
-        'name' => 'NL Softcover',
+        'name' => 'Nederlands',
         'is_published' => 1,
         'created_by' => 1,
         'updated_by' => 1,
-      ]);    
-
-
-    // Create two ProductCopy variants for each book
-    foreach ($books as $book) {
-
-      // Set different prices for hardcover and softcover
-      $hardcoverPrice = $book['price'] + 5; // Hardcover is 5 euro more
-      $softcoverPrice = $book['price'];     // Softcover keeps original price
-
-      // Create product for TR Hardcover
-      Product::create([
-        'title' => $book['base_title'] . ' - ' . $trCopy->name,
-        'base_title' => $book['base_title'],
-        'slug' => Str::slug($book['base_title'] . ' - ' . $trCopy->name),
-        'base_slug' => $book['base_slug'],
-        'short_description' => $book['short_description'],
-        'long_description' => $book['long_description'],
-        'price' => $hardcoverPrice,
-        'is_published' => $book['is_published'],
-        'stock' => $book['stock'],
-        'image_1' => $book['image_1'],
-        'created_by' => 1,
-        'updated_by' => 1,
-        'category_id' => $category->id,
-        'product_copy_id' => $trCopy->id,
       ]);
 
-      // Create product for NL Softcover
-      Product::create([
-        'title' => $book['base_title'] . ' - ' . $nlCopy->name,
-        'base_title' => $book['base_title'],
-        'slug' => Str::slug($book['base_title'] . ' - ' . $nlCopy->name),
-        'base_slug' => $book['base_slug'],
-        'short_description' => $book['short_description'],
-        'long_description' => $book['long_description'],
-        'price' => $softcoverPrice,
-        'is_published' => $book['is_published'],
-        'stock' => $book['stock'],
-        'image_1' => $book['image_1'],
+      // Nederlands-Turks
+      $nlTrCopy = ProductCopy::create([
+        'name' => 'Nederlands-Turks',
+        'is_published' => 1,
         'created_by' => 1,
         'updated_by' => 1,
-        'category_id' => $category->id,
-        'product_copy_id' => $nlCopy->id,
       ]);
-    }
+
+     // Engels
+     $enCopy = ProductCopy::create([
+        'name' => 'Engels',
+        'is_published' => 1,
+        'created_by' => 1,
+        'updated_by' => 1,
+     ]);
+
+    // Engels-Turks
+    $enTrCopy = ProductCopy::create([
+        'name' => 'Engels-Turks',
+        'is_published' => 1,
+        'created_by' => 1,
+        'updated_by' => 1,
+    ]);
 
     }
 }

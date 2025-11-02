@@ -10,6 +10,21 @@ class CartController extends Controller
     public function index()
     {
         $cart = session()->get('cart', []);
+
+        // Normalize any legacy composite keys (e.g. "123-456") to product_id-only keys
+        $normalized = [];
+        foreach ($cart as $key => $item) {
+            if (!empty($item['product_id'])) {
+                $pid = (string) $item['product_id'];
+                if (isset($normalized[$pid])) {
+                    $normalized[$pid]['quantity'] = ($normalized[$pid]['quantity'] ?? 0) + ($item['quantity'] ?? 0);
+                } else {
+                    $normalized[$pid] = $item;
+                }
+            }
+        }
+        $cart = $normalized;
+
         $changed = false;
         foreach ($cart as $key => $item) {
             if (!empty($item['product_id'])) {
@@ -28,6 +43,9 @@ class CartController extends Controller
         }
         if ($changed) {
             session(['cart' => $cart]);
+        } else {
+            // If we normalized keys, make sure session contains normalized cart
+            session(['cart' => $cart]);
         }
         return view('cart.index', ['cart' => $cart]);
     }
@@ -36,54 +54,28 @@ class CartController extends Controller
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'product_copy_id' => 'required|exists:product_copies,id',
-            'quantity' => 'required|integer|min:1|max:1000',
+            'quantity' => 'required|integer|min:1|max:10',
+        ], [
+            'product_id.required' => 'Selecteer een product.',
+            'product_id.exists' => 'Geselecteerd product bestaat niet.',
+            'quantity.required' => 'Geef een hoeveelheid op.',
+            'quantity.integer' => 'Hoeveelheid moet een heel getal zijn.',
+            'quantity.min' => 'Minimaal :min item toevoegen.',
+            'quantity.max' => 'Maximaal :max items toegestaan.',
         ]);
 
-        $baseProductId = $request->input('product_id');
-        $productCopyId = $request->input('product_copy_id');
-        $quantity = $request->input('quantity');
-        $baseProduct = Product::find($baseProductId);
-        if (!$baseProduct) {
+        $productId = $validated['product_id'];
+        $quantity = $validated['quantity'];
+
+        $product = Product::find($productId);
+        if (!$product) {
             return back()->with('error', 'Product niet gevonden.');
         }
 
         $cart = session()->get('cart', []);
 
-        // All variant products share the same slug; pick the one that matches the chosen product_copy_id if it exists
-        $variant = Product::where('base_slug', $baseProduct->base_slug)
-            ->where('product_copy_id', $productCopyId)
-            ->whereNull('deleted_at')
-            ->first();
-
-        // If no explicit variant product row, fallback to base product
-        $product = $variant ?: $baseProduct;
-
-        // Validate that the chosen product_copy actually belongs to this base_slug family
-        $validCopyIds = Product::where('base_slug', $baseProduct->base_slug)
-            ->whereNull('deleted_at')
-            ->pluck('product_copy_id')
-            ->filter()
-            ->unique();
-        if (!$validCopyIds->contains($productCopyId)) {
-            return back()->withInput()->withErrors([
-                'product_copy_id' => 'Het gekozen exemplaar hoort niet bij dit product.'
-            ]);
-        }
-
-        // Validate published copy
-        $productCopy = \App\Models\ProductCopy::where('id', $productCopyId)
-            ->where('is_published', 1)
-            ->first();
-        if (!$productCopy) {
-            return back()->withInput()->withErrors([
-                'product_copy_id' => 'Het gekozen exemplaar bestaat niet of is niet gepubliceerd.'
-            ]);
-        }
-
-        // Use variant product id for cart key to differentiate prices per variant
-        $productId = $product->id;
-        $cartKey = $productId.'-'.$productCopyId;
+        // Use product_id string as cart key
+        $cartKey = (string) $productId;
         $currentQty = isset($cart[$cartKey]) ? $cart[$cartKey]['quantity'] : 0;
         $newQty = $currentQty + $quantity;
         if ($newQty > $product->stock) {
@@ -94,10 +86,8 @@ class CartController extends Controller
 
         if (isset($cart[$cartKey])) {
             $cart[$cartKey]['quantity'] = $newQty;
-            $cart[$cartKey]['product_copy_id'] = $productCopyId;
-            $cart[$cartKey]['product_copy_name'] = $productCopy->name;
-            $cart[$cartKey]['image_1'] = $product->image_1 ?? '';
             $cart[$cartKey]['price'] = $product->price; // ensure latest price
+            $cart[$cartKey]['image_1'] = $product->image_1 ?? '';
             $cart[$cartKey]['name'] = $product->title;
         } else {
             $cart[$cartKey] = [
@@ -106,8 +96,6 @@ class CartController extends Controller
                 'price' => $product->price,
                 'image_1' => $product->image_1 ?? '',
                 'quantity' => $quantity,
-                'product_copy_id' => $productCopyId,
-                'product_copy_name' => $productCopy->name,
             ];
         }
 
@@ -121,7 +109,6 @@ class CartController extends Controller
         $validated = $request->validate([
             'products' => 'required|array',
             'products.*.product_id' => 'required|exists:products,id',
-            'products.*.product_copy_id' => 'required|exists:product_copies,id',
             'products.*.quantity' => 'required|integer|min:0',
         ]);
 
@@ -131,9 +118,8 @@ class CartController extends Controller
 
         foreach ($request->input('products') as $item) {
             $productId = $item['product_id'];
-            $productCopyId = $item['product_copy_id'];
             $quantity = $item['quantity'];
-            $cartKey = $productId.'-'.$productCopyId;
+            $cartKey = (string) $productId;
             $product = Product::find($productId);
 
             if (isset($cart[$cartKey])) {
@@ -160,9 +146,9 @@ class CartController extends Controller
         }
 
         if ($updated) {
-            return redirect()->back()->with('success', 'Winkelwagen is bijgewerkt');
+            return redirect()->back()->with('success', 'Winkelwagen is bijgewerkt.');
         } else {
-            return redirect()->back()->with('error', 'Geen producten bijgewerkt');
+            return redirect()->back()->with('error', 'Geen producten bijgewerkt.');
         }
     }
 
@@ -170,12 +156,10 @@ class CartController extends Controller
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'product_copy_id' => 'required|exists:product_copies,id',
         ]);
 
         $productId = $request->input('product_id');
-        $productCopyId = $request->input('product_copy_id');
-        $cartKey = $productId.'-'.$productCopyId;
+        $cartKey = (string) $productId;
         $cart = session()->get('cart', []);
 
         if (isset($cart[$cartKey])) {

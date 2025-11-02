@@ -39,6 +39,16 @@
                     <div class="item customer-details">
                         <h3>Factuurgegevens</h3>
 
+                        @auth
+                            <div>
+                                <p>Je bent ingelogd als <strong>{{ auth()->user()->email }}</strong>.</p>
+                            </div>
+                        @else
+                            <div>
+                                <p>Je rekent af als gast.</p>
+                            </div>
+                        @endauth
+
                         <div class="form-input">
                             <label for="billing_email">E-mailadres</label>
                             <input type="email" name="billing_email" autocomplete="email"
@@ -331,6 +341,7 @@
 
                     <input type="hidden" name="myparcel_delivery_options" id="myparcel_delivery_options" />
 
+                    @guest
                     <div class="checkout-create-account">
                         <div class="form-input customer-account">
                             <p>
@@ -354,6 +365,7 @@
                             </div>
                         </div>
                     </div>
+                    @endguest
 
                     <div class="place-order">
                         @error('myparcel_delivery_options')

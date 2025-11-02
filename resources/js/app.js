@@ -351,8 +351,8 @@ document.addEventListener('DOMContentLoaded', () => {
       <div class="custom-confirm-modal-content">
         <div class="custom-confirm-modal-message">${message}</div>
         <div class="custom-confirm-modal-actions">
-          <button class="btn confirm-btn" type="button">Ja, bevestigen</button>
-          <button class="btn cancel-btn" type="button">Annuleren</button>
+          <button class="btn confirm-btn small" type="button">Ja, bevestigen</button>
+          <button class="btn cancel-btn small" type="button">Annuleren</button>
         </div>
       </div>
     `;
